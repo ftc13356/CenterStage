@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Navigations.Odometry;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Robot;
 
 @Autonomous(name= "shooter_autonomous")
 @Disabled

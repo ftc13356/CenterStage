@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Accesories.WobbleGoal;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Robot;
 
 @Autonomous(name= "R_3Power_park")//12.76-13.7
 public class R_3Power_park extends LinearOpMode {

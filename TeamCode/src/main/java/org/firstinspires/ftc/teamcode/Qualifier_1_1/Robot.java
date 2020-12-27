@@ -13,18 +13,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Intake;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.RingDepositor;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.EncoderChassis;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.IMUChassis;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.OdometryChassis;
-//import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Accesories.Intake;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Accesories.RingDepositor;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Accesories.WobbleGoal;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Chassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.EncoderChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.IMUChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Navigations.VuforiaWebcam;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.ObjectDetection.TensorFlow;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.OdometryChassis;
+//import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.Navigations.VuforiaWebcam;
 
 
 public class Robot {

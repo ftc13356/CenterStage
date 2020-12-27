@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1_1.Robot;
 
 @Autonomous(name = "MoveWobbleGoalPark")
 public class MoveWobbleGoalPark extends LinearOpMode {
