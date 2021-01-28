@@ -192,7 +192,7 @@ public class IMUChassis extends BasicChassis {
 
     @Override
     public void moveForward(double distance, double power) {
-        /*double ticksToMove = counts_per_inch * distance;
+        double ticksToMove = counts_per_inch * distance;
         double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;
         double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() + ticksToMove;
         double newRightBackTargetPosition = motorRightBack.getCurrentPosition() + ticksToMove;
@@ -229,50 +229,7 @@ public class IMUChassis extends BasicChassis {
         motorLeftBack.setPower(0);
         motorRightBack.setPower(0);
         motorLeftFront.setPower(0);
-        motorRightFront.setPower(0);*/
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double startAngle = getAngle();
-        double[] currentPosition = track();
-        double[] target_position = {0, 0, 0};
-        double x = distance*(1-tan(getAngle()));
-        double y =distance*tan(getAngle());
-        double anglecorrection;
-        target_position[0] = currentPosition[0] + x;
-        target_position[1] = currentPosition[1] + y;
-        target_position[2] = currentPosition[2];
-        double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        while (op.opModeIsActive() && (difference >= 1)) {
-            currentPosition = track();
-            /*op.telemetry.addData("targetx", target_position[0]);
-            op.telemetry.addData("targety",target_position[1]);
-            op.telemetry.addData("angle",angleInRadians);
-            op.telemetry.addData("distance",difference);
-            op.telemetry.addData("power1",anglePower[0]);
-            op.telemetry.addData("power2",anglePower[1]);
-            op.telemetry.update();
-            op.telemetry.update();*/
-            if (difference < 5) {
-                power *= difference / 10;
-                if (abs(power) < 0.2) {
-                    power = 0.2;
-                }
-            }
-            x = target_position[0] - currentPosition[0];
-            y = target_position[1] - currentPosition[1];
-            anglecorrection = (currentPosition[2] - target_position[2]) * 0.007;
-            motorRightBack.setPower(power  - anglecorrection);
-            motorRightFront.setPower(power  - anglecorrection);
-            motorLeftBack.setPower(power  + anglecorrection);
-            motorLeftFront.setPower(power + anglecorrection);
-            difference = abs(sqrt((x) * (x) + (y) * (y)));
-            op.telemetry.addData("distance", difference);
-            op.telemetry.update();
-        }
-        turnInPlace(startAngle, 1.0);
-        stopAllMotors();
+        motorRightFront.setPower(0);
     }
 
     @Override

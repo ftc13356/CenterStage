@@ -25,7 +25,6 @@ import org.firstinspires.ftc.teamcode.Qualifier_1_1.Robot;
 import java.util.ArrayList;
 
 @Autonomous
-@Disabled
 public class TensorFlowTest extends LinearOpMode {
 
     @Override
