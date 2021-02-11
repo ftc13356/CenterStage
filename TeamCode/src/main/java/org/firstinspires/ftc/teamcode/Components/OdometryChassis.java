@@ -183,8 +183,8 @@ return data;
 //                anglePower[1]*=1.5;
 //                anglePower[0]*=1.5;
 //            }
-            while(abs(power)<0.35){
-                power*=0.35/abs(power);
+            while(abs(power)<0.37){
+                power*=0.37/abs(power);
             }
             motorRightBack.setPower(power * anglePower[1] + anglecorrection);
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);

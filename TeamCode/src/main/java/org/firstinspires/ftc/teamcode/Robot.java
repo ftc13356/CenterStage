@@ -309,7 +309,7 @@ public class Robot {
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
         drivetrain.turnInPlace(-1.75,1.0);
-        shooter.setVelocity(1500, 1000);
+        shooter.setVelocity(1570, 1000);
         op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);
