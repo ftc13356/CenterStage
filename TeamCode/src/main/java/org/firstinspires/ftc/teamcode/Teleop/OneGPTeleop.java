@@ -71,6 +71,7 @@ public class OneGPTeleop extends LinearOpMode {
             boolean odo_powershots = gamepad1.b;
             boolean shooter_servo = gamepad1.x;
             boolean wobble_goal_servo = gamepad1.y;
+            boolean quick_reverse = gamepad1.a;
 
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
@@ -119,7 +120,7 @@ public class OneGPTeleop extends LinearOpMode {
 
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
-            robot.moveMultidirectional(0.95*magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
+            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
 
             // wobble goal movements
             telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
@@ -175,6 +176,14 @@ public class OneGPTeleop extends LinearOpMode {
             } else if (!start_transfer_sys){
                 robot.stopIntake();
                 robot.stopTransfer();
+            }
+
+            if (quick_reverse){
+                robot.reverseIntake();
+                robot.reverseTransfer();
+                sleep(500);
+                robot.startIntake();
+                robot.startTransfer();
             }
 //            if (reverse_transfer_sys != 0) {
 //                robot.reverseIntake();
