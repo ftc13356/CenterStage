@@ -96,28 +96,7 @@ public class OneGPTeleop extends LinearOpMode {
             } else {
                 robot.stopShooter();
             }
-
-//            /**Speed Mode**/
-//            if (slow) {
-//                isSlow = true;
-//
-//                if (currSlow) {
-//                    currSlow = false;
-//                } else if (currSlow == false) {
-//                    currSlow = true;
-//                }
-//            } else {
-//                isSlow = false;
-//            }
-//
-//            if (isSlow) {
-//                if (currSlow) {
-//                    slowMode = true;
-//                } else if (currSlow == false) {
-//                    slowMode = false;
-//                }
-//            }
-
+            
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
             robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
@@ -169,7 +148,7 @@ public class OneGPTeleop extends LinearOpMode {
                 }
             }
 
-            //transfer system
+            // transfer system
             if(start_transfer_sys){
                 robot.startIntake();
                 robot.startTransfer();
@@ -178,21 +157,14 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.stopTransfer();
             }
 
+            // quick reverse
             if (quick_reverse){
                 robot.reverseIntake();
                 robot.reverseTransfer();
-                sleep(500);
+                sleep(250);
                 robot.startIntake();
                 robot.startTransfer();
             }
-//            if (reverse_transfer_sys != 0) {
-//                robot.reverseIntake();
-//                robot.reverseTransfer();
-//            } else {
-//                robot.stopIntake();
-//                robot.stopTransfer();
-//            }
-
         }
         idle();
     }

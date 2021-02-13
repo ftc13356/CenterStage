@@ -19,7 +19,7 @@ public class FinalAuto extends LinearOpMode {
         robot.stopRingDetection();
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
         if(rings!=1&&rings!=4) {
-            robot.goToPosition( -64,-1,0, 1);//-25,60
+            robot.goToPosition( -64,-6,0, 1);//-25,60
             robot.openWobbleGoalClaw();
             sleep(250);
             robot.goToPosition(-60.5,30.8,-2,0.8);//37,4
@@ -33,7 +33,7 @@ public class FinalAuto extends LinearOpMode {
             robot.closeWobbleGoalClaw();
             sleep(600);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            robot.goToPosition(-53.5+43.5-56.5,32+3-6.5-28,0,0.8);
+            robot.goToPosition(-53.5+43.5-56.5-7,32+3-6.5-28,0,0.8);
             robot.openWobbleGoalClaw();
             sleep(250);
             robot.goToPosition(-53.5+43.5-59-2,32+6.5-4-23+10,0,0.8);
@@ -78,7 +78,7 @@ public class FinalAuto extends LinearOpMode {
             robot.stopIntake();
             robot.stopTransfer();
             robot.goToPosition(-49,4,0,0.8);
-            robot.goToPosition(-49.5,4,-3,1);
+            robot.goToPosition(-49.25,4,-3,1);
             robot.shootHighGoal(2);
             robot.startIntake();
             robot.startTransfer();
