@@ -20,9 +20,9 @@ public class OpenCVTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false,90);
-        robot.rotateToPosition(-7.5);
-        sleep(1000);
+//        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false,90);
+//        robot.rotateToPosition(-7.5);
+//        sleep(1000);
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "BackWebcam"), cameraMonitorViewId);
         BlueTeamElem opencv = new BlueTeamElem(this);
         webcam.setPipeline(opencv);
