@@ -16,7 +16,7 @@ public class LEDStrip extends OpMode{
 
     @Override
     public void loop(){
-        gold();
+        red();
     }
 
 
@@ -56,8 +56,8 @@ public class LEDStrip extends OpMode{
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
     }
 
-    public void fire (){
-        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE);
+    public void green (){
+        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 }
 
