@@ -1,23 +1,20 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-public class LEDStrip extends OpMode{
+public class LEDStrip{
     RevBlinkinLedDriver blinkin;
 
-    @Override
-    public void init(){
-        blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-    }
+public LEDStrip(){
+    blinkin = op.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+    blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+}
 
-    @Override
-    public void loop(){
-        red();
-    }
 
 
     public void rainbow(){
