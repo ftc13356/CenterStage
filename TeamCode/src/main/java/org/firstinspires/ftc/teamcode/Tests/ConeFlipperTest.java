@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Components.RFModules.ConeFlipper;
 import org.firstinspires.ftc.teamcode.Old.Components.Localizer.OdometryTracker;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
@@ -21,16 +22,15 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 public class ConeFlipperTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Servo flipper = hardwareMap.servo.get("flipper");
-        flipper.setPosition(1);
+        ConeFlipper flipper = new ConeFlipper();
 
 
         while (!isStopRequested()) {
             if(gamepad1.x){
-                flipper.setPosition(0.0); //cone flipping position
+                flipper.setDownPosition();
             }
             else{
-                flipper.setPosition(1);
+                flipper.setUpPosition();
             }
         }
     }
