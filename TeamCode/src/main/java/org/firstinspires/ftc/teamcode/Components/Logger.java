@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import android.annotation.SuppressLint;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,6 +65,36 @@ public class Logger {
         }
 
     }
+    @SuppressLint("SdCardPath")
+    public void logPos(Pose2d position){
+        try {
+            FileWriter poser = new FileWriter("/sdcard/tmp/pos.csv");
+            poser.write(position.getX()+"\n"+position.getY()+"\n"+position.getHeading());
+            poser.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public Pose2d readLogPos(){
+        Pose2d returner = new Pose2d(0,0,0);
+        try {
+            Scanner poser = new Scanner("/storage/emulated/0/tmp/pos.csv");
+            double[] come = {0,0,0};
+            for(int i=0;i<3;i++){
+                if(poser.hasNextLine()){
+                    come[i]=Double.parseDouble(poser.nextLine());
+                }
+            }
+            poser.close();
+            returner = new Pose2d(come[0],come[1],come[2]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return returner;
+    }
 
     @SuppressLint("SdCardPath")
     public void createFile (String fileName, String headers) {
@@ -107,7 +140,7 @@ public class Logger {
         try {
             File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
             FileWriter filewriter = new FileWriter(file, true);
-            filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+            filewriter.write(String.format("%.2f", time) + ":" + input + "\n");
             filewriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,7 +168,7 @@ public class Logger {
 
             for (int i = 0; i < inputStrings.size(); i++) {
 
-                while (tempheaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", op.getRuntime()).length() - 1 >0) {
+                while (tempheaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", time).length() - 1 >0) {
                     loggingString += " ";
                 }
                 loggingString += inputStrings.get(i);
@@ -143,7 +176,7 @@ public class Logger {
 
             try {
                 FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
+                filewriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
                 filewriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -152,6 +185,17 @@ public class Logger {
 
         else {
             log(fileName, input);
+        }
+    }
+    @SuppressLint("DefaultLocale")
+    public void logNoTime(String fileName, String input){
+        try {
+            File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
+            FileWriter filewriter = new FileWriter(file, true);
+            filewriter.write(input + "\n");
+            filewriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -177,7 +221,7 @@ public class Logger {
 
                 for (int i = 0; i < inputStrings.size(); i++) {
 
-                    while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
+                    while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", time).length() - 1 > 0) {
                         loggingString += " ";
                     }
                     loggingString += inputStrings.get(i);
@@ -185,7 +229,7 @@ public class Logger {
 
                 try {
                     FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                    filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
+                    filewriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
                     filewriter.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -233,7 +277,7 @@ public class Logger {
 
                 for (int i = 0; i < inputStrings.size(); i++) {
 
-                    while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
+                    while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", time).length() - 1 > 0) {
                         loggingString += " ";
                     }
                     loggingString += inputStrings.get(i);
@@ -241,7 +285,7 @@ public class Logger {
 
                 try {
                     FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                    filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
+                    filewriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
                     filewriter.close();
                 } catch (IOException e) {
                     e.printStackTrace();

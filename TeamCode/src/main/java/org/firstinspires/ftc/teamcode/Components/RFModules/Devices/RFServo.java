@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ public class RFServo implements Servo {
 
     private final Servo rfServo;
 
-    private double lasttime = 0;
+    private double lasttime = -100;
 
     double servolimit = 0;
 
@@ -52,7 +54,7 @@ public class RFServo implements Servo {
     }
 
     public void setPosition(double position) {
-        if (op.getRuntime() - lasttime > 0.2) {
+        if (time - lasttime > 0.2) {
 //            if (rfServo.getPosition() != position) {
 //                inputlogs.clear();
 //                inputlogs.add(rfServoName);
@@ -66,12 +68,12 @@ public class RFServo implements Servo {
 //                logger.logRegulated("/RobotLogs/GeneralRobot", rfServoName + "\nsetPosition():\nSetting Position:" + position);
 
             rfServo.setPosition(position);
-            lasttime = op.getRuntime();
+            lasttime = time;
         }
     }
 
     public boolean flipServoInterval(double lowerpos, double upperpos) {
-        if(op.getRuntime() - lasttime > 0.2) {
+        if(time - lasttime > 0.2) {
             if (flipped) {
                 rfServo.setPosition(lowerpos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
@@ -84,11 +86,11 @@ public class RFServo implements Servo {
                 flipped = true;
             }
         }
-        return op.getRuntime() - lasttime > 0.2;
+        return time - lasttime > 0.2;
     }
 
     public void flipServoMax() {
-        if (op.getRuntime() - lasttime > 0.2) {
+        if (time - lasttime > 0.2) {
             if (flipped) {
                 rfServo.setPosition(0);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
@@ -100,7 +102,7 @@ public class RFServo implements Servo {
                         + df.format(servolimit), true);
                 flipped = true;
             }
-            lasttime = op.getRuntime();
+            lasttime = time;
         }
     }
 
@@ -115,6 +117,9 @@ public class RFServo implements Servo {
 
     public double getLastTime() {
         return lasttime;
+    }
+    public void setLastTime(double lastTime){
+        lasttime = lastTime;
     }
 
     @Override

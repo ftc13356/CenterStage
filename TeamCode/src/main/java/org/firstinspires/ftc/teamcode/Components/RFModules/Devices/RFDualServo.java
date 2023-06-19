@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
-
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
@@ -66,6 +65,9 @@ public class RFDualServo implements Servo {
 
         rfDualServoName = deviceName1;
     }
+    public void setLasttime(double p_lastTime){
+        lasttime = p_lastTime;
+    }
 
     public void flipServosMax (){
         if (op.getRuntime() - lasttime > 0.2) {
@@ -111,14 +113,14 @@ public class RFDualServo implements Servo {
 //                logger.log("/DualServoLogs/RFDualServo", " Setting Positions: " + position + ", " + servolimit + position);
 //                logger.log("/RobotLogs/GeneralRobot", rfDualServoName + "\nsetPositions():\nSetting Positions:\nservo 1: " + position + "\nservo 2: " + (servolimit - position));
 
-                if (op.getRuntime() - lasttime > 0.2) {
+//                if (time - lasttime > 0.2) {
                     dualServo1.setPosition(position);
                     dualServo2.setPosition(servolimit - position);
                     logger.log("/DualServoLogs/RFDualServo", rfDualServoName +
                             ",setPositions(),Setting Positions: " + df.format(position) + " " +
                             df.format(servolimit - position), true);
                     lasttime = op.getRuntime();
-                }
+//                }
             }
         }
 
@@ -126,6 +128,28 @@ public class RFDualServo implements Servo {
 
     public double getLastTime() {
         return lasttime;
+    }
+
+    public void disableServos() {
+        ServoController rfServoController1 = (ServoController) dualServo1.getController();
+        ServoController rfServoController2 = (ServoController) dualServo2.getController();
+        rfServoController1.pwmDisable();
+        rfServoController2.pwmDisable();
+    }
+    public void enableServos() {
+        ServoController rfServoController1 = (ServoController) dualServo1.getController();
+        ServoController rfServoController2 = (ServoController) dualServo2.getController();
+        rfServoController1.pwmEnable();
+        rfServoController2.pwmEnable();
+    }
+    public boolean abledServos() {
+        ServoController rfServoController1 = (ServoController) dualServo1.getController();
+        ServoController rfServoController2 = (ServoController) dualServo2.getController();
+        if(rfServoController1.getPwmStatus()== ServoController.PwmStatus.ENABLED){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 

@@ -314,7 +314,7 @@ public class TrajectorySequenceBuilder {
         return this;
     }
 
-    private TrajectorySequenceBuilder setTangentOffset(double offset) {
+    public TrajectorySequenceBuilder setTangentOffset(double offset) {
         setAbsoluteTangent = false;
 
         this.tangentOffset = offset;
@@ -468,6 +468,12 @@ public class TrajectorySequenceBuilder {
         pushPath();
 
         sequenceSegments.add(new TrajectorySegment(trajectory));
+        return this;
+    }
+    public TrajectorySequenceBuilder addSequenceSegment(SequenceSegment segment){
+        pushPath();
+
+        sequenceSegments.add(segment);
         return this;
     }
 
