@@ -40,7 +40,7 @@ public class Logger {
     FileWriter fileWriter = null;
     String currentTime;
     String data = "0";
-    StringBuilder loggingString;
+    StringBuilder loggingString = new StringBuilder();
 
     public int loopCounter=0;
     public static final DecimalFormat df = new DecimalFormat("0.00");

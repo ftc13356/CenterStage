@@ -34,14 +34,14 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 0.009, kI, kD = 0.00001, kV = 0.0003, kA = 0.00004, kR = 0, kS = 0.15,
-            MAX_ACCELERATION_UP = 6000, MAX_ACCELERATION_DOWN = 12000, RESISTANCE = 400;
-    public static double gravity = 0.2;
-    private double MAX_VELOCITY_UP = 1475 - 225 * (13.5 - BasicRobot.voltageSensor.getVoltage());
-    private double MAX_VELOCITY_DOWN = 3500;
+    private double MAX_VELOCITY_UP = 1400 - 225 * (14 - BasicRobot.voltageSensor.getVoltage());
+    private double MAX_VELOCITY_DOWN = 4000 - 225 * (14 - BasicRobot.voltageSensor.getVoltage());
+    public static double D = 0, D2 = 0, kP = 0.004268, kI, kD = 0.0005, kV = 0.000345, kA = 0.000012, kR = 0, kS = 0.1,
+            MAX_ACCELERATION_UP = 6000, MAX_ACCELERATION_DOWN = 27500, RESISTANCE = 400;
+    public static double gravity = 0.45;
     private double relativeDist, direction, peakVelo, J, decelDist;
     private double[][] calculatedIntervals = new double[4][8];
-    private double[][][] calculatedMotions = new double[3][7][5];;
+    private double[][][] calculatedMotions = new double[3][7][5];
     private double[] timeIntervals = new double[8];
     private double[] distances = new double[8];
     private double[] velocities = new double[8];
@@ -199,21 +199,35 @@ public class RFMotor extends Motor {
 
         double[] targetMotion = getTargetMotion(curve);
 
+        if (position > 25) {
+            gravity = 0.5;
+        }
+        else {
+            gravity = 0.2;
+        }
+
         double power = (kV * targetMotion[0] + kA * targetMotion[1] +
-                kP * (getTargetPosition(BasicRobot.time) - position) + kD * (getTargetVelocity(BasicRobot.time) - velocity) + gravity);
+                kP * (getTargetPosition(BasicRobot.time + 0.1) - position) + kD * (getTargetVelocity(BasicRobot.time + 0.1) - velocity) + gravity);
         power = abs(power)/power * min(1, abs(power));
 
-        op.telemetry.addData("POWERRR", power * 1000);
+        if (direction < 0) {
+            power = min(0.35, power);
+            power = max(-0.2, power);
+        }
+        else {
+            power = max(0.35, power);
+//            power = min(0.77, power);
+        }
         op.telemetry.addData("ACTUAL POS", position);
         op.telemetry.addData("TARGET POS", getTargetPosition(BasicRobot.time));
         op.telemetry.addData("TARGET VELOOO", getTargetVelocity(BasicRobot.time));
         op.telemetry.addData("ACTUAL VELO", velocity);
-        op.telemetry.addData("TARGET ACCEL", getTargetAcceleration(BasicRobot.time));
+        op.telemetry.addData("TARGET ACCEL", getTargetAcceleration(BasicRobot.time)/10);
 
 //        kP * (getTargetPosition(BasicRobot.time) - getCurrentPosition())
 //                + kD * (targetMotion[1] - getVelocity())
 
-        if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
+        if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 20) {
             if (power < 0) {
                 power -= kS;
             } else {
@@ -221,6 +235,7 @@ public class RFMotor extends Motor {
             }
         }
         setRawPower(power);
+        op.telemetry.addData("POWERRR", power * 1000);
         lastTime = time;
     }
 
@@ -371,7 +386,10 @@ public class RFMotor extends Motor {
     }
 
     public double getMaxVelocity() {
-        if (direction == 1) {
+        if (isSim) {
+            return 1500;
+        }
+        else if (direction == 1) {
             return MAX_VELOCITY_UP;
         }
         else {
@@ -380,7 +398,10 @@ public class RFMotor extends Motor {
     }
 
     public double getMaxAcceleration() {
-        if (direction == 1) {
+        if (isSim) {
+            return 6000;
+        }
+        else if (direction == 1) {
             return MAX_ACCELERATION_UP;
         }
         else {
@@ -398,19 +419,22 @@ public class RFMotor extends Motor {
     public double[] getTargetMotion(double curve) {
         double[] targets = {0, 0};
 
-        relativeDist = targetPos - getCurrentPosition();
-
-        if (relativeDist == 0) {
-            return targets;
-        }
-
         if (sameTarget) {
             targets[0] = getTargetVelocity(BasicRobot.time);
             targets[1] = getTargetAcceleration(BasicRobot.time);
             return targets;
         }
 
-        direction = abs(relativeDist)/relativeDist;
+        if (isSim) {
+            relativeDist = targetPos - currentTickPos;
+        }
+        else {
+            relativeDist = targetPos - getCurrentPosition();
+        }
+
+        if (relativeDist == 0) {
+            return targets;
+        }
 
         if (isSim) {
             velocities[0] = direction * currentVelocity;
@@ -420,6 +444,8 @@ public class RFMotor extends Motor {
             velocities[0] = direction * rfMotor.getVelocity();
             positions[0] = direction * rfMotor.getCurrentPosition();
         }
+
+        direction = abs(relativeDist)/relativeDist;
 
         if (velocities[0] == 0) {
             peakVelo = min((131 - 38 * curve)/131 * sqrt(getMaxAcceleration() * abs(relativeDist)), getMaxVelocity());
@@ -453,8 +479,8 @@ public class RFMotor extends Motor {
             positions[0] = rfMotor.getCurrentPosition();
         }
 
-        targets[0] = getTargetVelocity(BasicRobot.time);
-        targets[1] = getTargetAcceleration(BasicRobot.time);
+        targets[0] = getTargetVelocity(BasicRobot.time + 0.1);
+        targets[1] = getTargetAcceleration(BasicRobot.time + 0.1);
 
         decelDist = getTargetPosition(timeIntervals[7]) - getTargetPosition(timeIntervals[4]);
 

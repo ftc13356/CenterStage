@@ -37,19 +37,19 @@ public class RFMotionProfilerTest extends LinearOpMode {
         currentVelocity = 0;
         currentAcceleration = 0;
 
-        double maxpos = 0;
+        double maxpos = 10000;
         double minvelo = 2000;
         packet.clearLines();
 
         while (opModeIsActive()) {
             motor.setIsSim(true);
 
-            if (currentTickPos < 0 + 1/pow(10, 5)) {
-                motor.setTargetPos(1250);
+            if (currentTickPos == 0) {
+                motor.setTargetPos(1000);
                 motor.getTargetMotion(1);
             }
 
-            else if (currentTickPos > 1250 - 1/pow(10, 5)) {
+            else if (currentTickPos == 1000) {
                 motor.setTargetPos(0);
                 motor.getTargetMotion(1);
             }
@@ -84,7 +84,7 @@ public class RFMotionProfilerTest extends LinearOpMode {
 
             packet.put("Tick Position", currentTickPos);
 
-            if (pos > maxpos) {
+            if (pos < maxpos) {
                 maxpos = pos;
             }
 
