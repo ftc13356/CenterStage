@@ -176,6 +176,12 @@ public class RFMotor extends Motor {
     }
 
     public void setPosition(double p_targetPos, double curve) {
+        if (curve <= 0) {
+            curve = 0.0001;
+        }
+        else if (curve > 1) {
+            curve = 1;
+        }
         if (targetPos == p_targetPos) {
             sameTarget = true;
         }
