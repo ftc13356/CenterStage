@@ -11,7 +11,6 @@ import static org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Lift.LiftC
 import static org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.LiftArm.liftArmStates.ARM_RAISING;
-import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.RESISTANCE;
 import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.kA;
 import static org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Switch.prezzed;
 import static org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.flippas.flippaStates.FLIP_INTAKE;
@@ -113,7 +112,6 @@ public class PwPRobot extends BasicRobot {
         voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
         voltage = voltageSensor.getVoltage();
         RFMotor.kP *= 13 / voltageSensor.getVoltage();
-        RESISTANCE *= 13 / voltageSensor.getVoltage();
         RFMotor.kA *= 13 / voltageSensor.getVoltage();
 //        DriveConstants.TRACK_WIDTH *= 12.7 / voltageSensor.getVoltage();
         DriveConstants.MAX_ACCEL *= 13 / voltageSensor.getVoltage();

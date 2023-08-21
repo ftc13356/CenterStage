@@ -150,7 +150,6 @@ public class Lift {
     }
 
     public void setPeak(){
-        liftMotor.setCurrentPosition(1260);
     }
 
     public double getStackLevelHeight(int i){
@@ -284,25 +283,22 @@ public class Lift {
         op.sleep(200);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftTarget = 0;
-        liftMotor.setCurrentPosition(0);
     }
     public double getLiftTarget(){
         return liftTarget;
     }
 
     public void liftToTargetAuto() {
-        liftMotor.setPosition(liftTarget, 1);
     }
 
     private boolean LTTZeroLogged = false;
 
     public void liftToTarget() {
         if (time- lastManualTime > 0.2) {
-            liftMotor.setPosition(liftTarget, 1);
             //logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks" + logger.loopcounter, true);
             //logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Target: " + liftTarget + " ticks | Current Position: " + liftMotor.getCurrentPosition() + " | Velocity: " + liftMotor.getVelocity(), true);
             LTTZeroLogged = false;
-        } else if (time- lastManualTime < .2 && liftMotor.getPower() == liftMotor.getGRAVITY_CONSTANT()) {
+        } else if (time- lastManualTime < .2) {
             setLiftTarget(liftMotor.getCurrentPosition());
         } else {
             //if (LTTZeroLogged == false) {
