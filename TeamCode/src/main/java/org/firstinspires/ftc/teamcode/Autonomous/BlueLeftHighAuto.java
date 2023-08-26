@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Old.PowerPlay.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Old.PowerPlay.Robot.PwPRobot;
 @Autonomous(name = "BlueLeftAutoCycleTuned")
 
 
-public class BlueLeftAutoCycleTuned extends LinearOpMode {
+public class BlueLeftHighAuto extends LinearOpMode {
 
 
     public void runOpMode() {
