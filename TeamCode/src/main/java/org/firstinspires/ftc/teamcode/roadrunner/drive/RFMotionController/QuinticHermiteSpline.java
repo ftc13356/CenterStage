@@ -15,7 +15,20 @@ public class QuinticHermiteSpline {
         
     }
 
-    //return x,y,t
+    //return x,y,dx,dy,ddx,ddy
+    public Vector2d[] valsAt(double p_t){
+        Vector2d[] vals = {new Vector2d(0,0),new Vector2d(0,0), new Vector2d(0,0)};
+        for(int i=0;i<coeffs.size();i++){
+            vals[0]=vals[0].plus(coeffs.get(i).times(pow(p_t,i)));
+        }
+        for(int i=1;i<coeffs.size();i++){
+            vals[1]=vals[1].plus(coeffs.get(i).times(pow(p_t,i-1)).times(i));
+        }
+        for(int i=2;i<coeffs.size();i++){
+            vals[1]=vals[1].plus(coeffs.get(i).times(pow(p_t,i-2)).times(i*(i-1)));
+        }
+        return vals;
+    }
     public Pose2d poseAt(double p_t) {
         Vector2d pose = new Vector2d(0, 0);
         //eval func
