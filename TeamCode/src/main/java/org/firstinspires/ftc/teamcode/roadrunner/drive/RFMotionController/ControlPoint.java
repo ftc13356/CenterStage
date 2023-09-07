@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
+import static org.apache.commons.math3.util.FastMath.abs;
 import static org.apache.commons.math3.util.FastMath.asin;
 import static org.apache.commons.math3.util.FastMath.atan2;
 import static org.apache.commons.math3.util.FastMath.cos;
@@ -19,7 +20,7 @@ import org.apache.commons.math3.util.FastMath;
 import java.util.ArrayList;
 
 public class ControlPoint {
-    private final double x, y, t, k, v, a, time;
+    private final double x, y, t, k, v, a, time, otherTime;
 
 
     public ControlPoint(double p_x, double p_y, double p_dx, double p_dy, double p_ddx, double p_ddy, double p_v, double p_time) {
@@ -30,6 +31,7 @@ public class ControlPoint {
         time = p_time;
         v = p_v;
         a=0;
+        otherTime=0;
     }
 
     public ControlPoint(double p_x, double p_y, double p_t, double p_k, double p_v, double p_a, double p_time) {
@@ -40,12 +42,23 @@ public class ControlPoint {
         v = p_v;
         a = p_a;
         time = p_time;
+        otherTime=0;
+    }
+    private ControlPoint(double p_x, double p_y, double p_t, double p_k, double p_v, double p_a, double p_time, double p_otherTime, double p_filler) {
+        x = p_x;
+        y = p_y;
+        t = p_t;
+        k = p_k;
+        v = p_v;
+        a = p_a;
+        time = p_time;
+        otherTime=p_otherTime;
     }
     public ControlPoint forwardTraverse(double p_x, double p_y, double p_dx, double p_dy, double p_ddx, double p_ddy){
         double n_t = atan2(p_dy, p_dx);
         double n_k = (p_dx*p_ddy - p_dy*p_ddx) / pow(p_dx*p_dx+p_dy*p_dy,1.5);
         double avgK = (n_k + k)*0.5;
-        double newMaxAccel =max( MAX_ACCEL - v*v*avgK,1);
+        double newMaxAccel =MAX_ACCEL - v*v*avgK;
         double dist = sqrt((p_x - x) * (p_x - x) + (p_y - y)*(p_y - y));
         double radians = 2 * asin(dist*avgK*0.5);
         double arcLength = radians/avgK;
@@ -54,6 +67,27 @@ public class ControlPoint {
         double n_v = FastMath.min(v + newMaxAccel*deltaT, MAX_VEL*newMaxAccel/MAX_ACCEL);
         double n_a = (n_v- v)/deltaT;
         return new ControlPoint(p_x,p_y,n_t,n_k,n_v,n_a,n_time);
+    }
+    public ControlPoint backwardTraverse(ControlPoint prev){
+        double avgK = (prev.k+k)*0.5;
+        double newMaxAccel =MAX_ACCEL - v*v*avgK;
+        double dist = sqrt((prev.x - x) * (prev.x - x) + (prev.y - y)*(prev.y - y));
+        double radians = 2 * asin(dist*avgK*0.5);
+        double arcLength = radians/avgK;
+        double deltaT = (-v + sqrt(v*v+abs(2*newMaxAccel*arcLength)))/newMaxAccel;
+        double n_v =v + abs(newMaxAccel*deltaT);
+        double n_time, o_time;
+        if(n_v>=prev.v){
+            n_v = prev.v;
+            n_time = prev.time;
+            o_time = time-deltaT;
+        }
+        else{
+            n_time = time-deltaT;
+            o_time = prev.time;
+        }
+        double n_a = (v-n_v)/deltaT;
+        return new ControlPoint(prev.x,prev.y,prev.t,prev.k,n_v,n_a,n_time,o_time,0);
     }
     public double getCentripetalAccel(){
         return v*v*k;
