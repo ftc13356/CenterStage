@@ -12,7 +12,14 @@ public class QuinticHermiteSpline {
     private ArrayList<Vector2d> coeffs;
 
     public QuinticHermiteSpline(Vector2d p_startPos, Vector2d p_startVel, Vector2d p_startAccel, Vector2d p_endPos, Vector2d p_endVel, Vector2d p_endAccel) {
-        
+        coeffs.add(p_startPos);
+        coeffs.add(p_startVel);
+        coeffs.add(p_startAccel.times(0.5));
+        coeffs.add(p_startPos.times(-10).plus(p_startVel.times(-6)).plus(p_startAccel.times(-1.5))
+                .plus(p_endAccel.times(-1)).plus(p_endVel.times(-4)).plus(p_endPos).times(-10));
+        coeffs.add(p_startPos.times(15).plus(p_startVel.times(8)).plus(p_startAccel.times(1.5))
+                .plus(p_endAccel.times(-1)).plus(p_endVel.times(7)).plus(p_endPos.times(-15)));
+        coeffs.add(p_startPos.times(-6).plus(p_startVel.times(-3)));
     }
 
     //return x,y,dx,dy,ddx,ddy
