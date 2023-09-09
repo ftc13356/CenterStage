@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 public class BasicRobot{
     public static Logger logger;
+    public static RFLogger logger2;
     public static LinearOpMode op = null;
     public Queuer queuer;
     public static boolean isTeleop;
@@ -21,6 +23,8 @@ public class BasicRobot{
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
         logger = new Logger();
+        logger2 = new RFLogger(BasicRobot.class.getName());
+        logger2.createFile("/RobotLogs/GeneralRobot");
         logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
                 "Function                        Action");
         logger.createFile("gamepad", "Value Name Time");
