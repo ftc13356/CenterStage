@@ -19,10 +19,15 @@ public class QuinticHermiteSpline {
                 .plus(p_endAccel.times(-1)).plus(p_endVel.times(-4)).plus(p_endPos).times(-10));
         coeffs.add(p_startPos.times(15).plus(p_startVel.times(8)).plus(p_startAccel.times(1.5))
                 .plus(p_endAccel.times(-1)).plus(p_endVel.times(7)).plus(p_endPos.times(-15)));
-        coeffs.add(p_startPos.times(-6).plus(p_startVel.times(-3)));
+        coeffs.add(p_startPos.times(-6).plus(p_startVel.times(-3)).plus(p_startAccel.times(-0.5))
+                .plus(p_endAccel.times(0.5)).plus(p_endVel.times(-3)).plus(p_endPos.times(5)));
     }
 
-    //return x,y,dx,dy,ddx,ddy
+    /**
+     *
+     * @param p_t
+     * @return x, dx, ddx
+     */
     public Vector2d[] valsAt(double p_t){
         Vector2d[] vals = {new Vector2d(0,0),new Vector2d(0,0), new Vector2d(0,0)};
         for(int i=0;i<coeffs.size();i++){
@@ -35,18 +40,5 @@ public class QuinticHermiteSpline {
             vals[1]=vals[1].plus(coeffs.get(i).times(pow(p_t,i-2)).times(i*(i-1)));
         }
         return vals;
-    }
-    public Pose2d poseAt(double p_t) {
-        Vector2d pose = new Vector2d(0, 0);
-        //eval func
-        for (int i = 0; i < coeffs.size(); i++) {
-            pose = pose.plus(coeffs.get(i).times(pow(p_t, i)));
-        }
-        Vector2d velo = new Vector2d(0, 0);
-        //eval first deriv
-        for (int i = 1; i < coeffs.size(); i++) {
-            velo = velo.plus(coeffs.get(i).times(i*pow(p_t, i - 1)));
-        }
-        return new Pose2d(pose, velo.angle());
     }
 }
