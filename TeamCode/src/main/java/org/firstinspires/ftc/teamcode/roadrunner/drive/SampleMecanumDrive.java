@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -36,22 +34,25 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.roadrunner.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.roadrunner.util.BNO055IMUUtil;
-import org.firstinspires.ftc.teamcode.roadrunner.util.LimitSwitches;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.roadrunner.util.Ultrasonics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,16 +64,14 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.0, 0.5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.0, 0.1  );
+    public static final PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.0, 0.5);
+    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.0, 0.1);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static final double LATERAL_MULTIPLIER = 1;
 
-    public static double VX_WEIGHT = 1;
-    public static double VY_WEIGHT = 1;
-    public static double OMEGA_WEIGHT = 1;
-    private final boolean ultrasonics = false, touches = false;
-
+    public static final double VX_WEIGHT = 1;
+    public static final double VY_WEIGHT = 1;
+    public static final double OMEGA_WEIGHT = 1;
     private TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectorySequence trajectorySeq;
 
@@ -84,12 +83,19 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BNO055IMU imu;
+    private IMU imu;
     private VoltageSensor batteryVoltageSensor;
-    private FtcDashboard dashboard= null;
-    private Ultrasonics ultras = null;
-    private LimitSwitches touch = null;
-    private Pose2d endPose = new Pose2d(0,0,0);
+    private Pose2d endPose = new Pose2d(0, 0, 0);
+
+    public SampleMecanumDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
+        super(kV,
+                kA,
+                kStatic,
+                TRACK_WIDTH,
+                TRACK_WIDTH,
+                LATERAL_MULTIPLIER);
+        initializeDrive(hardwareMap, trackType);
+    }
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV,
@@ -98,6 +104,10 @@ public class SampleMecanumDrive extends MecanumDrive {
                 TRACK_WIDTH,
                 TRACK_WIDTH,
                 LATERAL_MULTIPLIER);
+        initializeDrive(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
+    }
+
+    public void initializeDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         follower = new RFHolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -134,15 +144,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-        // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        DcMotorEx backEncoder= hardwareMap.get(DcMotorEx.class, "motorLeftFront");
-        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
-        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "rightEncoder");
+        DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorRightFront");
+        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
+        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -151,7 +160,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -175,28 +183,28 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: reverse any motors using DcMotor.setDirection()
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-//        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
+        if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
+            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        } else if (trackType == Tracker.TrackType.ROADRUN_IMU_LEFT) {
+            setLocalizer(new TwoWheelTrackingLocalizerLeft(hardwareMap, this));
+        } else if (trackType == Tracker.TrackType.ROADRUN_IMU_RIGHT) {
+            setLocalizer(new TwoWheelTrackingLocalizerRight(hardwareMap, this));
+        } else {
+            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        }
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+        BasicRobot.dashboard = FtcDashboard.getInstance();
+        BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
+        logger.createFile("RoadrunLog", "Runtime, X, Y, A, error[0], error[1]");
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
-//        if(ultrasonics) {
-//            ultras = new Ultrasonics();
-//        }
-//        if(touches) {
-//            touch = new LimitSwitches();
-//        }
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-//        imu.initialize(parameters);
-//        BNO055IMUUtil.remapZAxis(imu, AxisDirection.POS_Y);
-        dashboard = FtcDashboard.getInstance();
-        dashboard.setTelemetryTransmissionInterval(25);
-        logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
-        trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10,0)).build();
+        trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -242,13 +250,13 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectory(Trajectory trajectory) {
-        logger.log("/RobotLogs/GeneralRobot","followingTrajectory");
+        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        logger.log("/RobotLogs/GeneralRobot","followingTrajectory");
+        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
@@ -260,11 +268,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         trajectorySeq = trajectorySequence;
 
     }
+
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
         trajectorySequenceRunner.changeTrajectorySequence(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
-        Trajectory tragedy = ((TrajectorySegment)trajectorySequence.get(0)).getTrajectory();
+        Trajectory tragedy = ((TrajectorySegment) trajectorySequence.get(0)).getTrajectory();
         follower.changeTrajectory(tragedy);
     }
 
@@ -278,27 +287,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        time=op.getRuntime();
-        if(ultrasonics){
-            Pose2d pos = getPoseEstimate();
-            if(ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
-                Pose2d ultraPos = ultras.getPose2d();
-                setPoseEstimate(new Pose2d(ultraPos.getX(), ultraPos.getY(),pos.getHeading()));
-            }
-            else{
-            }
-        }
-        if(touches){
-            Pose2d pos = getPoseEstimate();
-            if(touch.updateTouch(pos.getX(),pos.getY(),pos.getHeading())){
-                Pose2d touchaPos = touch.getPose2d();
-                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY(),pos.getHeading()));
-                op.telemetry.addData("touch-updated", true);
-            }else{
-                op.telemetry.addData("touch-updated", false);
-            }
-        }
-        logger.log("RoadrunLog","pos"+getPoseEstimate());
+        logger.log("RoadrunLog", "pos" + getPoseEstimate());
 //        PoseStorage.currentPose = getPoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
@@ -335,7 +324,8 @@ public class SampleMecanumDrive extends MecanumDrive {
             motor.setPIDFCoefficients(runMode, compensatedCoefficients);
         }
     }
-    public TrajectorySequence getCurrentTraj(){
+
+    public TrajectorySequence getCurrentTraj() {
         return trajectorySequenceRunner.getTrajectorySequence();
     }
 
@@ -392,7 +382,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
     @Override
@@ -402,7 +392,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // expected). This bug does NOT affect orientation.
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) imu.getAngularVelocity().xRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

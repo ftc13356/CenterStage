@@ -1,21 +1,18 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 // NOT TESTED YET - 7/28/2023, PUSHING AFTER SOME MORE CLEANUP
 public class RFCRServo implements CRServo {
-    private CRServo crServo;
-    private String deviceName;
+    private final CRServo crServo;
+    private final String deviceName;
 
-    /**crservo with specified direction
+    /**CRServo with specified direction
      *
-     * @param c_direction
-     * @param p_deviceName
+     * @param c_direction DcMotorSimple.Direction
+     * @param p_deviceName String for hwMap
      */
     public RFCRServo (String p_deviceName, DcMotorSimple.Direction c_direction) {
         deviceName = p_deviceName;
@@ -23,33 +20,42 @@ public class RFCRServo implements CRServo {
         crServo.setDirection(c_direction);
     }
 
-    /**crservo using default direction
+    /**CRServo using default direction
      *
-     * @param p_deviceName
+     * @param p_deviceName String for hwMap
      */
     public RFCRServo (String p_deviceName) {
         deviceName = p_deviceName;
         crServo = op.hardwareMap.get(CRServo.class, p_deviceName);
     }
 
-    /**movement methods
-     *
+    // movement methods
+
+    /**
+     * set power to 1, turns clockwise
      */
     public void spinClockwise() {
         crServo.setPower(1.0);
     }
 
+    /**
+     * set power to -1, turns counter clockwise
+     */
     public void spinCounterClockwise() {
         crServo.setPower(-1.0);
     }
 
+    /**
+     *  set power to 0, stops turning
+     */
     public void stopSpinning() {
         crServo.setPower(0);
     }
 
-    /**these methods override the methods in the crservo class, which rfcrservo implements, in order to compile
-     *
-     *
+    /**
+     * these methods override the methods in the crservo class,
+     * which rfcrservo implements,
+     * in order to compile
      */
     @Override
     public ServoController getController() {
