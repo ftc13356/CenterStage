@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.System;
 import android.annotation.SuppressLint;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -11,10 +12,16 @@ import java.util.logging.SimpleFormatter;
 
 public class RFLogger {
     public static Logger LOGGER;
-    HashMap<String, FileHandler> fileMap = new HashMap<>();
+//    HashMap<String, FileHandler> fileMap = new HashMap<>();
     FileHandler fh;
     SimpleFormatter sh = new SimpleFormatter();
-
+    EnumMap<File, FileHandler> fileMap = new EnumMap<>(File.class);
+    public static enum File {
+        GeneralLog,
+        AutoLog,
+        HardwareLog,
+        QueuerLog;
+    }
     public RFLogger (String className){
         LOGGER = Logger.getLogger(className);
         LOGGER.setLevel(Level.ALL);
@@ -24,7 +31,7 @@ public class RFLogger {
             e.printStackTrace();
         }
         fh.setFormatter(sh);
-        fileMap.put(className,fh);
+        fileMap.put(File.GeneralLog,fh);
         LOGGER.addHandler(fh);
     }
 
@@ -36,12 +43,14 @@ public class RFLogger {
             e.printStackTrace();
         }
         fh.setFormatter(sh);
-        fileMap.put("/sdcard/tmp/"+p_fileName+"Log.csv", fh);
+        fileMap.put(File.GeneralLog, fh);
     }
 
     public void setFile(String p_fileName){
         LOGGER.addHandler(fileMap.get("/sdcard/tmp/"+p_fileName+"Log.csv"));
     }
+
+
 
     public void logSevere(String error){
         LOGGER.severe(error);
