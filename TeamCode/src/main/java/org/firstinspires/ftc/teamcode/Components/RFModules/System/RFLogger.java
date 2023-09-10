@@ -15,42 +15,60 @@ public class RFLogger {
 //    HashMap<String, FileHandler> fileMap = new HashMap<>();
     FileHandler fh;
     SimpleFormatter sh = new SimpleFormatter();
-    EnumMap<File, FileHandler> fileMap = new EnumMap<>(File.class);
-    public static enum File {
-        GeneralLog,
-        AutoLog,
-        HardwareLog,
-        QueuerLog;
+    Level logLevel = Level.ALL;
+    public enum Files {
+        GENERAL_LOG("/sdcard/tmp/GeneralLog.csv"),
+        AUTONOMOUS_LOG("/sdcard/tmp/AutonomousLog.csv"),
+        HARDWARE_LOG("/sdcard/tmp/HardwareLog.csv"),
+        QUEUER_LOG("/sdcard/tmp/QueuerLog.csv");
+
+        String filePath;
+
+        Files(String p_filePath){
+            filePath = p_filePath;
+        }
     }
     public RFLogger (String className){
         LOGGER = Logger.getLogger(className);
-        LOGGER.setLevel(Level.ALL);
+        LOGGER.setLevel(logLevel);
         try {
-            fh = new FileHandler("/sdcard/tmp/MotorLogs");
+            fh = new FileHandler(Files.GENERAL_LOG.filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         fh.setFormatter(sh);
-        fileMap.put(File.GeneralLog,fh);
         LOGGER.addHandler(fh);
     }
 
-    @SuppressLint("SdCardPath")
-    public void createFile (String p_fileName) {
+//    @SuppressLint("SdCardPath")
+//    public void createFile (String p_fileName) {
+//        try {
+//            fh = new FileHandler("/sdcard/tmp/"+p_fileName+"Log.csv");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        fh.setFormatter(sh);
+//        fileMap.put(File.GeneralLog, fh);
+//    }
+
+//    public void setFile(String p_fileName){
+//        LOGGER.addHandler(fileMap.get("/sdcard/tmp/"+p_fileName+"Log.csv"));
+//    }
+    public void setLogLevel(Level p_logLevel){
+        logLevel = p_logLevel;
+        LOGGER.setLevel(logLevel);
+    }
+
+    public void log(Files p_file, String info){
         try {
-            fh = new FileHandler("/sdcard/tmp/"+p_fileName+"Log.csv");
+            fh = new FileHandler(p_file.filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         fh.setFormatter(sh);
-        fileMap.put(File.GeneralLog, fh);
+        LOGGER.addHandler(fh);
+        LOGGER.log(logLevel, info);
     }
-
-    public void setFile(String p_fileName){
-        LOGGER.addHandler(fileMap.get("/sdcard/tmp/"+p_fileName+"Log.csv"));
-    }
-
-
 
     public void logSevere(String error){
         LOGGER.severe(error);
