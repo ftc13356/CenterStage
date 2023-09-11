@@ -24,7 +24,6 @@ public class BasicRobot{
         op = opMode;
         logger = new Logger();
         logger2 = new RFLogger(BasicRobot.class.getName());
-        logger2.createFile("/RobotLogs/GeneralRobot");
         logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
                 "Function                        Action");
         logger.createFile("gamepad", "Value Name Time");

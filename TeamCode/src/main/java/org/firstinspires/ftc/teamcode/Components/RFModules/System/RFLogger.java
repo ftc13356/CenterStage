@@ -28,6 +28,23 @@ public class RFLogger {
             filePath = p_filePath;
         }
     }
+
+    public enum Severity {
+        ALL(Level.ALL),
+        SEVERE(Level.SEVERE),
+        WARNING(Level.WARNING),
+        INFO(Level.INFO),
+        CONFIG(Level.CONFIG),
+        FINE(Level.FINE),
+        FINER(Level.FINER),
+        FINEST(Level.FINEST);
+
+        Level logSeverity;
+
+        Severity(Level p_logSeverity){
+            logSeverity = p_logSeverity;
+        }
+    }
     public RFLogger (String className){
         LOGGER = Logger.getLogger(className);
         LOGGER.setLevel(logLevel);
@@ -54,14 +71,37 @@ public class RFLogger {
 //    public void setFile(String p_fileName){
 //        LOGGER.addHandler(fileMap.get("/sdcard/tmp/"+p_fileName+"Log.csv"));
 //    }
-    public void setLogLevel(Level p_logLevel){
-        logLevel = p_logLevel;
+    public void setLogLevel(Severity p_severity){
+        logLevel = p_severity.logSeverity;
         LOGGER.setLevel(logLevel);
+    }
+
+    public void log(Severity p_severity, Files p_file, String info){
+        try {
+            fh = new FileHandler(p_file.filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fh.setFormatter(sh);
+        LOGGER.addHandler(fh);
+        logLevel = p_severity.logSeverity;
+        LOGGER.log(logLevel, info);
     }
 
     public void log(Files p_file, String info){
         try {
             fh = new FileHandler(p_file.filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fh.setFormatter(sh);
+        LOGGER.addHandler(fh);
+        LOGGER.log(logLevel, info);
+    }
+
+    public void log(String info){
+        try {
+            fh = new FileHandler(Files.GENERAL_LOG.filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
