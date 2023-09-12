@@ -12,20 +12,24 @@ import java.util.logging.SimpleFormatter;
 
 public class RFLogger {
     public static Logger LOGGER;
-//    HashMap<String, FileHandler> fileMap = new HashMap<>();
-    FileHandler fh;
+    ArrayList<FileHandler> handlerList = new ArrayList<>();
     SimpleFormatter sh = new SimpleFormatter();
+    FileHandler fh;
     Level logLevel = Level.ALL;
+    static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
+
     public enum Files {
-        GENERAL_LOG("/sdcard/tmp/GeneralLog.csv"),
-        AUTONOMOUS_LOG("/sdcard/tmp/AutonomousLog.csv"),
-        HARDWARE_LOG("/sdcard/tmp/HardwareLog.csv"),
-        QUEUER_LOG("/sdcard/tmp/QueuerLog.csv");
+        GENERAL_LOG("/sdcard/tmp/GeneralLog.log", 0),
+        AUTONOMOUS_LOG("/sdcard/tmp/AutonomousLog.log", 1),
+        HARDWARE_LOG("/sdcard/tmp/HardwareLog.log", 2),
+        QUEUER_LOG("/sdcard/tmp/QueuerLog.log", 3);
 
         String filePath;
+        int index;
 
-        Files(String p_filePath){
+        Files(String p_filePath, int p_index){
             filePath = p_filePath;
+            index = p_index;
         }
     }
 
@@ -45,96 +49,68 @@ public class RFLogger {
             logSeverity = p_logSeverity;
         }
     }
+
     public RFLogger (String className){
         LOGGER = Logger.getLogger(className);
         LOGGER.setLevel(logLevel);
         try {
-            fh = new FileHandler(Files.GENERAL_LOG.filePath);
+            GeneralFH = new FileHandler(Files.GENERAL_LOG.filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        fh.setFormatter(sh);
-        LOGGER.addHandler(fh);
+
+        try {
+            AutonomousFH = new FileHandler(Files.AUTONOMOUS_LOG.filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            HardwareFH = new FileHandler(Files.HARDWARE_LOG.filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            QueuerFH = new FileHandler(Files.QUEUER_LOG.filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        handlerList.add(GeneralFH);
+        handlerList.add(AutonomousFH);
+        handlerList.add(HardwareFH);
+        handlerList.add(QueuerFH);
+
+        GeneralFH.setFormatter(sh);
+        AutonomousFH.setFormatter(sh);
+        HardwareFH.setFormatter(sh);
+        QueuerFH.setFormatter(sh);
+
+        LOGGER.addHandler(GeneralFH);
     }
 
-//    @SuppressLint("SdCardPath")
-//    public void createFile (String p_fileName) {
-//        try {
-//            fh = new FileHandler("/sdcard/tmp/"+p_fileName+"Log.csv");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        fh.setFormatter(sh);
-//        fileMap.put(File.GeneralLog, fh);
-//    }
-
-//    public void setFile(String p_fileName){
-//        LOGGER.addHandler(fileMap.get("/sdcard/tmp/"+p_fileName+"Log.csv"));
-//    }
     public void setLogLevel(Severity p_severity){
         logLevel = p_severity.logSeverity;
         LOGGER.setLevel(logLevel);
     }
 
     public void log(Severity p_severity, Files p_file, String info){
-        try {
-            fh = new FileHandler(p_file.filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        fh.setFormatter(sh);
+        fh = handlerList.get(p_file.index);
         LOGGER.addHandler(fh);
         logLevel = p_severity.logSeverity;
         LOGGER.log(logLevel, info);
     }
 
     public void log(Files p_file, String info){
-        try {
-            fh = new FileHandler(p_file.filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        fh.setFormatter(sh);
+        fh = handlerList.get(p_file.index);
         LOGGER.addHandler(fh);
         LOGGER.log(logLevel, info);
     }
 
     public void log(String info){
-        try {
-            fh = new FileHandler(Files.GENERAL_LOG.filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        fh.setFormatter(sh);
+        fh = handlerList.get(0);
         LOGGER.addHandler(fh);
         LOGGER.log(logLevel, info);
-    }
-
-    public void logSevere(String error){
-        LOGGER.severe(error);
-    }
-
-    public void logWarning(String warning){
-        LOGGER.warning(warning);
-    }
-
-    public void logInfo(String info){
-        LOGGER.info(info);
-    }
-
-    public void logConfig(String config){
-        LOGGER.config(config);
-    }
-
-    public void logFine(String logMsg){
-        LOGGER.fine(logMsg);
-    }
-
-    public void logFiner(String logMsg){
-        LOGGER.finer(logMsg);
-    }
-
-    public void logFinest(String logMsg){
-        LOGGER.finest(logMsg);
     }
 }
