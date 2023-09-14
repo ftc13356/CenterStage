@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static java.lang.Math.cos;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -12,6 +16,8 @@ public class RFWaypoint {
     private double endTangent;
     private double endVelocity;
     private int definedness;
+    private double startTangentMag, endTangentMag, startAccel, endAccel, endCurvature;
+
 
     public RFWaypoint(Pose2d p_target, double p_endTangent, double p_endVelocity, int definedness) {
         createRFWaypoint(p_target, p_endTangent, p_endVelocity, definedness);
@@ -79,5 +85,25 @@ public class RFWaypoint {
 
     public int getDefinedness() {
         return definedness;
+    }
+
+    public Vector2d[] getSplineCoeffs(){
+        Vector2d[] coeffs = {new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d()};
+        coeffs[0]=currentPose.vec();
+        coeffs[1] = currentPose.vec().times(startTangentMag/currentPose.vec().norm());
+        coeffs[2] = solveForCurvatureMaintaingAccel(currentVelocity.getHeading(), currentVelocity.getX(), currentVelocity.getY(), startAccel);
+        coeffs[3] = getTarget().vec();
+        coeffs[4] = getEndVelocityVec();
+        coeffs[5] = solveForCurvatureMaintaingAccel(endCurvature, coeffs[4].getX(), coeffs[4].getY(), endAccel);
+        return coeffs;
+    }
+    public Vector2d solveForCurvatureMaintaingAccel(double k, double dx, double dy, double a){
+        double n = k*pow(dx*dx+dy*dy, 1.5);
+        double b = (2*n*dy+dx*dx)/(dx*dx);
+        double A = dy/(dx*dx);
+        double c = (n*n-a*dx*dx)/(dx*dx);
+        double ddx = (-b+sqrt(b*b-4*A*c))/(2*A);
+        double ddy = sqrt(a-ddx*ddx);
+        return new Vector2d(ddx,ddy);
     }
 }

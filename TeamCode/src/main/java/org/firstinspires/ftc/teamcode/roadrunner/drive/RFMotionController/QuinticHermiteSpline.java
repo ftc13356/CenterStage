@@ -20,7 +20,7 @@ public class QuinticHermiteSpline {
         coeffs.add(p_startPos.times(15).plus(p_startVel.times(8)).plus(p_startAccel.times(1.5))
                 .plus(p_endAccel.times(-1)).plus(p_endVel.times(7)).plus(p_endPos.times(-15)));
         coeffs.add(p_startPos.times(-6).plus(p_startVel.times(-3)).plus(p_startAccel.times(-0.5))
-                .plus(p_endAccel.times(0.5)).plus(p_endVel.times(-3)).plus(p_endPos.times(5)));
+                .plus(p_endAccel.times(0.5)).plus(p_endVel.times(-3)).plus(p_endPos.times(6)));
     }
 
     /**

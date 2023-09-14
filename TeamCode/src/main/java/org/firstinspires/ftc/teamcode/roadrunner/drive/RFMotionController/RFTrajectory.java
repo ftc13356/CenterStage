@@ -25,8 +25,7 @@ import java.util.ArrayList;
 public class RFTrajectory {
     public static double SCALE = 1.0;
     ArrayList<RFSegment> segments;
-    CubicHermiteSpline currentPath;
-    RFMotionProfile motionProfile;
+    QuinticHermiteSpline currentPath;
     RFWaypoint startPoint;
     int segIndex = -1;
     double transAccuracy = 0.5, headingAccuracy = toRadians(30);
@@ -53,7 +52,7 @@ public class RFTrajectory {
     }
 
     public Pose2d getTargetPosition() {
-        return currentPath.targetPose;
+        return currentPath.;
     }
 
     public boolean updateSegments() {
@@ -61,11 +60,7 @@ public class RFTrajectory {
             setCurrentSegment(0);
             return true;
         } else if (segIndex + 1 < segments.size()) {
-            if (motionProfile.isProfileDone(time) || (/*currentPose.vec().distTo(segments.get(segIndex).getWaypoint().getTarget().vec()) < 5*/  motionProfile.isProfileDone(time - 1.5))) {
-                setCurrentSegment(segIndex + 1);
-                return true;
 
-            }
         } else {
             Pose2d curPos = currentPose;
             Pose2d targetPos = segments.get(segments.size() - 1).getWaypoint().getTarget();
