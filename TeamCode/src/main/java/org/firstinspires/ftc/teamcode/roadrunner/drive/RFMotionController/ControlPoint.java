@@ -146,6 +146,7 @@ public class ControlPoint {
     public double getK() {
         return k;
     }
+    public double getKAccel(){return nextK-k;}
 
     public double getV() {
         return v;

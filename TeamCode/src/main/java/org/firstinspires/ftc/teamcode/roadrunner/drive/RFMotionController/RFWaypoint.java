@@ -97,6 +97,16 @@ public class RFWaypoint {
         coeffs[5] = solveForCurvatureMaintaingAccel(endCurvature, coeffs[4].getX(), coeffs[4].getY(), endAccel);
         return coeffs;
     }
+    public Vector2d[] getSplineCoeffs(Pose2d currentPose, Pose2d currentVelocity){
+        Vector2d[] coeffs = {new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d()};
+        coeffs[0]=currentPose.vec();
+        coeffs[1] = currentPose.vec().times(startTangentMag/currentPose.vec().norm());
+        coeffs[2] = solveForCurvatureMaintaingAccel(currentVelocity.getHeading(), currentVelocity.getX(), currentVelocity.getY(), startAccel);
+        coeffs[3] = getTarget().vec();
+        coeffs[4] = getEndVelocityVec();
+        coeffs[5] = solveForCurvatureMaintaingAccel(endCurvature, coeffs[4].getX(), coeffs[4].getY(), endAccel);
+        return coeffs;
+    }
     public Vector2d solveForCurvatureMaintaingAccel(double k, double dx, double dy, double a){
         double n = k*pow(dx*dx+dy*dy, 1.5);
         double b = (2*n*dy+dx*dx)/(dx*dx);

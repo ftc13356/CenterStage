@@ -22,6 +22,9 @@ public class QuinticHermiteSpline {
         coeffs.add(p_startPos.times(-6).plus(p_startVel.times(-3)).plus(p_startAccel.times(-0.5))
                 .plus(p_endAccel.times(0.5)).plus(p_endVel.times(-3)).plus(p_endPos.times(6)));
     }
+    public QuinticHermiteSpline(Vector2d[] p_coeffs) {
+        new QuinticHermiteSpline(p_coeffs[0],p_coeffs[1],p_coeffs[2],p_coeffs[3],p_coeffs[4],p_coeffs[5]);
+    }
 
     /**
      *
