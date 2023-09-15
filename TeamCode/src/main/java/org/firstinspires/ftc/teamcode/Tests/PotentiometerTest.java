@@ -17,32 +17,33 @@ import java.util.ArrayList;
 public class PotentiometerTest extends LinearOpMode {
 
     private AnalogInput potentiometer;
-    private Servo potentiometerServo;
+    private Servo clawServo;
 
     public void runOpMode(){
         BasicRobot robot = new BasicRobot(this, true);
-        potentiometer = op.hardwareMap.get(AnalogInput.class, "potentiometer");
-        potentiometerServo = op.hardwareMap.get(Servo.class, "potentiometerServo");
+        potentiometer = op.hardwareMap.get(AnalogInput.class, "axonPotentiometer");
+        clawServo = op.hardwareMap.get(Servo.class, "clawServo");
 
+        clawServo.setPosition(0);
 
         waitForStart();
         while(opModeIsActive()){
             op.telemetry.addData("voltage", potentiometer.getVoltage());
-            op.telemetry.addData("angle in degrees", potentiometer.getVoltage() * 270/3.305);
-            op.telemetry.addData("servo position", potentiometerServo.getPosition());
+            op.telemetry.addData("angle in degrees", (potentiometer.getVoltage() - 1.51) * 142/0.59);
+            op.telemetry.addData("servo position", clawServo.getPosition());
             op.telemetry.update();
 
             if (op.gamepad1.x) {
-                potentiometerServo.setPosition(1);
+                clawServo.setPosition(0.6);
             }
             if (op.gamepad1.b) {
-                potentiometerServo.setPosition(0);
+                clawServo.setPosition(0.2);
             }
             if (op.gamepad1.y) {
-                Log.i("Servo Ending Position:", " " + potentiometer.getVoltage() * 270/3.305);
+                Log.i("angle", "" + (potentiometer.getVoltage() - 1.51) * 142/0.59);
+//                Log.i("voltage", "" + potentiometer.getVoltage());
             }
             robot.update();
         }
     }
 }
-
