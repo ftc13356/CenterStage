@@ -19,10 +19,10 @@ public class RFLogger {
     static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
 
     public enum Files {
-        GENERAL_LOG("/sdcard/tmp/GeneralLog.log", 0),
-        AUTONOMOUS_LOG("/sdcard/tmp/AutonomousLog.log", 1),
-        HARDWARE_LOG("/sdcard/tmp/HardwareLog.log", 2),
-        QUEUER_LOG("/sdcard/tmp/QueuerLog.log", 3);
+        GENERAL_LOG("/sdcard/tmp/General.log", 0),
+        AUTONOMOUS_LOG("/sdcard/tmp/Auton.log", 1),
+        HARDWARE_LOG("/sdcard/tmp/Hardware.log", 2),
+        QUEUER_LOG("/sdcard/tmp/Queuer.log", 3);
 
         String filePath;
         int index;
