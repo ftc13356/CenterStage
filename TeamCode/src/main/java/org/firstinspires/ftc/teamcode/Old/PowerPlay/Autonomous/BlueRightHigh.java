@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -15,11 +16,11 @@ import org.firstinspires.ftc.teamcode.Old.PowerPlay.Robot.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 import java.util.ArrayList;
-
+@Config
 public class BlueRightHigh {
-    private boolean boosted,tooHot=false;
-    PwPRobot robot=null;
-    LinearOpMode op;
+    private boolean boosted;
+    private PwPRobot robot;
+    private LinearOpMode op;
     double dummyP = 0, dropX=-27.8, dropY=1.8, dropA = toRadians(140),lastTime = 0.0,startTime=0.0;
 
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
