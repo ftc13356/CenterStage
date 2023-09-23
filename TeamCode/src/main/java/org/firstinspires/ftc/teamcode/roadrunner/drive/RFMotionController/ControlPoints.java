@@ -44,7 +44,7 @@ public class ControlPoints {
 
     /**
      * targetPose, targetVel, targetAccel, targetHead(vel, accel)
-     * @param p_time
+     * @param p_time time
      * @return targetPose, targetVel, targetAccel, targetHead(vel, accel)
      */
     public Vector2d[] getTargets(double p_time) {
