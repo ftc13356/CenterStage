@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Robots.TWDRobot;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+
 @Disabled
 @TeleOp(name = "AnteaterTeleop")
 public class AnteaterTeleop extends LinearOpMode {
@@ -24,8 +25,7 @@ public class AnteaterTeleop extends LinearOpMode {
     private final double TICKS_PER_RADIAN = 84;
 
     public void runOpMode() {
-        TWDRobot robot = new TWDRobot(this, true);
-
+        BasicRobot robot = new BasicRobot(this,true);
         motorLeft = new RFMotor("motorLeft", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorRight = new RFMotor("motorRight", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         armMotor = new RFMotor("armMotor", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);

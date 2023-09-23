@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Components.Localizer.OdometryTracker;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /**
@@ -26,9 +25,6 @@ public class EncoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
-        OdometryTracker odom = new OdometryTracker(false, false);
-        while (!isStopRequested()) {
-            odom.track();
-        }
+
     }
 }

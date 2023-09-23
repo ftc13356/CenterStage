@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Robots.FWDRobot;
-@Disabled
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+
 @TeleOp(name = "AntTeleop")
 public class AntTeleop extends LinearOpMode {
     public RFMotor motorLeftBack;
@@ -20,7 +20,7 @@ public class AntTeleop extends LinearOpMode {
     public RFServo clawServo;
 
     public void runOpMode() {
-        FWDRobot robot = new FWDRobot(this, true);
+        BasicRobot robot = new BasicRobot(this, true);
 
         motorLeftBack = new RFMotor("motorLeftBack", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorRightBack = new RFMotor("motorRightBack", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);

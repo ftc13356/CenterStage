@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Old.PowerPlay.Components;
 
-import org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Components.Misc.ColorDistanceRevV3;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
 
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ public class Aligner{
 
 //    private final RFMotor intakeMotor;
 
-    private ColorDistanceRevV3 alignerSensor;
+    private ColorSensor alignerSensor;
 
     //temporary
     private final double MAX_EXTENSION_TICKS = 1000;

@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Robots.TWDRobot;
-@Disabled
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+
 @TeleOp(name = "LopsidedTeleop")
 public class LopsidedTeleop extends LinearOpMode {
 
@@ -19,7 +19,7 @@ public class LopsidedTeleop extends LinearOpMode {
     public RFServo clawServo;
 
     public void runOpMode() {
-        TWDRobot robot = new TWDRobot(this, true);
+        BasicRobot robot = new BasicRobot(this, true);
 
         motorLeft = new RFMotor("motorLeft", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorRight = new RFMotor("motorRight", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
@@ -33,6 +33,7 @@ public class LopsidedTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
+        clawServo.setPosition(0.0);
 
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("status", "waiting for start command...");
@@ -49,7 +50,7 @@ public class LopsidedTeleop extends LinearOpMode {
             move(left_stick_y, right_stick_x);
 
             if (gamepad1.right_bumper && getRuntime() - lastpressed > 1) {
-                grabrelease();
+                clawServo.setPosition(0.8);
                 lastpressed = getRuntime();
             }
         }
