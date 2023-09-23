@@ -19,13 +19,13 @@ public class RoadRunMoveTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
-        logger2.log(RFLogger.Severity.CONFIG, RFLogger.Files.AUTONOMOUS_LOG, "Basic Robot Initialized");
+        logger2.log(RFLogger.Severity.CONFIG,  "Basic Robot Initialized");
         SampleMecanumDrive roadrun = new SampleMecanumDrive(this.hardwareMap);
-        logger2.log(RFLogger.Severity.CONFIG, RFLogger.Files.AUTONOMOUS_LOG, "Mec drive initialized");
+        logger2.log(RFLogger.Severity.CONFIG,  "Mec drive initialized");
         Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
-        logger2.log(RFLogger.Severity.INFO, RFLogger.Files.AUTONOMOUS_LOG, "Starting Pose: " + startPose.getX() + startPose.getY() + startPose.getHeading());
+        logger2.log(RFLogger.Severity.INFO,  "Starting Pose: " + startPose.getX() + startPose.getY() + startPose.getHeading());
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        logger2.log(RFLogger.Severity.CONFIG, RFLogger.Files.AUTONOMOUS_LOG, "DCMotor mode = run without encoder");
+        logger2.log(RFLogger.Severity.CONFIG,  "DCMotor mode = run without encoder");
 
         roadrun.setPoseEstimate(startPose);
 
@@ -40,21 +40,21 @@ public class RoadRunMoveTest extends LinearOpMode {
 
 //        while (opModeIsActive()) {
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 1");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 1");
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 2");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 2");
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 3");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 3");
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 4");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 4");
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 5");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 5");
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 6");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 6");
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 7");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 7");
             roadrun.followTrajectorySequence(trajSeq2);
-            logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.AUTONOMOUS_LOG, "Pass 8");
+            logger2.log(RFLogger.Severity.FINEST,  "Pass 8");
 
 //            roadrun.update();
 //            telemetry.update();

@@ -1,25 +1,32 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.System;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger2;
+
 import android.annotation.SuppressLint;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
 public class RFLogger {
     public static Logger LOGGER;
     ArrayList<FileHandler> handlerList = new ArrayList<>();
+    StackTraceElement[] elements = new StackTraceElement[0];
     SimpleFormatter sh = new SimpleFormatter();
-    FileHandler fh;
+    FileHandler TestFH;
     Level logLevel = Level.ALL;
     static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
 
     public enum Files {
-        GENERAL_LOG("/sdcard/tmp/General.log", 0),
+        GENERAL_LOG("/sdcard/tmp/Generalowo.log", 0),
         AUTONOMOUS_LOG("/sdcard/tmp/Auton.log", 1),
         HARDWARE_LOG("/sdcard/tmp/Hardware.log", 2),
         QUEUER_LOG("/sdcard/tmp/Queuer.log", 3);
@@ -77,17 +84,34 @@ public class RFLogger {
             e.printStackTrace();
         }
 
+        try {
+            TestFH = new FileHandler("/sdcard/tmp/Testinglog.log");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         handlerList.add(GeneralFH);
         handlerList.add(AutonomousFH);
         handlerList.add(HardwareFH);
         handlerList.add(QueuerFH);
 
-        GeneralFH.setFormatter(sh);
+        TestFH.setFormatter(new SimpleFormatter() {
+            private static final String format = "[%1$tF %1$tT.%1$tL] [%2$-7s] %3$s %n";
+            @SuppressLint("DefaultLocale")
+            public synchronized String format(LogRecord lr) {
+                return String.format(format,
+                        new Date(lr.getMillis()),
+                        lr.getLevel().getLocalizedName(),
+                        lr.getMessage()
+                );
+            }
+        });
         AutonomousFH.setFormatter(sh);
         HardwareFH.setFormatter(sh);
         QueuerFH.setFormatter(sh);
 
-        LOGGER.addHandler(GeneralFH);
+        LOGGER.addHandler(TestFH);
+
     }
 
     public void setLogLevel(Severity p_severity){
@@ -95,22 +119,81 @@ public class RFLogger {
         LOGGER.setLevel(logLevel);
     }
 
-    public void log(Severity p_severity, Files p_file, String info){
-        fh = handlerList.get(p_file.index);
-        LOGGER.addHandler(fh);
-        logLevel = p_severity.logSeverity;
-        LOGGER.log(logLevel, info);
+//    public void log(Severity p_severity, Files p_file, String info){
+//        String output = "";
+//        fh = handlerList.get(p_file.index);
+//        LOGGER.addHandler(fh);
+//        logLevel = p_severity.logSeverity;
+//        elements = Thread.currentThread().getStackTrace();
+//        for(int i = 0;i<elements.length; i++){
+//            output += ".";
+//        }
+//        LOGGER.log(logLevel, output);
+//
+//    }
+public void log(Severity p_severity, String info){
+    StringBuilder output = new StringBuilder(":");
+//    fh = handlerList.get(0);
+    LOGGER.addHandler(TestFH);
+    logLevel = p_severity.logSeverity;
+    elements = Thread.currentThread().getStackTrace();
+    for (StackTraceElement element : elements) {
+//        if (element.getClassName().startsWith("TeamCode")) {
+            output.append(".");
+//        }
     }
+    LOGGER.log(logLevel, output + info);
+}
 
     public void log(Files p_file, String info){
-        fh = handlerList.get(p_file.index);
-        LOGGER.addHandler(fh);
-        LOGGER.log(logLevel, info);
+        StringBuilder output = new StringBuilder(":");
+//        fh = handlerList.get(p_file.index);
+//        LOGGER.addHandler(fh);
+        LOGGER.addHandler(TestFH);
+        elements = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : elements) {
+            if (element.getClassName().startsWith("TeamCode")) {
+                output.append(".");
+            }
+        }
+        LOGGER.log(logLevel, output + info);
     }
 
     public void log(String info){
-        fh = handlerList.get(0);
-        LOGGER.addHandler(fh);
-        LOGGER.log(logLevel, info);
+            StringBuilder output = new StringBuilder(":");
+//            fh = handlerList.get(0);
+//            LOGGER.addHandler(fh);
+//        LOGGER.addHandler(TestFH);
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+            boolean first = false;
+            StackTraceElement firstElement = elements[0];
+            for (StackTraceElement element : elements) {
+            if (element.toString().startsWith("org")) {
+                    output.append(".");
+                    if(!first && !element.getMethodName().startsWith("log")){
+                        first = true;
+                        firstElement = element;
+                    }
+                }
+            }
+        LOGGER.log(logLevel, firstElement.getMethodName() + output + info);
+    }
+    public void logMAX(String info){
+        StringBuilder output = new StringBuilder(":");
+        StringBuilder maxMethods = new StringBuilder("");
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        boolean first = false;
+        StackTraceElement firstElement = elements[0];
+        for (StackTraceElement element : elements) {
+            maxMethods.append("\n" + element.getFileName() + ": " + element.getClassName() + "." + element.getMethodName());
+            if (element.toString().startsWith("org")) {
+                output.append(".");
+                if(!first && !element.getMethodName().startsWith("log")){
+                    first = true;
+                    firstElement = element;
+                }
+            }
+        }
+        LOGGER.log(logLevel, firstElement.getMethodName() + output + info + maxMethods);
     }
 }

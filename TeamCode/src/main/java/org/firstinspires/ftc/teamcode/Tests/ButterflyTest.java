@@ -25,13 +25,13 @@ public class ButterflyTest extends LinearOpMode {
         double lastSwitchTime = 0;
         BasicRobot robot = new BasicRobot(this, true);
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
-        logger2.log(RFLogger.Severity.CONFIG, RFLogger.Files.GENERAL_LOG, "Mec drive init");
+        logger2.log(RFLogger.Severity.CONFIG, "Mec drive init");
         servos = new ArrayList<>();
         servos.add(hardwareMap.servo.get("servoLeftFront"));
         servos.add(hardwareMap.servo.get("servoLeftBack"));
         servos.add(hardwareMap.servo.get("servoRightFront"));
         servos.add(hardwareMap.servo.get("servoRightBack"));
-        logger2.log(RFLogger.Severity.CONFIG, RFLogger.Files.GENERAL_LOG, "Servos hardware mapped");
+        logger2.log(RFLogger.Severity.CONFIG, "Servos hardware mapped");
         toggleServos();
         waitForStart();
         while(opModeIsActive()){
@@ -43,7 +43,7 @@ public class ButterflyTest extends LinearOpMode {
                 telemetry.addData("rightStckX", a);
                 double[] powers = {y+a,y+a,y-a,y-a};
                 drive.setMotorPowers(powers[0],powers[1],powers[2],powers[3]);
-                logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.GENERAL_LOG, "Motor Powers:" + powers[0] + powers[1] + powers[2] + powers[3]);
+                logger2.log(RFLogger.Severity.FINEST, "Motor Powers:" + powers[0] + powers[1] + powers[2] + powers[3]);
             }
             if(time>lastSwitchTime+1.0 && gamepad1.a){
                 isButtered=!isButtered;
@@ -58,14 +58,14 @@ public class ButterflyTest extends LinearOpMode {
             for(int i=0;i<4;i++){
                 double BUTTERED_POSITION = 0.6;
                 servos.get(i).setPosition(BUTTERED_POSITION +OFFSETS[i]);
-                logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.GENERAL_LOG, "Butter down at pos: " + BUTTERED_POSITION);
+                logger2.log(RFLogger.Severity.FINEST, "Butter down at pos: " + BUTTERED_POSITION);
             }
         }
         else{
             for(int i=0;i<4;i++){
                 double INIT_POSITION = 1.0;
                 servos.get(i).setPosition(INIT_POSITION);
-                logger2.log(RFLogger.Severity.FINEST, RFLogger.Files.GENERAL_LOG, "Butter up at pos: " + INIT_POSITION);
+                logger2.log(RFLogger.Severity.FINEST, "Butter up at pos: " + INIT_POSITION);
             }
         }
     }
