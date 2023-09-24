@@ -48,9 +48,9 @@ public class AntTeleop extends LinearOpMode {
 
         while (!isStopRequested() && getRuntime() < 90) {
 
-            double left_stick_y = -gamepad1.left_stick_y;
+            double left_stick_y = gamepad1.left_stick_y;
             double left_stick_x = gamepad1.left_stick_x;
-            double right_stick_x = -gamepad1.right_stick_x * 0.5;
+            double right_stick_x = gamepad1.right_stick_x * 0.5;
 
             move(left_stick_y, left_stick_x, right_stick_x);
 
