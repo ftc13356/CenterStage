@@ -185,7 +185,7 @@ public void log(Severity p_severity, String info){
         boolean first = false;
         StackTraceElement firstElement = elements[0];
         for (StackTraceElement element : elements) {
-            maxMethods.append("\n" + element.getFileName() + ": " + element.getClassName() + "." + element.getMethodName());
+            maxMethods.append("\n" + "   " + element.getFileName() + ": " + element.getClassName() + "." + element.getMethodName());
             if (element.toString().startsWith("org")) {
                 output.append(".");
                 if(!first && !element.getMethodName().startsWith("log")){
