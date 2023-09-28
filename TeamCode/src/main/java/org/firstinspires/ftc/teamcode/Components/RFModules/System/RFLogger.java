@@ -133,16 +133,22 @@ public class RFLogger {
 //    }
 public void log(Severity p_severity, String info){
     StringBuilder output = new StringBuilder(":");
-//    fh = handlerList.get(0);
-    LOGGER.addHandler(TestFH);
+    StringBuilder maxMethods = new StringBuilder("");
     logLevel = p_severity.logSeverity;
-    elements = Thread.currentThread().getStackTrace();
+    StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+    boolean first = false;
+    StackTraceElement firstElement = elements[0];
     for (StackTraceElement element : elements) {
-//        if (element.getClassName().startsWith("TeamCode")) {
+        maxMethods.append("\n" + "   " + element.getFileName() + ": " + element.getClassName() + "." + element.getMethodName());
+        if (element.toString().startsWith("org")) {
             output.append(".");
-//        }
+            if(!first && !element.getMethodName().startsWith("log")){
+                first = true;
+                firstElement = element;
+            }
+        }
     }
-    LOGGER.log(logLevel, output + info);
+    LOGGER.log(logLevel, firstElement.getMethodName() + output + info + maxMethods);
 }
 
     public void log(Files p_file, String info){
@@ -160,7 +166,7 @@ public void log(Severity p_severity, String info){
     }
 
     public void log(String info){
-            StringBuilder output = new StringBuilder(":");
+        StringBuilder output = new StringBuilder(":");
 //            fh = handlerList.get(0);
 //            LOGGER.addHandler(fh);
 //        LOGGER.addHandler(TestFH);

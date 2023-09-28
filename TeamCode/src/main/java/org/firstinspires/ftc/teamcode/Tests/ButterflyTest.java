@@ -34,16 +34,17 @@ public class ButterflyTest extends LinearOpMode {
         logger2.log(RFLogger.Severity.CONFIG, "Servos hardware mapped");
         toggleServos();
         waitForStart();
-        while(opModeIsActive()){
+        while(opModeIsActive()&&!isStopRequested()){
             if(!isButtered){
                 drive.setWeightedDrivePower(new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
+                logger2.log(RFLogger.Severity.FINEST, "Motor Powers non-butter:" + gamepad1.left_stick_y + " " + gamepad1.left_stick_x + " " + gamepad1.right_stick_x);
             }else{
                 double y = gamepad1.left_stick_y;
                 double a = -gamepad1.right_stick_x;
                 telemetry.addData("rightStckX", a);
                 double[] powers = {y+a,y+a,y-a,y-a};
                 drive.setMotorPowers(powers[0],powers[1],powers[2],powers[3]);
-                logger2.log(RFLogger.Severity.FINEST, "Motor Powers:" + powers[0] + powers[1] + powers[2] + powers[3]);
+                logger2.log(RFLogger.Severity.FINEST, "Motor Powers butter:" + powers[0] + powers[1] + powers[2] + powers[3]);
             }
             if(time>lastSwitchTime+1.0 && gamepad1.a){
                 isButtered=!isButtered;
@@ -52,6 +53,7 @@ public class ButterflyTest extends LinearOpMode {
             }
             robot.update();
         }
+        stop();
     }
     public void toggleServos(){
         if(isButtered){

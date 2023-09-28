@@ -34,7 +34,7 @@ public class RoadRunMoveTest extends LinearOpMode {
         TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
                 .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(180)))
                 .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(90)))
-                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(13.75,  57.75,Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
                 .build();
 
