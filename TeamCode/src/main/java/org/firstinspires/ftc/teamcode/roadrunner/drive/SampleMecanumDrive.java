@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.enc
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
 import androidx.annotation.NonNull;
 
@@ -32,7 +33,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,16 +41,22 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.TwoWheelTrackingLocalizerLeft;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.TwoWheelTrackingLocalizerRight;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
+import org.firstinspires.ftc.teamcode.roadrunner.util.AxisDirection;
+import org.firstinspires.ftc.teamcode.roadrunner.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -81,9 +88,21 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BHI260IMU imu;
+    private IMU imu;
     private VoltageSensor batteryVoltageSensor;
     private Pose2d endPose = new Pose2d(0, 0, 0);
+
+    private final double [] OFFSETS = {0.005,-0.005,0.01,0.02 };
+
+    private final double BUTTERED_POSITION = 0.6;
+    private final double INIT_POSITION = 1.0;
+
+    private final double FIELD_CENTRIC_DOWNSCALE = 0.3;
+
+
+    private boolean isButtered = false, isFieldCentric = false;
+
+    private ArrayList<Servo> servos;
 
     public SampleMecanumDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         super(kV,
@@ -161,6 +180,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -194,15 +218,22 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
-        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
-        imu = hardwareMap.get(BHI260IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        imu.initialize(parameters);
+        
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+        imu.resetYaw();
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
         logger.createFile("RoadrunLog", "Runtime, X, Y, A, error[0], error[1]");
+        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
+        servos = new ArrayList<>();
+        servos.add(hardwareMap.servo.get("servoLeftFront"));
+        servos.add(hardwareMap.servo.get("servoLeftBack"));
+        servos.add(hardwareMap.servo.get("servoRightFront"));
+        servos.add(hardwareMap.servo.get("servoRightBack"));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -284,9 +315,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void update() {
+//        setPoseEstimate(currentPose);
+        logger.log("/RobotLogs/GeneralRobot", "curPose"+currentPose);
         updatePoseEstimate();
-        logger.log("RoadrunLog", "pos" + getPoseEstimate());
-//        PoseStorage.currentPose = getPoseEstimate();
+
+        logger.log("/RobotLogs/GeneralRobot", "curPose2"+currentPose);
+
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }
@@ -329,7 +363,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
-
+        if(isButtered){
+            vel = new Pose2d(vel.getX(),0,vel.getHeading());
+        }
+        if(isFieldCentric){
+            vel = vel.times(FIELD_CENTRIC_DOWNSCALE);
+            vel = new Pose2d(vel.vec().rotated(currentPose.getHeading()), vel.getHeading());
+        }
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
@@ -345,6 +385,41 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         setDrivePower(vel);
+        if(isButtered){
+            isButtered=false;
+            toggleServos();
+        }
+    }
+    public void toggleFieldCentric(){
+        isFieldCentric= !isFieldCentric;
+        if(isFieldCentric&&isButtered){
+            toggleButtered();
+        }
+    }
+    public void toggleButtered(){
+        isButtered=!isButtered;
+        if(isButtered&&isFieldCentric){
+            toggleFieldCentric();
+        }
+        toggleServos();
+    }
+
+    public boolean isButtered(){
+        return isButtered;
+    }
+
+
+    public void toggleServos(){
+        if(isButtered){
+            for(int i=0;i<4;i++){
+                servos.get(i).setPosition(BUTTERED_POSITION +OFFSETS[i]);
+            }
+        }
+        else{
+            for(int i=0;i<4;i++){
+                servos.get(i).setPosition(INIT_POSITION);
+            }
+        }
     }
 
     @NonNull
@@ -390,7 +465,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // expected). This bug does NOT affect orientation.
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).yRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
