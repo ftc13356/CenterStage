@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
@@ -57,8 +58,10 @@ public class RFTrajectory {
     }
 
     public boolean updateSegments() {
-        if (segIndex == -1) {
+        if (segIndex == -1&&segments.size()>0) {
             setCurrentSegment(0);
+//            dashboard.sendTelemetryPacket(packet);
+
             return true;
         } else if (segIndex + 1 < segments.size()) {
 
@@ -67,9 +70,13 @@ public class RFTrajectory {
             Pose2d targetPos = segments.get(segments.size() - 1).getWaypoint().getTarget();
             if (curPos.vec().distTo(targetPos.vec()) < 5.0) {
                 clear();
+//                dashboard.sendTelemetryPacket(packet);
+
                 return true;
             }
         }
+//        dashboard.sendTelemetryPacket(packet);
+
         return false;
     }
 

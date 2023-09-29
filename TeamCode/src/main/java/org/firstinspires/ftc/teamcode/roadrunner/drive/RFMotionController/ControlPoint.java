@@ -9,6 +9,7 @@ import static org.apache.commons.math3.util.FastMath.pow;
 import static org.apache.commons.math3.util.FastMath.sin;
 import static org.apache.commons.math3.util.FastMath.sqrt;
 import static org.apache.commons.math3.util.MathUtils.min;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 
@@ -69,6 +70,7 @@ public class ControlPoint {
         double n_time = time + deltaT;
         double n_v = FastMath.min(v + newMaxAccel * deltaT, MAX_VEL * newMaxAccel / MAX_ACCEL);
         double n_a = (n_v - v) / deltaT;
+        packet.put("x,y",p_vals[0]);
         return new ControlPoint(p_vals[0].getX(), p_vals[0].getY(), n_t, n_k, n_v, n_a, n_time);
     }
 
@@ -90,6 +92,11 @@ public class ControlPoint {
             o_time = prev.time;
         }
         double n_a = (v - n_v) / deltaT;
+//        packet.put("t", prev.t);
+//        packet.put("x", prev.x);
+//        packet.put("y", prev.y);
+//        packet.put("k", prev.k);
+
         return new ControlPoint(prev.x, prev.y, prev.t, prev.k, n_v, n_a, n_time, o_time, 0);
     }
 

@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
+package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFMecanumDrive.poseMode;
@@ -54,25 +56,32 @@ public class RFMotionControllerTest extends LinearOpMode {
                     currentPose = new Pose2d(0, 0, toRadians(0));
                     currentVelocity = new Pose2d(0, 0, 0);
                 }
-                drive.setReversed(false);
-                drive.setCurviness(CURVINESS);
+                packet.put("alive", true);
+
 //                drive.setTangentOffset(toRadians(-90));
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1, targetY1)));
 //                drive.setTangentOffset(toRadians(-90));
 //                drive.setReversed(true);
+                packet.put("alive2", true);
+
 
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX2, targetY2)));
 //                drive.setTangentOffset(toRadians(-90));
 //                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
+                packet.put("alive3", true);
 
             }
             if (poseMode > 1) {
                 assert localizer != null;
                 localizer.update();
             }
+            packet.put("alive4", true);
+
 //            sleep(10);
-            drive.update();
             robot.update();
+            packet.put("alive5",true);
+//            dashboard.sendTelemetryPacket(packet);
+            drive.update();
         }
 //            robot.update();
     }

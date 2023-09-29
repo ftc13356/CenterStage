@@ -95,6 +95,9 @@ public class RFWaypoint {
         coeffs[3] = getTarget().vec();
         coeffs[4] = getEndVelocityVec();
         coeffs[5] = solveForCurvatureMaintaingAccel(endCurvature, coeffs[4].getX(), coeffs[4].getY(), endAccel);
+        for(int i=0;i<coeffs.length; i++){
+            packet.put("inpCoeffs"+i, coeffs[i]);
+        }
         return coeffs;
     }
     public Vector2d[] getSplineCoeffs(Pose2d currentPose, Pose2d currentVelocity){

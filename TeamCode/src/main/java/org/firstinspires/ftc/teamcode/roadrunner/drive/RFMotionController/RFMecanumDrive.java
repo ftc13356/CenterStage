@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -94,6 +95,7 @@ public class RFMecanumDrive {
     public void update(){
         if(pathFollower.isFollowing()){
             if(poseMode<1){
+//                dashboard.sendTelemetryPacket(packet);
                 pathFollower.update();
                 poseSim.updateSim(pathFollower.pF, pathFollower.pS, pathFollower.pR);
             }

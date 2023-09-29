@@ -19,6 +19,7 @@ public class ControlPoints {
 
     public ControlPoints(QuinticHermiteSpline p_spline, double p_v0, double p_v1) {
         startTime = time;
+        points = new ArrayList<>();
         points.add(new ControlPoint(p_spline.valsAt(0), p_v0, 0));
         points.get(0).setPrevK(points.get(0).getK());
         for (int i = 1; i < controlPointRes - 1; i++) {
@@ -31,7 +32,7 @@ public class ControlPoints {
         points.get(points.size() - 2).setNextK(points.get(points.size() - 1).getK());
         points.get(points.size() - 1).setNextK(points.get(points.size() - 1).getK());
         double lastSignum = signum(points.get(points.size() - 1).getTime());
-        for (int i = 1; i < controlPointRes - 1; i++) {
+        for (int i = 2; i < controlPointRes; i++) {
             int ind = controlPointRes - i;
             points.set(ind, points.get(ind + 1).backwardTraverse(points.get(ind)));
             double signum = signum(points.get(ind).getTime());
