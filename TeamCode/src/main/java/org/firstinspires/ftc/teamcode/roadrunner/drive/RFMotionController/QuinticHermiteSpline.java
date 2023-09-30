@@ -8,7 +8,6 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 

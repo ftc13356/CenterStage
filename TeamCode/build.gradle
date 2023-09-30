@@ -21,6 +21,9 @@ android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
     packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
         jniLibs.useLegacyPackaging true
     }
     compileOptions {
@@ -29,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17
+    }
+    androidResources {
+        noCompress 'tflite'
     }
 }
 
