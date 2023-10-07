@@ -16,6 +16,7 @@ public class RFLoggerTest extends LinearOpMode {
     public void runOpMode(){
         BasicRobot robot = new BasicRobot(this, true);
         boolean isPressed = false;
+        logger2.log(RFLogger.Files.AUTONOMOUS_LOG, "Program Name: " + RFLoggerTest.class.getSimpleName());
 
         waitForStart();
 
@@ -36,11 +37,11 @@ public class RFLoggerTest extends LinearOpMode {
     public int factorial(int n){
         if(n==0||n==1){
             int b = 1;
-            logger2.logMAX("" + b);
+            logger2.log(RFLogger.Files.AUTONOMOUS_LOG, "" + b);
             return b;
         }
         int a = n*factorial(n-1);
-        logger2.logMAX("" + a);
+        logger2.log(RFLogger.Files.AUTONOMOUS_LOG, "" + a);
         return a;
     }
 }
