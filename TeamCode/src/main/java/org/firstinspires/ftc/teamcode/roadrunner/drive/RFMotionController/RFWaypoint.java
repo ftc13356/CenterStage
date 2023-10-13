@@ -126,18 +126,17 @@ public class RFWaypoint {
      */
     public Vector2d solveForCurvatureMaintaingAccel(double k, double dx, double dy, double a){
         double n = k*pow(dx*dx+dy*dy, 1.5);
-        double b = (2*n*dy+dx*dx)/(dx*dx);
-        double A = dy/(dx*dx);
-        double c = (n*n-a*dx*dx)/(dx*dx);
+        double b = -(2*n*dx);
+        double A = (dx*dx+dy*dy);
+        if(A==0){
+            A=0.001;
+        }
+        double c = (n*n-a*dy*dy);
         double ddx = (-b+sqrt(b*b-4*A*c))/(2*A);
-        double ddy = sqrt(a-ddx*ddx);
+        double ddy = sqrt(a*a-ddx*ddx);
         if(dx==0&&dy==0){
             return new Vector2d(a*cos(k), a*sin(k));
         }
-        if(A==0){
-            ddx = -b+sqrt(b*b-4*A*c) * 10000;
-            ddy = sqrt(a-ddx*ddx);
-        }
-        return new Vector2d(a*(ddx*ddx)/(ddx*ddx+ddy*ddy),a*(ddy*ddy)/(ddx*ddx+ddy*ddy));
+        return new Vector2d(ddx,ddy);
     }
 }
