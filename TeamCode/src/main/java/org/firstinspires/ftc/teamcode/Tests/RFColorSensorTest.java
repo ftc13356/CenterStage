@@ -25,6 +25,7 @@ public class RFColorSensorTest extends LinearOpMode{
         if(isStopRequested()) return;
         while(opModeIsActive() && !isStopRequested()){
             packet.put("Hue", colorSensor.getHSV()[0]);
+            packet.put("Color", colorSensor.getColor());
             robot.update();
         }
     }
