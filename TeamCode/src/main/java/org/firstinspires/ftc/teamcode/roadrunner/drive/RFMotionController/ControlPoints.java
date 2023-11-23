@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class ControlPoints {
     ArrayList<ControlPoint> points;
-    int controlPointRes = 100;
+    double controlPointRes = 100;
     double totalTime = 0;
     double startTime =0;
 
@@ -22,8 +22,9 @@ public class ControlPoints {
         points = new ArrayList<>();
         points.add(new ControlPoint(p_spline.valsAt(0), p_v0, 0));
         points.get(0).setPrevK(points.get(0).getK());
-        for (int i = 1; i < controlPointRes - 1; i++) {
-            points.add(points.get(points.size() - 1).forwardTraverse(p_spline.valsAt((double) i / controlPointRes)));
+        Double[] times = p_spline.binRecursion();
+        for (int i = 1; i < times.length; i++) {
+            points.add(points.get(points.size() - 1).forwardTraverse(p_spline.valsAt(times[i])));
             points.get(points.size() - 1).setPrevK(points.get(points.size() - 2).getK());
             points.get(points.size() - 2).setNextK(points.get(points.size() - 1).getK());
         }
@@ -32,8 +33,8 @@ public class ControlPoints {
         points.get(points.size() - 2).setNextK(points.get(points.size() - 1).getK());
         points.get(points.size() - 1).setNextK(points.get(points.size() - 1).getK());
         double lastSignum = signum(points.get(points.size() - 1).getTime());
-        for (int i = 2; i < controlPointRes; i++) {
-            int ind = controlPointRes - i;
+        for (int i = 2; i < times.length; i++) {
+            int ind = times.length - i;
             points.set(ind, points.get(ind + 1).backwardTraverse(points.get(ind)));
             double signum = signum(points.get(ind).getTime());
             if (signum != lastSignum && totalTime == 0) {
@@ -100,6 +101,12 @@ public class ControlPoints {
         return new double[]{downBound, weight[0], weight[1]};
     }
 
+    /**
+     * binary search for between which two points the target position is
+     * @param p_arr controlPoints to search
+     * @param p_pose target position
+     * @return double array with {firstControlPoint, how close to first control point}
+     */
     public double[] binPose(ArrayList<ControlPoint> p_arr, Vector2d p_pose) {
         int upBound = p_arr.size() - 1, downBound = 0;
         while (upBound > downBound + 1) {
@@ -115,8 +122,8 @@ public class ControlPoints {
         }
         double downDist = p_pose.distTo(p_arr.get(downBound).getPoseVec());
         double upDist = p_pose.distTo(p_arr.get(upBound).getPoseVec());
-        double[] weight = {downDist / (downDist + upDist), upDist / (downDist + upDist)};
-        return new double[]{downBound, weight[0], weight[1]};
+        double weight = downDist / (downDist + upDist);
+        return new double[]{downBound, weight};
     }
 
     public Pose2d[] getInstantaneousTarget(){
