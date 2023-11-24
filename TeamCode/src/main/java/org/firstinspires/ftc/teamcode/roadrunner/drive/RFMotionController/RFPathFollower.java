@@ -32,23 +32,21 @@ public class RFPathFollower {
     }
 
     public double[] update() {
-        if (!isFollowing && rfTrajectory.length() != 0) {
-            rfTrajectory.compileSegments();
-            isFollowing = true;
-        }
         boolean updated = rfTrajectory.updateSegments();
         double[] powers = {0, 0, 0, 0};
         if (isFollowing()) {
             Pose2d curPos = currentPose;
             Pose2d curVel = currentVelocity;
-            PIDTargetVelocity = rfTrajectory.getTargetVelocity();
-            Pose2d PIDTargetPose = rfTrajectory.getTargetPosition();
+            Pose2d[] targets = rfTrajectory.getTargets();
+            PIDTargetVelocity = targets[1];
+            Pose2d PIDTargetPose = targets[0];
             Vector2d transPosError = PIDTargetPose.vec().minus(curPos.vec());
             Vector2d transVelError = PIDTargetVelocity.vec().minus(curVel.vec());
             double headError = rfTrajectory.angleDist(PIDTargetPose.getHeading() + rfTrajectory.getTangentOffset(), curPos.getHeading());
             double headVelError = PIDTargetVelocity.getHeading() - curVel.getHeading();
-            Pose2d FFTargetAcceleration = rfTrajectory.getInstantaneousTargetAcceleration();
-            Pose2d FFTargetVelocity = rfTrajectory.getInstantaneousTargetVelocity();
+            Pose2d[] instantTargets = rfTrajectory.getInstantaneousTargets();
+            Pose2d FFTargetAcceleration = instantTargets[2];
+            Pose2d FFTargetVelocity = instantTargets[1];
             finalTargetVelocity = new Pose2d(FFTargetVelocity.getX() + transPosError.getX() * kPTrans,
                     FFTargetVelocity.getY() + transPosError.getY() * kPTrans,
                     FFTargetVelocity.getHeading() + headError * kPHead);
@@ -165,6 +163,12 @@ public class RFPathFollower {
 
     public void addWaypoint(RFWaypoint p_waypoint) {
         rfTrajectory.addSegment(new RFSegment(p_waypoint, tangentOffset, constantHeading, curviness));
+    }
+    public void goToWaypoints(){
+        if (!isFollowing && rfTrajectory.length() != 0) {
+            rfTrajectory.compileSegments();
+            isFollowing = true;
+        }
     }
 
     public void changeEndpoint(RFWaypoint p_endpoint) {

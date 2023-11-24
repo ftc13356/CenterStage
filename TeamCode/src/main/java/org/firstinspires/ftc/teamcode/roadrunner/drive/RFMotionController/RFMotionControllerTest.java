@@ -65,10 +65,11 @@ public class RFMotionControllerTest extends LinearOpMode {
                 packet.put("alive2", true);
 
 
-                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX2, targetY2)));
+//                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX2, targetY2)));
 //                drive.setTangentOffset(toRadians(-90));
 //                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
                 packet.put("alive3", true);
+                drive.goToWaypoint();
 
             }
             if (poseMode > 1) {

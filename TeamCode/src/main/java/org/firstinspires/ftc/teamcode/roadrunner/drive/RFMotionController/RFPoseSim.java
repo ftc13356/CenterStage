@@ -50,6 +50,7 @@ public class RFPoseSim {
         realAcceleration = new Pose2d(rotAcceleration.vec().rotated(currentPose.getHeading()), rotAcceleration.getHeading());
         Pose2d newVelocity = currentVelocity.plus(realAcceleration.times(diffTime));
         Pose2d avgVelocity = newVelocity.plus(currentVelocity).times(0.5);
+        packet.put("currentPose", currentPose);
         packet.put("rotAcceleration", rotAcceleration);
         packet.put("realAcceleration",realAcceleration);
         currentVelocity = newVelocity;

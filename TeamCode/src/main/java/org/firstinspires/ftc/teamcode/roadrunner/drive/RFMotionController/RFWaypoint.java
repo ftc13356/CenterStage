@@ -88,18 +88,18 @@ public class RFWaypoint {
         return definedness;
     }
 
-    public Vector2d[] getSplineCoeffs(){
-        Vector2d[] coeffs = {new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d(),new Vector2d()};
-        coeffs[0]=currentPose.vec();
-        coeffs[1] = currentPose.vec().times(startTangentMag*currentVelocity.vec().norm());
-        coeffs[2] = solveForCurvatureMaintaingAccel(currentVelocity.getHeading(), currentVelocity.getX(), currentVelocity.getY(), startAccel);
-        coeffs[3] = getTarget().vec();
-        coeffs[4] = getEndVelocityVec();
+    public Pose2d[] getSplineCoeffs(){
+        Pose2d[] coeffs = {new Pose2d(),new Pose2d(),new Pose2d(),new Pose2d(),new Pose2d(),new Pose2d()};
+        coeffs[0]=currentPose;
+        coeffs[1] = new Pose2d(currentPose.vec().times(startTangentMag*currentVelocity.vec().norm()),0);
+        coeffs[2] = new Pose2d(solveForCurvatureMaintaingAccel(currentVelocity.getHeading(), currentVelocity.getX(), currentVelocity.getY(), startAccel),0);
+        coeffs[3] = getTarget();
+        coeffs[4] = new Pose2d(getEndVelocityVec(),0);
         packet.put("endCurv", endCurvature);
         packet.put("endVelo", coeffs[4]);
         packet.put("endAccel", endAccel);
 
-        coeffs[5] = solveForCurvatureMaintaingAccel(endCurvature, coeffs[4].getX(), coeffs[4].getY(), endAccel);
+        coeffs[5] = new Pose2d(solveForCurvatureMaintaingAccel(endCurvature, coeffs[4].getX(), coeffs[4].getY(), endAccel),0);
         for(int i=0;i<coeffs.length; i++){
             packet.put("inpCoeffs"+i, coeffs[i]);
         }
@@ -133,7 +133,11 @@ public class RFWaypoint {
         }
         double c = (n*n-a*dy*dy);
         double ddx = (-b+sqrt(b*b-4*A*c))/(2*A);
+        if(A==0.001){
+            ddx=0;
+        }
         double ddy = sqrt(a*a-ddx*ddx);
+
         if(dx==0&&dy==0){
             return new Vector2d(a*cos(k), a*sin(k));
         }

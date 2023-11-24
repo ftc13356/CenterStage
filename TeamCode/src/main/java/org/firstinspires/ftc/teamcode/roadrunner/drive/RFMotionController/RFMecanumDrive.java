@@ -50,6 +50,9 @@ public class RFMecanumDrive {
     public void addWaypoint(RFWaypoint p_waypoint) {
         pathFollower.addWaypoint(p_waypoint);
     }
+    public void goToWaypoint(){
+        pathFollower.goToWaypoints();
+    }
     public void setReversed(boolean p_reversed) {
         pathFollower.setReversed(p_reversed);
     }
