@@ -13,58 +13,64 @@ import java.util.ArrayList;
 
 public class QuinticHermiteSpline {
   private ArrayList<Vector2d> coeffs;
+  private Pose2d startPose, endPose;
 
   public void initQuinticHermiteSpline(
-      Vector2d p_startPos,
+      Pose2d p_startPos,
       Vector2d p_startVel,
       Vector2d p_startAccel,
-      Vector2d p_endPos,
+      Pose2d p_endPos,
       Vector2d p_endVel,
       Vector2d p_endAccel) {
+    startPose = p_startPos;
+    endPose = p_endPos;
     coeffs = new ArrayList<>();
-    coeffs.add(p_startPos);
+    coeffs.add(p_startPos.vec());
     coeffs.add(p_startVel);
     coeffs.add(p_startAccel.times(0.5));
     coeffs.add(
         p_startPos
+            .vec()
             .times(-10)
             .plus(p_startVel.times(-6))
             .plus(p_startAccel.times(-1.5))
             .plus(p_endAccel.times(-1))
             .plus(p_endVel.times(-4))
-            .plus(p_endPos)
+            .plus(p_endPos.vec())
             .times(-10));
     coeffs.add(
         p_startPos
+            .vec()
             .times(15)
             .plus(p_startVel.times(8))
             .plus(p_startAccel.times(1.5))
             .plus(p_endAccel.times(-1))
             .plus(p_endVel.times(7))
-            .plus(p_endPos.times(-15)));
+            .plus(p_endPos.vec().times(-15)));
     coeffs.add(
         p_startPos
+            .vec()
             .times(-6)
             .plus(p_startVel.times(-3))
             .plus(p_startAccel.times(-0.5))
             .plus(p_endAccel.times(0.5))
             .plus(p_endVel.times(-3))
-            .plus(p_endPos.times(6)));
+            .plus(p_endPos.vec().times(6)));
     for (int i = 0; i < coeffs.size(); i++) {
       packet.put("coeffs" + i, coeffs.get(i));
     }
   }
 
-  public QuinticHermiteSpline(Vector2d[] p_coeffs) {
+  public QuinticHermiteSpline(Pose2d[] p_pose, Vector2d[] p_coeffs) {
     initQuinticHermiteSpline(
-        p_coeffs[0], p_coeffs[1], p_coeffs[2], p_coeffs[3], p_coeffs[4], p_coeffs[5]);
+        p_pose[0], p_coeffs[0], p_coeffs[1], p_pose[1], p_coeffs[2], p_coeffs[3]);
   }
 
   public QuinticHermiteSpline(
-      Vector2d p_startPos,
+      Pose2d p_startPos,
       Vector2d p_startVel,
       Vector2d p_startAccel,
-      Vector2d p_endPos,
+      Pose2d p_endPos,
       Vector2d p_endVel,
       Vector2d p_endAccel) {
     initQuinticHermiteSpline(p_startPos, p_startVel, p_startAccel, p_endPos, p_endVel, p_endAccel);
@@ -106,7 +112,11 @@ public class QuinticHermiteSpline {
   public ArrayList<Double> binRecurse(ArrayList<Double> p_times, int p_index) {
     Vector2d p1 = valsAt(p_times.get(p_index - 1))[0];
     Vector2d p2 = valsAt(p_times.get(p_index))[0];
-    if (p2.distTo(p1) < 1) {
+    if (p2.distTo(p1)
+            + (p_times.get(p_index) - p_times.get(p_index - 1))
+                * (startPose.getHeading() - endPose.getHeading())
+                * 6
+        < 1) {
       p_times.add(p_index - 1, (p_times.get(p_index) + p_times.get(p_index - 1)) * 0.5);
       binRecurse(p_times, p_index - 1);
     }
