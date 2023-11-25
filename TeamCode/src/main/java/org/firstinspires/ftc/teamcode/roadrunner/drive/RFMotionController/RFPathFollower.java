@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
@@ -38,6 +39,7 @@ public class RFPathFollower {
             Pose2d curPos = currentPose;
             Pose2d curVel = currentVelocity;
             Pose2d[] targets = rfTrajectory.getTargets();
+      dashboard.sendTelemetryPacket(packet);
             PIDTargetVelocity = targets[1];
             Pose2d PIDTargetPose = targets[0];
             Vector2d transPosError = PIDTargetPose.vec().minus(curPos.vec());

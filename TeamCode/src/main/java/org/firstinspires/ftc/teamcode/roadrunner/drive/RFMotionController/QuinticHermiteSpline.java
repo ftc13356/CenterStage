@@ -127,6 +127,7 @@ public class QuinticHermiteSpline {
   }
 
   public ArrayList<Double> binRecurse(ArrayList<Double> p_times, int p_index) {
+    packet.put("time"+p_index+"/"+p_times.size(), p_times.get(p_index));
     if (p_index != 0) {
       Pose2d p1 = valsAt(p_times.get(p_index - 1))[0];
       Pose2d p2 = valsAt(p_times.get(p_index))[0];
