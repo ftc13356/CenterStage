@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
-import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam
+import org.firstinspires.ftc.teamcode.Components.CVMaster
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker
@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * 9/6/23
  * Odom localizer 8 24x24 squares...but Kotlin!
  */
+
 @Autonomous(name = "KprilTagRRTest")
 
 class KotlinAprilTagRRTest : LinearOpMode() {
@@ -27,7 +28,8 @@ class KotlinAprilTagRRTest : LinearOpMode() {
         roadrun = SampleMecanumDrive(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY)
         val startPose = Pose2d(40.0, 1.5 * 23.5, Math.toRadians(0.0))
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
-        val cam = RFAprilCam()
+        val cv = CVMaster()
+        cv.switchToApril()
         roadrun.poseEstimate = startPose
         queuer = Queuer()
         var loops = 0
@@ -43,14 +45,14 @@ class KotlinAprilTagRRTest : LinearOpMode() {
         resetRuntime()
         BasicRobot.time = 0.0
         while (!isStopRequested && opModeIsActive()) {
-            for (i in 1..10)
-                followTrajAsync(trajSeq2)
+//            for (i in 1..10)
+//                followTrajAsync(trajSeq2)
             loops++
             BasicRobot.packet.put("loopTime", loops / BasicRobot.time)
             queuer.isFirstLoop = false
             robot.update()
             roadrun.update()
-            cam.update()
+            cv.update()
         }
     }
 

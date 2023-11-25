@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
@@ -38,6 +39,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -46,6 +48,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
@@ -70,7 +73,7 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static final PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.0, 0.5);
-    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.0, 0.1);
+    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.1, 1);
 
     public static final double LATERAL_MULTIPLIER = 1;
 
@@ -98,6 +101,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final double INIT_POSITION = 1.0;
 
     private final double FIELD_CENTRIC_DOWNSCALE = 0.3;
+    public static double INITIAL1 = 0.005, INITIAL2 = 0.005,INITIAL3 = .01, INITIAL4 = 0.9;
+    public static double FINAL1 = 1.00, FINAL2 = 0.605,FINAL3 = .601, FINAL4 = 0.20;
 
 
     private boolean isButtered = false, isFieldCentric = false;
@@ -111,20 +116,6 @@ public class SampleMecanumDrive extends MecanumDrive {
                 TRACK_WIDTH,
                 TRACK_WIDTH,
                 LATERAL_MULTIPLIER);
-        initializeDrive(hardwareMap, trackType);
-    }
-
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
-        super(kV,
-                kA,
-                kStatic,
-                TRACK_WIDTH,
-                TRACK_WIDTH,
-                LATERAL_MULTIPLIER);
-        initializeDrive(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
-    }
-
-    public void initializeDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         follower = new RFHolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -166,13 +157,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
-        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "motorRightBack");
+        DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
+        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "hangerMotor");
+        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "motorRightFront");
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -203,10 +193,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.FORWARD);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
@@ -218,7 +208,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
-        
+
         imu = hardwareMap.get(IMU.class, "imu");
 
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
@@ -226,7 +216,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         imu.resetYaw();
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
-        logger.createFile("RoadrunLog", "Runtime, X, Y, A, error[0], error[1]");
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
         servos = new ArrayList<>();
@@ -234,7 +223,15 @@ public class SampleMecanumDrive extends MecanumDrive {
         servos.add(hardwareMap.servo.get("servoLeftBack"));
         servos.add(hardwareMap.servo.get("servoRightFront"));
         servos.add(hardwareMap.servo.get("servoRightBack"));
+        isButtered=true;
+        toggleButtered();
+//
     }
+
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
+        this(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
+    }
+
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
@@ -279,13 +276,13 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectory(Trajectory trajectory) {
-        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("going from: " +trajectorySequence.start() +" to: " + trajectorySequence.end());
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
@@ -364,11 +361,14 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
         if(isButtered){
+            drivePower = new Pose2d(vel.getX(),0,vel.getHeading());
             vel = new Pose2d(vel.getX(),0,vel.getHeading());
+
         }
         if(isFieldCentric){
             vel = vel.times(FIELD_CENTRIC_DOWNSCALE);
-            vel = new Pose2d(vel.vec().rotated(currentPose.getHeading()), vel.getHeading());
+            drivePower = new Pose2d(vel.vec().rotated(-currentPose.getHeading()), vel.getHeading());
+            vel = drivePower;
         }
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
@@ -385,16 +385,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         setDrivePower(vel);
-        if(isButtered){
-            isButtered=false;
-            toggleServos();
-        }
     }
     public void toggleFieldCentric(){
         isFieldCentric= !isFieldCentric;
         if(isFieldCentric&&isButtered){
             toggleButtered();
         }
+        LOGGER.log(RFLogger.Severity.INFO, "fieldCentric: "+isFieldCentric);
     }
     public void toggleButtered(){
         isButtered=!isButtered;
@@ -402,6 +399,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             toggleFieldCentric();
         }
         toggleServos();
+        LOGGER.log(RFLogger.Severity.INFO, "isButtered: "+isButtered);
     }
 
     public boolean isButtered(){
@@ -410,16 +408,21 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
     public void toggleServos(){
-        if(isButtered){
-            for(int i=0;i<4;i++){
-                servos.get(i).setPosition(BUTTERED_POSITION +OFFSETS[i]);
+            if(isButtered){
+                servos.get(0).setPosition(INITIAL1);
+                servos.get(1).setPosition(INITIAL2);
+                servos.get(2).setPosition(INITIAL3);
+                servos.get(3).setPosition(INITIAL4);
+//            isButtered = false;
             }
-        }
-        else{
-            for(int i=0;i<4;i++){
-                servos.get(i).setPosition(INIT_POSITION);
+            else{
+                servos.get(0).setPosition(FINAL1);
+                servos.get(1).setPosition(FINAL2);
+                servos.get(2).setPosition(FINAL3);
+                servos.get(3).setPosition(FINAL4);
+//                isButtered = true;
             }
-        }
+
     }
 
     @NonNull

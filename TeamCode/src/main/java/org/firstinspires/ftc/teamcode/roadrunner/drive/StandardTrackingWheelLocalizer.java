@@ -48,13 +48,15 @@ public class StandardTrackingWheelLocalizer implements Localizer {
     public static double WHEEL_RADIUS = 1.3779/2; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 13.195*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 0*Y_MULTIPLIER/*-4.32939*/; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 13.12*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = -5.8*Y_MULTIPLIER/*-4.32939*/; // in; offset of the lateral wheel
 
     private double[] lastTicks = {0,0,0};
 
-    private double ticks_per_radian = TICKS_PER_REV*LATERAL_DISTANCE/(WHEEL_RADIUS*4*PI), ticks_per_inch = TICKS_PER_REV/(WHEEL_RADIUS*2*PI),
-    aOffset=0, lastAngle=0;
+    private final double ticks_per_radian = TICKS_PER_REV*LATERAL_DISTANCE/(WHEEL_RADIUS*2*PI);
+    private final double ticks_per_inch = TICKS_PER_REV/(WHEEL_RADIUS*2*PI);
+    private double aOffset=0;
+    private double lastAngle=0;
 
     //start 5.1,5.5,...
     //end 4 low
@@ -65,9 +67,9 @@ public class StandardTrackingWheelLocalizer implements Localizer {
     private final Encoder frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightBack"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "hangerMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
@@ -175,6 +177,7 @@ public class StandardTrackingWheelLocalizer implements Localizer {
         }
     }
 
+    @NonNull
     public Pose2d getPoseEstimate() {
         return currentPose;
     }

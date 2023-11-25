@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /**
  * Warren
@@ -15,15 +19,20 @@ public class Launcher extends RFServo {
      */
     public Launcher(){
         super("launcherServo", 1.0);
-        setPosition(OTHER_POSITION);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("initializing hardware, setting position to OTHER_POSITION : " +OTHER_POSITION);
+        super.setPosition(OTHER_POSITION);
         isLoaded=true;
+        super.setLastTime(-100);
     }
 
     /**
      * Shoots the plane, changes state. Logs these two to general surface level
      */
     public void shoot(){
-        setPosition(SHOOT_POSITION);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("shooting, setting position to SHOOT_POSITION : " + SHOOT_POSITION);
+        super.superSetPosition(SHOOT_POSITION);
         isLoaded = false;
     }
 
@@ -31,7 +40,12 @@ public class Launcher extends RFServo {
      * Loads the launcher, changes state. Logs these two to general surface level
      */
     public void load(){
-        setPosition(OTHER_POSITION);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("loading, setting position to OTHER_POSITIOn : " + OTHER_POSITION);
+        super.superSetPosition(OTHER_POSITION);
         isLoaded = true;
+    }
+    public boolean getLoaded(){
+        return isLoaded;
     }
 }

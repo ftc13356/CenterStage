@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
  *
  * These are not the only parameters; some are located in the localizer classes, drive base classes,
- * and op modes themselves.
+ * and op modes themselves. test
  */
 @Config
 public class DriveConstants {
@@ -46,13 +46,15 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 11.5; // in
+    public static double TRACK_WIDTH = 18; // in
 
     public static double kPTrans = 0.00;
     public static double kDTrans = 0.000;
 
-    public static double kPHead = 0.00;
-    public static double kDHead = 0.000;
+    public static double kPHead = 6.00;
+    public static double kDHead = 2.000;
+
+    public static double kIHead = 0.1;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -60,9 +62,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.01;
-    public static double kA = 0.002 ;
-    public static double kStatic = 0.09;
+    public static double kV = 0.016;
+    public static double kA = 0.0004 ;
+    public static double kStatic = 0.15;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -71,10 +73,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 60;
-    public static double MAX_ACCEL = 50;
-    public static double MAX_ANG_VEL = 6;
-    public static double MAX_ANG_ACCEL = 3;
+    public static double MAX_VEL = 40;
+    public static double MAX_ACCEL = 20;
+    public static double MAX_ANG_VEL = 2;
+    public static double MAX_ANG_ACCEL = 1;
 
 
     public static double encoderTicksToInches(double ticks) {

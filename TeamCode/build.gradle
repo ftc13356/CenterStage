@@ -20,21 +20,12 @@ apply plugin: 'kotlin-android'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
-    packagingOptions {
-        jniLibs {
-            pickFirsts += ['**/*.so']
-        }
-        jniLibs.useLegacyPackaging true
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17
-    }
-    androidResources {
-        noCompress 'tflite'
     }
 }
 

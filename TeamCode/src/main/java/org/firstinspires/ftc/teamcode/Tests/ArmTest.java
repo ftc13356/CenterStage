@@ -1,27 +1,36 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import org.firstinspires.ftc.teamcode.Robots.BradBot;
+@Disabled
+
+@Autonomous
+@Config
 public class ArmTest extends RFServoTest{
 
-    static double FLIP_TIME = 1;
-    static double SERVO_LOWER_LIMIT = 0;
-    static double SERVO_UPPER_LIMIT = 1;
+    public static double LOAD = 0.28, SHOOT = 0.98;
+    public static int target = 0;
+    private int atTarg = 0;
 
-    /**
-     * Constructs super from RFServoTest
-     */
-    public ArmTest() {
-        super(new RFServo("armServo", 1.0), FLIP_TIME, SERVO_LOWER_LIMIT, SERVO_UPPER_LIMIT);
-    }
-
-    /**
-     * Calls autoLoop() function from RFServoTest (see RFServoTest class).
-     */
-    public void runOpMode() {
+    @Override
+    public void runOpMode() throws InterruptedException {
+        initialize("armServo", 0.5, LOAD, SHOOT);
         waitForStart();
         while (opModeIsActive()) {
-            super.autoLoop();
+            double[] pussitions = {LOAD, SHOOT};
+
+            if (target != atTarg) {
+                flipTo(pussitions[target]);
+                atTarg = target;
+            }
+            packet.put("atTarg", atTarg);
+            robot.update();
         }
     }
 }

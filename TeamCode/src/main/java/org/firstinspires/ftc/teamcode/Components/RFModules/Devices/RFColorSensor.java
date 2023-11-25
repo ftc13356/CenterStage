@@ -1,35 +1,54 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.apache.commons.math3.stat.StatUtils.min;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 /**
  * Harry
+ * Class to contain all RFColorSensor functions
  */
 public class RFColorSensor {
-    private RevColorSensorV3 colorSensor;
+    NormalizedColorSensor colorSensor;
+    private double white = 156, purple = 214, green = 127, yellow = 81;
+    private float HSV[] = {0,0,0};
+
+    /**
+     * constructor for rfcolorsensor, logs to general with CONFIG severity
+     * @param p_deviceName
+     */
     public RFColorSensor(String p_deviceName){
-        colorSensor = op.hardwareMap.get(RevColorSensorV3.class, p_deviceName);
+        colorSensor = op.hardwareMap.get(NormalizedColorSensor.class, p_deviceName);
     }
 
-    public boolean isWhite(){
-        boolean white = false;
-        return white;
+    public float[] getHSV(){
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+        Color.colorToHSV(colors.toColor(), HSV);
+        return HSV;
     }
 
-    public boolean isPurple(){
-        boolean purple = false;
-        return purple;
-    }
-
-    public boolean isYellow(){
-        boolean yellow = false;
-        return yellow;
-    }
-
-    public boolean isGreen(){
-        boolean green = false;
-        return green;
+    public String getColor(){
+        double errorW = 0, errorP = 0, errorG = 0, errorY = 0;
+        float[] hsv = getHSV();
+        errorW = Math.abs(hsv[0]-white); errorP = Math.abs(hsv[0]-purple); errorG = Math.abs(hsv[0]-green); errorY = Math.abs(hsv[0]-yellow);
+        if(Math.min(Math.min(errorW, errorP),Math.min(errorY, errorG)) == errorW){
+            return "WHITE";
+        }
+        if(Math.min(Math.min(errorW, errorP),Math.min(errorY, errorG)) == errorP){
+            return "PURPLE";
+        }
+        if(Math.min(Math.min(errorW, errorP),Math.min(errorY, errorG)) == errorY){
+            return "YELLOW";
+        }
+        if(Math.min(Math.min(errorW, errorP),Math.min(errorY, errorG)) == errorG){
+            return "GREEN";
+        }
+        return "WHITE";
     }
 }

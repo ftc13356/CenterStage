@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger.df;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -8,6 +10,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /**
  * William
@@ -17,13 +21,17 @@ public class RFServo implements Servo {
 
     private final Servo rfServo;
 
-    private double lastTime = -100;
+    private double plastTime = -100;
+
+    private double target = 0;
 
     final double SERVO_LIMIT;
 
-    final double FLIP_TIME = 0.2;
+    double FLIP_TIME = 0.2;
 
     boolean flipped = false;
+
+    double position =0;
 
     private final String rfServoName;
 
@@ -43,6 +51,7 @@ public class RFServo implements Servo {
                 "Function               Action");
 
         SERVO_LIMIT = p_limit;
+        plastTime = -100;
     }
 
     /**
@@ -51,13 +60,7 @@ public class RFServo implements Servo {
      * @param p_limit physical limit of servo
      */
     public RFServo (String p_deviceName, double p_limit) {
-        rfServo = op.hardwareMap.get(Servo.class, p_deviceName);
-        rfServoName = p_deviceName;
-
-        logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
-                "Function               Action");
-
-        SERVO_LIMIT = p_limit;
+       this(p_deviceName, Direction.FORWARD, p_limit);
     }
 
     /* Updating the last time the servo flipped */
@@ -68,7 +71,7 @@ public class RFServo implements Servo {
      */
 
     public void setFlipTime(double p_flipTime){
-        lastTime=p_flipTime;
+        FLIP_TIME=p_flipTime;
     }
 
     /**
@@ -77,12 +80,26 @@ public class RFServo implements Servo {
      */
 
     public void setPosition(double p_position) {
-        if (time - lastTime > FLIP_TIME) {
+        if (time - plastTime > FLIP_TIME) {
                 logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
                         + df.format(p_position), true);
             rfServo.setPosition(p_position);
-            lastTime = time;
+            plastTime = time;
+            LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
+            target = p_position;
+            position = p_position;
         }
+    }
+    public void superSetPosition(double p_position){
+        rfServo.setPosition(p_position);
+        plastTime= time;
+        LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
+        target = p_position;
+        position = p_position;
+    }
+
+    public double getTarget() {
+        return target;
     }
 
     /**
@@ -93,7 +110,7 @@ public class RFServo implements Servo {
      */
 
     public boolean flipServoInterval(double p_lowerPos, double p_upperPos) {
-        if(time - lastTime > FLIP_TIME) {
+        if(time - plastTime > FLIP_TIME) {
             if (flipped) {
                 rfServo.setPosition(p_lowerPos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
@@ -106,7 +123,7 @@ public class RFServo implements Servo {
                 flipped = true;
             }
         }
-        return time - lastTime > FLIP_TIME;
+        return time - plastTime > FLIP_TIME;
     }
 
     /**
@@ -114,7 +131,7 @@ public class RFServo implements Servo {
      */
 
     public void flipServoMax() {
-        if (time - lastTime > FLIP_TIME) {
+        if (time - plastTime > FLIP_TIME) {
             if (flipped) {
                 rfServo.setPosition(0);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
@@ -126,7 +143,7 @@ public class RFServo implements Servo {
                         + df.format(SERVO_LIMIT), true);
                 flipped = true;
             }
-            lastTime = time;
+            plastTime = time;
         }
     }
 
@@ -136,7 +153,7 @@ public class RFServo implements Servo {
      */
 
     public double getPosition() {
-        return rfServo.getPosition();
+        return position;
     }
 
     /**
@@ -145,7 +162,7 @@ public class RFServo implements Servo {
      */
 
     public double getLastTime() {
-        return lastTime;
+        return plastTime;
     }
 
     /**
@@ -154,7 +171,7 @@ public class RFServo implements Servo {
      */
 
     public void setLastTime(double p_lastTime){
-        lastTime = p_lastTime;
+        plastTime = p_lastTime;
     }
 
     /* Overridden functions from implemented Servo class */
