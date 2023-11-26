@@ -34,19 +34,27 @@ public class RFPathFollower {
 
     public double[] update() {
         boolean updated = rfTrajectory.updateSegments();
+
         double[] powers = {0, 0, 0, 0};
         if (isFollowing()) {
             Pose2d curPos = currentPose;
             Pose2d curVel = currentVelocity;
+            packet.put("curPos", currentPose);
+            packet.put("curVel", curVel);
             Pose2d[] targets = rfTrajectory.getTargets();
-      dashboard.sendTelemetryPacket(packet);
+            packet.put("targetPose", targets[0]);
+            packet.put("targetVel", targets[1]);
             PIDTargetVelocity = targets[1];
             Pose2d PIDTargetPose = targets[0];
             Vector2d transPosError = PIDTargetPose.vec().minus(curPos.vec());
             Vector2d transVelError = PIDTargetVelocity.vec().minus(curVel.vec());
             double headError = rfTrajectory.angleDist(PIDTargetPose.getHeading() + rfTrajectory.getTangentOffset(), curPos.getHeading());
             double headVelError = PIDTargetVelocity.getHeading() - curVel.getHeading();
+            dashboard.sendTelemetryPacket(packet);
             Pose2d[] instantTargets = rfTrajectory.getInstantaneousTargets();
+            packet.put("targetPose", instantTargets[1]);
+            packet.put("targetVel", instantTargets[2]);
+            dashboard.sendTelemetryPacket(packet);
             Pose2d FFTargetAcceleration = instantTargets[2];
             Pose2d FFTargetVelocity = instantTargets[1];
             finalTargetVelocity = new Pose2d(FFTargetVelocity.getX() + transPosError.getX() * kPTrans,
@@ -54,8 +62,28 @@ public class RFPathFollower {
                     FFTargetVelocity.getHeading() + headError * kPHead);
             finalTargetAcceleration = new Pose2d(FFTargetAcceleration.getX() + transVelError.getX() * kDTrans, FFTargetAcceleration.getY() + transVelError.getY() * kDTrans,
                     FFTargetAcceleration.getHeading() + headVelError * kDHead);
+            packet.put("curX", curPos.getX());
+            packet.put("curY", curPos.getY());
+            packet.put("curH", curPos.getHeading());
+            packet.put("curdX", curVel.getX());
+            packet.put("curdY", curVel.getY());
+            packet.put("curdH", curVel.getHeading());
+            packet.put("tarX", PIDTargetPose.getX());
+            packet.put("tarY", PIDTargetPose.getY());
+            packet.put("tarH", PIDTargetPose.getHeading());
+            packet.put("targdX", PIDTargetVelocity.getX());
+            packet.put("targdY", PIDTargetVelocity.getY());
+            packet.put("targdH", PIDTargetVelocity.getHeading());
+            packet.put("vel", PIDTargetVelocity.vec().norm());
+            packet.put("FFtargdX", FFTargetVelocity.getX());
+            packet.put("FFtargdY", FFTargetVelocity.getY());
+            packet.put("FFtargdH", FFTargetVelocity.getHeading());
+            packet.put("FFtargddX", FFTargetAcceleration.getX());
+            packet.put("FFtargddY", FFTargetAcceleration.getY());
+            packet.put("FFtargddH", FFTargetAcceleration.getHeading());
             Vector2d rotateTargetVelocity = finalTargetVelocity.vec().rotated(-curPos.getHeading());
             Vector2d rotateTargetAccel = finalTargetAcceleration.vec().rotated(-curPos.getHeading());
+
 
             pF = rotateTargetVelocity.getX() * kV + rotateTargetAccel.getX() * kA;
             pS = rotateTargetVelocity.getY() * kV + rotateTargetAccel.getY() * kA;
@@ -128,7 +156,6 @@ public class RFPathFollower {
 
 
             }
-            pS*=1.41;
 //            pR=0;
             //frontLeft
             powers[0] = pF - pS - pR;

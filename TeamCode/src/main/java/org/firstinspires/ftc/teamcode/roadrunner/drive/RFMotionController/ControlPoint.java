@@ -71,28 +71,38 @@ public class ControlPoint {
     double n_t = p_vals[0].getHeading();
     double n_k = p_vals[1].getHeading();
     double avgK = (n_k + k) * 0.5;
-    double newMaxAccel = MAX_ACCEL - v * v * avgK;
+    double newMaxAccel = sqrt(MAX_ACCEL*MAX_ACCEL - v * v * avgK);
+    if(Double.isNaN(newMaxAccel)||newMaxAccel<0)
+      newMaxAccel=0;
     double dist =
         sqrt(
             (p_vals[0].getX() - x) * (p_vals[0].getX() - x)
                 + (p_vals[0].getY() - y) * (p_vals[0].getY() - y));
     double radians = 2 * asin(dist * avgK * 0.5);
     double arcLength = radians / avgK;
+
     double deltaT = (-v + sqrt(v * v + 2 * newMaxAccel * arcLength)) / newMaxAccel;
+    if(Double.isNaN(deltaT)){
+      deltaT=0.01;
+    }
     double n_time = time + deltaT;
     double n_v = FastMath.min(v + newMaxAccel * deltaT, MAX_VEL * newMaxAccel / MAX_ACCEL);
     double n_a = (n_v - v) / deltaT;
-    packet.put("x,y", p_vals[0]);
     return new ControlPoint(p_vals[0].getX(), p_vals[0].getY(), n_t, n_k, n_v, n_a, n_time);
   }
 
   public ControlPoint backwardTraverse(ControlPoint prev) {
     double avgK = (prev.k + k) * 0.5;
     double newMaxAccel = MAX_ACCEL - v * v * avgK;
+    if(Double.isNaN(newMaxAccel)||newMaxAccel<0)
+      newMaxAccel=0;
     double dist = sqrt((prev.x - x) * (prev.x - x) + (prev.y - y) * (prev.y - y));
     double radians = 2 * asin(dist * avgK * 0.5);
     double arcLength = radians / avgK;
     double deltaT = (-v + sqrt(v * v + abs(2 * newMaxAccel * arcLength))) / newMaxAccel;
+    if(Double.isNaN(deltaT)){
+      deltaT=0.01;
+    }
     double n_v = v + abs(newMaxAccel * deltaT);
     double n_time, o_time;
     if (n_v >= prev.v) {
@@ -104,11 +114,6 @@ public class ControlPoint {
       o_time = prev.time;
     }
     double n_a = (v - n_v) / deltaT;
-    //        packet.put("t", prev.t);
-    //        packet.put("x", prev.x);
-    //        packet.put("y", prev.y);
-    //        packet.put("k", prev.k);
-
     return new ControlPoint(prev.x, prev.y, prev.t, prev.k, n_v, n_a, n_time, o_time, 0);
   }
 

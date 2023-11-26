@@ -33,7 +33,7 @@ public class BasicRobot{
     public static VoltageSensor voltageSensor;
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
-    public static final boolean isSim = false;
+    public static final boolean isSim = true;
 
     /**
      * instantiates basic robot
@@ -58,7 +58,7 @@ public class BasicRobot{
         if(!isSim) {
             voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
         }
-        dashboard.setTelemetryTransmissionInterval(25);
+        dashboard.setTelemetryTransmissionInterval(10);
         packet=new TelemetryPacket();
         gampad = new RFGamepad();
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
@@ -72,9 +72,9 @@ public class BasicRobot{
 
     public void update(){
         time = op.getRuntime();
-        dashboard.sendTelemetryPacket(packet);
-        packet = new TelemetryPacket();
-        packet.clearLines();
+//        dashboard.sendTelemetryPacket(packet);
+//        packet = new TelemetryPacket();
+//        packet.clearLines();
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.clearBulkCache();
     }

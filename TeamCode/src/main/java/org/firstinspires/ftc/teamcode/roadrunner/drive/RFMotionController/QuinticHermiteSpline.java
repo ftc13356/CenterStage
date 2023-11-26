@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
+import static org.apache.commons.math3.util.FastMath.PI;
+import static org.apache.commons.math3.util.FastMath.abs;
 import static org.apache.commons.math3.util.FastMath.pow;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
-
-import static java.lang.Double.NaN;
 
 import android.annotation.SuppressLint;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 public class QuinticHermiteSpline {
   private ArrayList<Vector2d> coeffs;
+  ArrayList<Double> times;
   private Pose2d startPose, endPose;
 
   public void initQuinticHermiteSpline(
@@ -60,6 +62,7 @@ public class QuinticHermiteSpline {
     for (int i = 0; i < coeffs.size(); i++) {
       packet.put("coeffs" + i, coeffs.get(i));
     }
+    times = new ArrayList<>();
   }
 
   public QuinticHermiteSpline(Pose2d[] p_coeffs) {
@@ -111,36 +114,41 @@ public class QuinticHermiteSpline {
     if (Double.isNaN(k)) {
       k = 0;
     }
-    vals2[1] = new Pose2d(vals[1], k - (startPose.getHeading() - endPose.getHeading()));
+    double dist = (startPose.getHeading() - endPose.getHeading() + 360) % 360;
+    if (dist > 180) dist = 360 - dist;
+    vals2[1] = new Pose2d(vals[1], 0);
     return vals2;
   }
 
   @SuppressLint("NewApi")
   public Object[] binRecursion() {
-    ArrayList<Double> times = new ArrayList<>();
     times.add((double) 0);
     times.add((double) 0.5);
     times.add((double) 1);
-    times = binRecurse(times, 1);
-    times = binRecurse(times, 2);
+    binRecurse( 1);
+    binRecurse( times.size()-1);
     return times.toArray();
   }
 
-  public ArrayList<Double> binRecurse(ArrayList<Double> p_times, int p_index) {
-    packet.put("time"+p_index+"/"+p_times.size(), p_times.get(p_index));
+  public void binRecurse(int p_index) {
+    int backIndex = times.size()-p_index;
     if (p_index != 0) {
-      Pose2d p1 = valsAt(p_times.get(p_index - 1))[0];
-      Pose2d p2 = valsAt(p_times.get(p_index))[0];
-      if (p2.vec().distTo(p1.vec())
-              + (p_times.get(p_index) - p_times.get(p_index - 1))
-                  * (startPose.getHeading() - endPose.getHeading())
-                  * 6
-          < 1) {
-        p_times.add(p_index - 1, (p_times.get(p_index) + p_times.get(p_index - 1)) * 0.5);
-        binRecurse(p_times, p_index);
+      Pose2d p1 = valsAt(times.get(p_index - 1))[0];
+      Pose2d p2 = valsAt(times.get(p_index))[0];
+      while (p2.vec().distTo(p1.vec())
+//              + abs(
+//                  ((times.get(p_index) - times.get(p_index - 1))
+//                              * (endPose.getHeading()-startPose.getHeading())
+//                          + p2.getHeading()
+//                          - p1.getHeading())
+//                      * 6)
+          > 1) {
+        times.add(p_index, (times.get(p_index) + times.get(p_index - 1)) * 0.5);
+        binRecurse(p_index);
+        p_index = times.size() - backIndex;
+        p1 = valsAt(times.get(p_index - 1))[0];
+        p2 = valsAt(times.get(p_index))[0];
       }
-      return p_times;
     }
-    return p_times;
   }
 }

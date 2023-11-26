@@ -23,7 +23,7 @@ public class ControlPoints {
         points.add(new ControlPoint(p_spline.valsAt(0), p_v0, 0));
         points.get(0).setPrevK(points.get(0).getK());
         Object[] times = p_spline.binRecursion();
-        for (int i = 1; i < times.length; i++) {
+        for (int i = 1; i < times.length-1; i++) {
             points.add(points.get(points.size() - 1).forwardTraverse(p_spline.valsAt((double)times[i])));
             points.get(points.size() - 1).setPrevK(points.get(points.size() - 2).getK());
             points.get(points.size() - 2).setNextK(points.get(points.size() - 1).getK());
@@ -46,11 +46,10 @@ public class ControlPoints {
 
     /**
      * targetPose, targetVel, targetAccel, targetHead(vel, accel)
-     * @param p_time time
      * @return targetPose, targetVel, targetAccel, targetHead(vel, accel)
      */
-    public Pose2d[] getTargets(double p_time) {
-        double[] ind = bin(points, p_time);
+    public Pose2d[] getTargets() {
+        double[] ind = binPose(points, currentPose.vec());
         ControlPoint p1 = points.get((int) ind[0]), p2 = points.get((int) ind[0] + 1);
         Pose2d targetPose = p1.getPose().times(ind[1]).plus(p2.getPose().times(1-ind[1]));
         Pose2d targetVel = p1.getVelo().times(ind[1]).plus(p2.getVelo().times(1-ind[1]));
@@ -124,7 +123,7 @@ public class ControlPoints {
         double weight = downDist / (downDist + upDist);
         return new double[]{downBound, weight};
     }
-
+    //this doesn't work for angle velo and angle velocity
     public Pose2d[] getInstantaneousTarget(){
         double[] ind = binPose(points, currentPose.vec());
         ControlPoint p1 = points.get((int) ind[0]), p2 = points.get((int) ind[0] + 1);

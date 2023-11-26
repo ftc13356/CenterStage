@@ -66,7 +66,7 @@ public class RFTrajectory {
 
       return true;
     } else if (segIndex + 1 < segments.size()) {
-
+      setCurrentSegment(segIndex);
     } else {
       Pose2d curPos = currentPose;
       Pose2d targetPos = segments.get(segments.size() - 1).getWaypoint().getTarget();
@@ -99,8 +99,7 @@ public class RFTrajectory {
 
   // run before getTargetPosition
   public Pose2d[] getTargets() {
-    Pose2d[] targets = controlPoints.getTargets(time);
-    return targets;
+    return controlPoints.getTargets();
   }
 
   // not needed for PID
@@ -200,8 +199,7 @@ public class RFTrajectory {
     // currentPose.vec().distTo(getCurrentSegment().getWaypoint().getTarget().vec())));
     //            return pathAccel;
     //        }
-    Pose2d[] targets = controlPoints.getInstantaneousTarget();
-    return targets;
+    return controlPoints.getInstantaneousTarget();
   }
 
   public void compileSegments() {
