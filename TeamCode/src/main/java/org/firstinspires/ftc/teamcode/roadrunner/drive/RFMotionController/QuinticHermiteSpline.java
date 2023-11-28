@@ -105,9 +105,7 @@ public class QuinticHermiteSpline {
     packet.put("vals", vals[0] + ", T = " + p_t);
     //    dashboard.sendTelemetryPacket(packet);
     Pose2d[] vals2 = {new Pose2d(), new Pose2d(), new Pose2d()};
-    vals2[0] =
-        new Pose2d(
-            vals[0], vals[1].angle() + (startPose.getHeading() - endPose.getHeading()) * (1 - p_t));
+
     double k =
         (vals[1].getX() * vals[2].getY() - vals[1].getY() * vals[2].getX())
             / pow(vals[1].getX() * vals[1].getX() + vals[1].getY() * vals[1].getY(), 1.5);
@@ -116,7 +114,10 @@ public class QuinticHermiteSpline {
     }
     double dist = (startPose.getHeading() - endPose.getHeading() + 360) % 360;
     if (dist > 180) dist = 360 - dist;
-    vals2[1] = new Pose2d(vals[1], 0);
+    vals2[0] =
+            new Pose2d(
+                    vals[0], vals[1].angle() + (dist) * (1 - p_t));
+    vals2[1] = new Pose2d(vals[1], k);
     return vals2;
   }
 

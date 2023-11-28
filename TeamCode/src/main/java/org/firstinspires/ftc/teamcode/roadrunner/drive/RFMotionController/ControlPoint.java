@@ -21,10 +21,10 @@ import org.apache.commons.math3.util.FastMath;
 import java.util.ArrayList;
 
 public class ControlPoint {
-  private final double x, y, t, k, v, a, time, otherTime;
+  private final double x, y, t, k, v, a, time, otherTime, h, w, ah;
   private double prevK = 0, nextK = 0;
 
-  public ControlPoint(Pose2d[] p_vals, double p_v, double p_time) {
+  public ControlPoint(Pose2d[] p_vals, double p_v, double p_time, double p_h, double p_w, double p_ah) {
     x = p_vals[0].getX();
     y = p_vals[0].getY();
     t = p_vals[0].getHeading();
@@ -33,10 +33,13 @@ public class ControlPoint {
     v = p_v;
     a = 0;
     otherTime = 0;
+    h = p_h;
+    w = p_w;
+    ah = p_ah;
   }
 
   public ControlPoint(
-      double p_x, double p_y, double p_t, double p_k, double p_v, double p_a, double p_time) {
+      double p_x, double p_y, double p_t, double p_k, double p_v, double p_a, double p_time,double p_h, double p_w, double p_ah) {
     x = p_x;
     y = p_y;
     t = p_t;
@@ -45,6 +48,9 @@ public class ControlPoint {
     a = p_a;
     time = p_time;
     otherTime = 0;
+    h=p_h;
+    w=p_w;
+    ah = p_ah;
   }
 
   private ControlPoint(
@@ -56,7 +62,10 @@ public class ControlPoint {
       double p_a,
       double p_time,
       double p_otherTime,
-      double p_filler) {
+      double p_filler,
+      double p_h,
+      double p_w,
+      double p_ah) {
     x = p_x;
     y = p_y;
     t = p_t;
@@ -65,12 +74,18 @@ public class ControlPoint {
     a = p_a;
     time = p_time;
     otherTime = p_otherTime;
+    h = p_h;
+    w = p_w;
+    ah = p_ah;
   }
 
   public ControlPoint forwardTraverse(Pose2d[] p_vals) {
-    double n_t = p_vals[0].getHeading();
+    double n_t = atan2(p_vals[1].getY(), p_vals[1].getX());
+    double n_h = p_vals[0].getHeading();
     double n_k = p_vals[1].getHeading();
     double avgK = (n_k + k) * 0.5;
+    //n_h = wt + 0.5 * ah * t^2, max_a = ah + sqrt(ax^2 + ay^2)
+    //d = 0.5ax^2
     double newMaxAccel = sqrt(MAX_ACCEL*MAX_ACCEL - v * v * avgK);
     if(Double.isNaN(newMaxAccel)||newMaxAccel<0)
       newMaxAccel=0;
@@ -134,12 +149,12 @@ public class ControlPoint {
   }
 
   public Pose2d getVelo() {
-    return new Pose2d(v * cos(t), v * sin(t), k);
+    return new Pose2d(v * cos(t), v * sin(t), v*k);
   }
 
   public Pose2d getAccel() {
     double c = getCentripetalAccel();
-    return new Pose2d(a * cos(t) - c * sin(t), a * sin(t) - c * cos(t), nextK - k);
+    return new Pose2d(a * cos(t) - c * sin(t), a * sin(t) - c * cos(t), v *(nextK - k));
   }
 
   public Vector2d getPoseVec() {
