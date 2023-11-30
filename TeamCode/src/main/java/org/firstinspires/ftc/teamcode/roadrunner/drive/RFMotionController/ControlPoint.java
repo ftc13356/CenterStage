@@ -83,6 +83,8 @@ public class ControlPoint {
     double n_t = atan2(p_vals[1].getY(), p_vals[1].getX());
     double n_h = p_vals[0].getHeading();
     double n_k = p_vals[1].getHeading();
+    double dh = n_h-h;
+    double d = p_vals[0].vec().distTo(getPoseVec());
     double avgK = (n_k + k) * 0.5;
     //n_h = wt + 0.5 * ah * t^2, max_a = ah + sqrt(ax^2 + ay^2)
     //d = 0.5ax^2
