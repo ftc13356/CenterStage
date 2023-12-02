@@ -212,7 +212,7 @@ public class RFTrajectory {
   public void setCurrentPath(RFWaypoint p1) {
     currentPath = new QuinticHermiteSpline(p1.getSplineCoeffs());
     controlPoints =
-        new ControlPoints(currentPath, currentVelocity.vec().norm(), p1.getEndVelocity());
+        new ControlPoints(currentPath, currentVelocity, new Pose2d(p1.getEndVelocity(),0,0));
   }
 
   public double getEndVelMag() {

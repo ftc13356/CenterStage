@@ -17,10 +17,10 @@ public class ControlPoints {
     double totalTime = 0;
     double startTime =0;
 
-    public ControlPoints(QuinticHermiteSpline p_spline, double p_v0, double p_v1) {
+    public ControlPoints(QuinticHermiteSpline p_spline, Pose2d p_v0, Pose2d p_v1) {
         startTime = time;
         points = new ArrayList<>();
-        points.add(new ControlPoint(p_spline.valsAt(0), p_v0, 0));
+        points.add(new ControlPoint(p_spline.valsAt(0), p_v0.vec().norm(), 0, p_v0.getHeading()));
         points.get(0).setPrevK(points.get(0).getK());
         Object[] times = p_spline.binRecursion();
         for (int i = 1; i < times.length-1; i++) {
@@ -28,7 +28,7 @@ public class ControlPoints {
             points.get(points.size() - 1).setPrevK(points.get(points.size() - 2).getK());
             points.get(points.size() - 2).setNextK(points.get(points.size() - 1).getK());
         }
-        points.add(new ControlPoint(p_spline.valsAt(1), p_v1, 0));
+        points.add(new ControlPoint(p_spline.valsAt(1), p_v1.vec().norm(), 0, p_v1.getHeading()));
         points.get(points.size() - 1).setPrevK(points.get(points.size() - 2).getK());
         points.get(points.size() - 2).setNextK(points.get(points.size() - 1).getK());
         points.get(points.size() - 1).setNextK(points.get(points.size() - 1).getK());
