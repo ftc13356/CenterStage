@@ -123,7 +123,7 @@ public class ControlPoints {
         double weight = downDist / (downDist + upDist);
         return new double[]{downBound, weight};
     }
-    //this doesn't work for angle velo and angle velocity
+    //generate short cubic hermite spline to estimate, 5x error min of 2 control points ahead
     public Pose2d[] getInstantaneousTarget(){
         double[] ind = binPose(points, currentPose.vec());
         ControlPoint p1 = points.get((int) ind[0]), p2 = points.get((int) ind[0] + 1);
