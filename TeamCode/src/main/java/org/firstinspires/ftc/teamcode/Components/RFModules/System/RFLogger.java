@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.System;
 
 import android.annotation.SuppressLint;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
@@ -18,6 +20,7 @@ import java.util.logging.SimpleFormatter;
 
 public class RFLogger {
     public Logger LOGGER;
+    boolean nameLogged = false;
     ArrayList<FileHandler> handlerList = new ArrayList<>();
     Severity logLevel = Severity.ALL;
     static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
@@ -27,10 +30,10 @@ public class RFLogger {
 
 
     public enum Files {
-        @SuppressLint("SdCardPath") GENERAL_LOG("/sdcard/tmp/General.log", 0),
-        @SuppressLint("SdCardPath") AUTONOMOUS_LOG("/sdcard/tmp/Autonomous.log", 1),
-        @SuppressLint("SdCardPath") HARDWARE_LOG("/sdcard/tmp/Hardware.log", 2),
-        @SuppressLint("SdCardPath") QUEUER_LOG("/sdcard/tmp/Queuer.log", 3);
+        @SuppressLint("SdCardPath") GENERAL_LOG("/sdcard/tmp/General/GeneralLog.log", 0),
+        @SuppressLint("SdCardPath") AUTONOMOUS_LOG("/sdcard/tmp/Autonomous/AutoLog.log", 1),
+        @SuppressLint("SdCardPath") HARDWARE_LOG("/sdcard/tmp/Hardware/HWLog.log", 2),
+        @SuppressLint("SdCardPath") QUEUER_LOG("/sdcard/tmp/Queuer/QueuerLog.log", 3);
 
         final String filePath;
         final int index;
@@ -59,6 +62,10 @@ public class RFLogger {
     }
 
     public RFLogger(String className) {
+        new File("/sdcard/tmp/General").mkdirs();
+        new File("/sdcard/tmp/Autonomous").mkdirs();
+        new File("/sdcard/tmp/Hardware").mkdirs();
+        new File("/sdcard/tmp/Queuer").mkdirs();
         LOGGER = Logger.getLogger(className);
         LOGGER.setLevel(logLevel.logSeverity);
 
@@ -123,6 +130,7 @@ public class RFLogger {
      * @param info what string you want to be logged
      */
     public void log(String info) {
+        logName();
         Severity severity = Severity.INFO;
         if (logLevelSet) {
             severity = logLevel;
@@ -131,14 +139,17 @@ public class RFLogger {
     }
 
     public void log(Severity p_severity, String info) {
+        logName();
         log(Files.GENERAL_LOG, p_severity, info);
     }
 
     public void log(Files p_file, String info) {
+        logName();
         log(p_file, Severity.INFO, info);
     }
 
     public void log(Files p_file, Severity p_Severity, String info) {
+        logName();
         setLogLevel(p_Severity);
         if (logLevel.logSeverity.intValue() >= FILTER.logSeverity.intValue()) {
             for (Handler i : LOGGER.getHandlers()) {
@@ -163,6 +174,13 @@ public class RFLogger {
                     + "(): " + output + info);
         }
         logLevelSet = false;
+    }
+
+    public void logName(){
+        if(!nameLogged){
+            nameLogged = true;
+            log("Program Name: " + Thread.currentThread().getStackTrace()[2].getClassName());
+        }
     }
 
     public void setFilter(Severity p_severity) {
