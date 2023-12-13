@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.apache.commons.math3.util.FastMath.floor;
+import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.signum;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+
+import static java.lang.Double.min;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -16,6 +20,7 @@ public class ControlPoints {
     double controlPointRes = 100;
     double totalTime = 0;
     double startTime =0;
+    double currentPos =0;
 
     public ControlPoints(QuinticHermiteSpline p_spline, Pose2d p_v0, Pose2d p_v1) {
         startTime = time;
@@ -107,15 +112,14 @@ public class ControlPoints {
      */
     public double[] binPose(ArrayList<ControlPoint> p_arr, Vector2d p_pose) {
         int upBound = p_arr.size() - 1, downBound = 0;
-        while (upBound > downBound + 1) {
-            int m = (upBound + downBound) / 2;
-            if (p_arr.get(m).getPoseVec().distTo(p_pose) > p_arr.get(m+1).getPoseVec().distTo(p_pose)) {
-                downBound = m;
-            } else if (p_arr.get(m).getPoseVec().distTo(p_pose) < p_arr.get(m+1).getPoseVec().distTo(p_pose)) {
-                upBound = m;
-            } else {
-                downBound = m;
-                break;
+        int pos = (int) floor(currentPos);
+        double[] dist = {p_pose.distTo(points.get(max(pos-1,0)).getPoseVec()),p_pose.distTo(points.get(pos).getPoseVec()),p_pose.distTo(points.get(pos+1).getPoseVec()),p_pose.distTo(points.get(pos+2).getPoseVec())};
+        while (dist[1]+dist[2]>=dist[2]+dist[3]||(dist[1]+dist[2]>=dist[0]+dist[1]&&pos!=0)) {
+            if(dist[2]+dist[3]<dist[1]+dist[2]){
+                pos++;
+            }
+            else {
+                pos--;
             }
         }
         double downDist = p_pose.distTo(p_arr.get(downBound).getPoseVec());
