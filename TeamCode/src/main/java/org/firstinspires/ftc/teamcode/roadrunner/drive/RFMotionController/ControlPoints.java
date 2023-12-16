@@ -13,6 +13,8 @@ import static java.lang.Double.min;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
+import org.apache.commons.math3.util.FastMath;
+
 import java.util.ArrayList;
 
 public class ControlPoints {
@@ -125,16 +127,19 @@ public class ControlPoints {
         double downDist = p_pose.distTo(p_arr.get(downBound).getPoseVec());
         double upDist = p_pose.distTo(p_arr.get(upBound).getPoseVec());
         double weight = downDist / (downDist + upDist);
+        currentPos = downBound+weight;
         return new double[]{downBound, weight};
     }
     //generate short cubic hermite spline to estimate, 5x error min of 2 control points ahead
     public Pose2d[] getInstantaneousTarget(){
-        double[] ind = binPose(points, currentPose.vec());
-        ControlPoint p1 = points.get((int) ind[0]), p2 = points.get((int) ind[0] + 1);
-        Pose2d targetPose = p1.getPose().times(ind[1]).plus(p2.getPose().times(1-ind[1]));
-        Pose2d targetVel = p1.getVelo().times(ind[1]).plus(p2.getVelo().times(1-ind[1]));
-        Pose2d targetAccel = p1.getAccel().times(ind[1]).plus(p2.getAccel().times(1-ind[1]));
-        return new Pose2d[]{targetPose, targetVel, targetAccel};
+        binPose(points, currentPose.vec());
+        ControlPoint p1 = points.get((int) currentPos), p2 = points.get((int) currentPos + 1);
+        Pose2d targetPose = p1.getPose().times(currentPos%1).plus(p2.getPose().times(1-currentPos%1));
+        double err = targetPose.vec().distTo(currentPose.vec());
+        int aheadTarg = FastMath.min((int)(5*err),2);
+        CubicHermiteSpline instaSpline = new CubicHermiteSpline(currentPose,currentVelocity,points.get(aheadTarg).getPose(),points.get(aheadTarg).getVelo());
+        ControlPoint targ = instaSpline.initRatio();
+        return new Pose2d[]{targ.getPose(), targ.getVelo(), targ.getAccel()};
     }
 
 }

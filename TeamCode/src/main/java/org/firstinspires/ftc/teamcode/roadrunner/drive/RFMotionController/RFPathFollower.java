@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Double.NaN;
 import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -42,19 +43,26 @@ public class RFPathFollower {
             packet.put("curPos", currentPose);
             packet.put("curVel", curVel);
             Pose2d[] targets = rfTrajectory.getTargets();
+//      if (Double.isNaN(targets[0].getX())&&!Double.isNaN(curPos.getX())){
+//          packet.put("NaNner", targets[0]);
+//      }
             packet.put("targetPose", targets[0]);
-            packet.put("targetVel", targets[1]);
+            packet.put("targetVelo", targets[1]);
+            dashboard.sendTelemetryPacket(packet);
             PIDTargetVelocity = targets[1];
             Pose2d PIDTargetPose = targets[0];
             Vector2d transPosError = PIDTargetPose.vec().minus(curPos.vec());
             Vector2d transVelError = PIDTargetVelocity.vec().minus(curVel.vec());
             double headError = rfTrajectory.angleDist(PIDTargetPose.getHeading() + rfTrajectory.getTangentOffset(), curPos.getHeading());
             double headVelError = PIDTargetVelocity.getHeading() - curVel.getHeading();
-            dashboard.sendTelemetryPacket(packet);
+//            dashboard.sendTelemetryPacket(packet);
             Pose2d[] instantTargets = rfTrajectory.getInstantaneousTargets();
-            packet.put("targetPose", instantTargets[1]);
-            packet.put("targetVel", instantTargets[2]);
-            dashboard.sendTelemetryPacket(packet);
+            if (Double.isNaN(instantTargets[0].getX())&&!Double.isNaN(curPos.getX())){
+                packet.put("NaNner", instantTargets[0]);
+            }
+//            packet.put("targetPose", instantTargets[1]);
+//            packet.put("targetVel", instantTargets[2]);
+//            dashboard.sendTelemetryPacket(packet);
             Pose2d FFTargetAcceleration = instantTargets[2];
             Pose2d FFTargetVelocity = instantTargets[1];
             finalTargetVelocity = new Pose2d(FFTargetVelocity.getX() + transPosError.getX() * kPTrans,
