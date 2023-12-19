@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.ControlPoints.prity;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 public class ControlPoint {
   private final double x, y, t, k, v, a, time, otherTime, h, w, ah;
   private double prevK = 0, nextK = 0, deltaT = 0;
+
 
   public ControlPoint(
       Pose2d[] p_vals, double p_v, double p_time, double p_w) {
@@ -108,10 +110,22 @@ public class ControlPoint {
             (p_vals[0].getX() - x) * (p_vals[0].getX() - x)
                 + (p_vals[0].getY() - y) * (p_vals[0].getY() - y));
     double radians = 2 * asin(dist * avgK * 0.5);
-    double arcLength = radians / avgK;
+    double arcLength = abs(radians / avgK);
     double deldaT =
-        (ab + sqrt(ab * ab + 2 * (MAX_ACCEL - v * v * avgK) * (dh + arcLength)))
+        (ab + sqrt(ab * ab + 2 * (MAX_ACCEL - v * v * avgK) * (abs(dh) + arcLength)))
             / (MAX_ACCEL - v * v * avgK);
+    if(!prity){
+      packet.put("deldaT", deldaT);
+      packet.put("abba", ab);
+      packet.put("sqrty", sqrt(ab * ab + 2 * (MAX_ACCEL - v * v * avgK) * (abs(dh) + arcLength)));
+      packet.put("unsqrty", (ab * ab + 2 * (MAX_ACCEL - v * v * avgK) * (abs(dh) + arcLength)));
+      packet.put("lengthy", abs(dh)+arcLength);
+      packet.put("avgk", avgK);
+      packet.put("dhl", dh);
+      packet.put("arcy", arcLength);
+      packet.put("megacel", (MAX_ACCEL - v * v * avgK));
+      prity=true;
+    }
     double a_t = 2 * (arcLength - v * deldaT) / (deldaT * deldaT);
     double a_h = 2 * (dh - w * TRACK_WIDTH * deldaT) / (deldaT * deldaT);
     double a_c = v * v * n_k;

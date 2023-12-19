@@ -110,7 +110,7 @@ public class QuinticHermiteSpline {
         (vals[1].getX() * vals[2].getY() - vals[1].getY() * vals[2].getX())
             / pow(vals[1].getX() * vals[1].getX() + vals[1].getY() * vals[1].getY(), 1.5);
     if (Double.isNaN(k)) {
-      k = 0;
+      k = 0.001;
     }
     double dist = (startPose.getHeading() - endPose.getHeading() + 360) % 360;
     if (dist > 180) dist = 360 - dist;

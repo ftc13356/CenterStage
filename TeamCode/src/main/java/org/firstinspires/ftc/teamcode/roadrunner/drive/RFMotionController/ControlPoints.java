@@ -4,6 +4,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
 import static org.apache.commons.math3.util.FastMath.floor;
 import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.signum;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
@@ -23,6 +24,9 @@ public class ControlPoints {
     double totalTime = 0;
     double startTime =0;
     double currentPos =0;
+
+    public static boolean prity = true;
+    boolean secondpr = false;
 
     public ControlPoints(QuinticHermiteSpline p_spline, Pose2d p_v0, Pose2d p_v1) {
         startTime = time;
@@ -132,6 +136,11 @@ public class ControlPoints {
     }
     //generate short cubic hermite spline to estimate, 5x error min of 2 control points ahead
     public Pose2d[] getInstantaneousTarget(){
+        if(!secondpr){
+            prity=false;
+            secondpr=true;
+        }
+        packet.put("reach", true);
         binPose(points, currentPose.vec());
         ControlPoint p1 = points.get((int) currentPos), p2 = points.get((int) currentPos + 1);
         Pose2d targetPose = p1.getPose().times(currentPos%1).plus(p2.getPose().times(1-currentPos%1));

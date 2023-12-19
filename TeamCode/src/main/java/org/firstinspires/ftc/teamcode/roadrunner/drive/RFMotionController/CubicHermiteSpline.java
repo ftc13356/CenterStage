@@ -52,7 +52,7 @@ public class CubicHermiteSpline {
             (vals[1].getX() * vals[2].getY() - vals[1].getY() * vals[2].getX())
                     / pow(vals[1].getX() * vals[1].getX() + vals[1].getY() * vals[1].getY(), 1.5);
     if (Double.isNaN(k)) {
-      k = 0;
+      k = 0.001;
     }
     vals[1] = new Pose2d(vals[1].vec(), k);
     packet.put("vals", vals[0] + ", T = " + p_t);
@@ -86,7 +86,6 @@ public class CubicHermiteSpline {
     Pose2d vals = new Pose2d(0, 0, 0);
     Pose2d p_v0 = currentVelocity;
     Pose2d p_v1 = endVelo;
-    points.add(new ControlPoint(valsAt(0), currentVelocity.vec().norm(), 0, currentVelocity.getHeading()));
     points = new ArrayList<>();
     points.add(new ControlPoint(valsAt(0), p_v0.vec().norm(), 0, p_v0.getHeading()));
     points.get(0).setPrevK(points.get(0).getK());
