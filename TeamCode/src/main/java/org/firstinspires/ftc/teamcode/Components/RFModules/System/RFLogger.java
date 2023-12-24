@@ -23,22 +23,30 @@ public class RFLogger {
     boolean nameLogged = false;
     ArrayList<FileHandler> handlerList = new ArrayList<>();
     Severity logLevel = Severity.ALL;
-    static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
+    FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
     public static Severity FILTER = Severity.INFO;
 
     private boolean logLevelSet = false;
 
 
     public enum Files {
-        @SuppressLint("SdCardPath") GENERAL_LOG("/sdcard/tmp/General/GeneralLog.log", 0),
-        @SuppressLint("SdCardPath") AUTONOMOUS_LOG("/sdcard/tmp/Autonomous/AutoLog.log", 1),
-        @SuppressLint("SdCardPath") HARDWARE_LOG("/sdcard/tmp/Hardware/HWLog.log", 2),
-        @SuppressLint("SdCardPath") QUEUER_LOG("/sdcard/tmp/Queuer/QueuerLog.log", 3);
+        @SuppressLint("SdCardPath") GENERAL_LOG("/sdcard/tmp/General/GeneralLog", 0),
+        @SuppressLint("SdCardPath") AUTONOMOUS_LOG("/sdcard/tmp/Autonomous/AutoLog", 1),
+        @SuppressLint("SdCardPath") HARDWARE_LOG("/sdcard/tmp/Hardware/HWLog", 2),
+        @SuppressLint("SdCardPath") QUEUER_LOG("/sdcard/tmp/Queuer/QueuerLog", 3);
 
         final String filePath;
         final int index;
 
         Files(String p_filePath, int p_index) {
+            int i=0;
+            while(true){
+                if(!new File(p_filePath + "" + i).isFile()){
+                    p_filePath = p_filePath + "" + i;
+                    break;
+                }
+                i++;
+            }
             filePath = p_filePath;
             index = p_index;
         }
@@ -130,7 +138,10 @@ public class RFLogger {
      * @param info what string you want to be logged
      */
     public void log(String info) {
-        logName();
+        if(!nameLogged){
+            nameLogged = true;
+            log("Program Name: " + Thread.currentThread().getStackTrace()[2].getClassName());
+        }
         Severity severity = Severity.INFO;
         if (logLevelSet) {
             severity = logLevel;
@@ -139,17 +150,26 @@ public class RFLogger {
     }
 
     public void log(Severity p_severity, String info) {
-        logName();
+        if(!nameLogged){
+            nameLogged = true;
+            log("Program Name: " + Thread.currentThread().getStackTrace()[2].getClassName());
+        }
         log(Files.GENERAL_LOG, p_severity, info);
     }
 
     public void log(Files p_file, String info) {
-        logName();
+        if(!nameLogged){
+            nameLogged = true;
+            log("Program Name: " + Thread.currentThread().getStackTrace()[2].getClassName());
+        }
         log(p_file, Severity.INFO, info);
     }
 
     public void log(Files p_file, Severity p_Severity, String info) {
-        logName();
+        if(!nameLogged){
+            nameLogged = true;
+            log("Program Name: " + Thread.currentThread().getStackTrace()[2].getClassName());
+        }
         setLogLevel(p_Severity);
         if (logLevel.logSeverity.intValue() >= FILTER.logSeverity.intValue()) {
             for (Handler i : LOGGER.getHandlers()) {
