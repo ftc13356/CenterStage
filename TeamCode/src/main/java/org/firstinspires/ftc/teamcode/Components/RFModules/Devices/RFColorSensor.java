@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import android.graphics.Color;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -16,11 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Harry
  * Class to contain all RFColorSensor functions
  */
+@Config
 public class RFColorSensor {
     NormalizedColorSensor colorSensor;
     RevColorSensorV3 distSensor;
-    private double white = 156, purple = 214, green = 127, yellow = 81;
+    public static double white = 156, purple = 214, green = 127, yellow = 81;
     private float HSV[] = {0,0,0};
+    private double errorW = 0, errorP = 0, errorG = 0, errorY = 0;
 
     /**
      * constructor for rfcolorsensor, logs to general with CONFIG severity
@@ -41,8 +44,28 @@ public class RFColorSensor {
         return distSensor.getDistance(DistanceUnit.INCH);
     }
 
+    public double getWhite(){
+        return errorW/white;
+    }
+
+    public double getYellow(){
+        return errorY/yellow;
+    }
+
+    public double getGreen(){
+        return errorG/green;
+    }
+
+    public double getPurple(){
+        return errorP/purple;
+    }
+
+    public double getRawColor(){
+        float[] hsv = getHSV();
+        return hsv[0];
+    }
+
     public String getColor(){
-        double errorW = 0, errorP = 0, errorG = 0, errorY = 0;
         float[] hsv = getHSV();
         errorW = Math.abs(hsv[0]-white); errorP = Math.abs(hsv[0]-purple); errorG = Math.abs(hsv[0]-green); errorY = Math.abs(hsv[0]-yellow);
         if(Math.min(Math.min(errorW, errorP),Math.min(errorY, errorG)) == errorW){

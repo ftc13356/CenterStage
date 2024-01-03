@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFColorSensor;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
+import java.util.ArrayList;
+
 /**
  * Harry
  * test color sensor, must have dashboard tuneable ranges for each color, print out read values, which range it is in, include LED on the extended class test program
@@ -24,9 +26,23 @@ public class RFColorSensorTest extends LinearOpMode{
         colorSensor = new RFColorSensor("colorSensor");
         waitForStart();
         if(isStopRequested()) return;
+        double count = 0;
+        double total = 0;
+        double avg = 0;
         while(opModeIsActive() && !isStopRequested()){
+            if(BasicRobot.time > 10){
+                total += colorSensor.getRawColor();
+                count++;
+                avg = total/count;
+            }
             packet.put("Color", colorSensor.getColor());
+            packet.put("%E WHITE", colorSensor.getWhite());
+            packet.put("%E YELLOW", colorSensor.getYellow());
+            packet.put("%E GREEN", colorSensor.getGreen());
+            packet.put("%E PURPLE", colorSensor.getPurple());
             packet.put("Dist(in.)", colorSensor.getDist());
+            packet.put("Data point #", count);
+            packet.put("AVGRAWCOLOR", avg);
             robot.update();
         }
     }
