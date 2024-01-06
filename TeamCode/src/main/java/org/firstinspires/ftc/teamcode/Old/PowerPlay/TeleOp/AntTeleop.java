@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Old.PowerPlay.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
@@ -17,7 +19,7 @@ public class AntTeleop extends LinearOpMode {
     public RFMotor motorRightBack;
     public RFMotor motorLeftFront;
     public RFMotor motorRightFront;
-    public RFServo clawServo;
+    public Servo clawServo;
 
     public void runOpMode() {
         BasicRobot robot = new BasicRobot(this, true);
@@ -26,7 +28,7 @@ public class AntTeleop extends LinearOpMode {
         motorRightBack = new RFMotor("motorRightBack", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorLeftFront = new RFMotor("motorLeftFront", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorRightFront = new RFMotor("motorRightFront", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
-        clawServo = new RFServo("clawServo", 1.0);
+        clawServo = op.hardwareMap.get(Servo.class, "clawServo");
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
@@ -44,7 +46,7 @@ public class AntTeleop extends LinearOpMode {
 
         double lastpressed = 0;
 
-        clawServo.setPosition(0.3);
+        clawServo.setPosition(0.5);
 
         while (!isStopRequested() && getRuntime() < 90) {
 
@@ -54,11 +56,12 @@ public class AntTeleop extends LinearOpMode {
 
             move(left_stick_y, left_stick_x, right_stick_x);
 
-            if (gamepad1.right_bumper && getRuntime() - lastpressed > 1) {
+            if (gamepad1.a && getRuntime() - lastpressed > 1) {
                 grabrelease();
                 lastpressed = getRuntime();
             }
-
+            op.telemetry.update();
+            robot.updateTime();
         }
         idle();
     }
@@ -73,6 +76,6 @@ public class AntTeleop extends LinearOpMode {
     }
 
     private void grabrelease() {
-        clawServo.setPosition(0.3 - clawServo.getPosition());
+        clawServo.setPosition(0.5 - clawServo.getPosition());
     }
 }
