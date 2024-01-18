@@ -30,7 +30,7 @@ public class RFColorSensorTest extends LinearOpMode{
         double total = 0;
         double avg = 0;
         while(opModeIsActive() && !isStopRequested()){
-            if(BasicRobot.time > 10){
+            if(BasicRobot.time > 5){
                 total += colorSensor.getRawColor();
                 count++;
                 avg = total/count;
@@ -41,6 +41,7 @@ public class RFColorSensorTest extends LinearOpMode{
             packet.put("%E GREEN", colorSensor.getGreen());
             packet.put("%E PURPLE", colorSensor.getPurple());
             packet.put("Dist(in.)", colorSensor.getDist());
+            packet.put("Correct #", count);
             packet.put("Data point #", count);
             packet.put("AVGRAWCOLOR", avg);
             robot.update();
