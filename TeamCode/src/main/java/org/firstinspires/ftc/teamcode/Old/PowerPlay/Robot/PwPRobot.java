@@ -955,6 +955,16 @@ public class PwPRobot extends BasicRobot {
     public void setDistBroke(boolean value) {
         distBroke = value;
     }
+    public void cripTele(){
+        roadrun.update();
+        loopTime = time - lastTime;
+        lastTime = time;
+        double[] vals = {-op.gamepad1.left_stick_x, -op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
+        roadrun.setDrivePower(new Pose2d(vals[1],
+                vals[0],
+                vals[2]));
+
+    }
 
     public void teleOp() {
         roadrun.update();
