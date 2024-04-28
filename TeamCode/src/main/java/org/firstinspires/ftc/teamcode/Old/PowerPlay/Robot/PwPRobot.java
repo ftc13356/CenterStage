@@ -960,9 +960,10 @@ public class PwPRobot extends BasicRobot {
         loopTime = time - lastTime;
         lastTime = time;
         double[] vals = {-op.gamepad1.left_stick_x, -op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
-        roadrun.setDrivePower(new Pose2d(vals[1],
-                vals[0],
-                vals[2]));
+        roadrun.setDrivePower(new Pose2d(vals[1]*.5,
+
+                vals[0]*.5,
+                vals[2]*.5));
 
     }
 
