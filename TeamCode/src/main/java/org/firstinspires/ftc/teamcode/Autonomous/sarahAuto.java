@@ -17,20 +17,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class sarahAuto extends LinearOpMode {
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
+    private double power = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         backLeft = hardwareMap.get(DcMotor.class, "motorLeftBack");
         backRight = hardwareMap.get(DcMotor.class, "motorRightBack");
-
-        backLeft.setDirection((DcMotorSimple.Direction.FORWARD));
-        backRight.setDirection((DcMotorSimple.Direction.REVERSE));
-
-        waitForStart();
-
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        sleep(2000); //random time tbh
 
     }
 }
