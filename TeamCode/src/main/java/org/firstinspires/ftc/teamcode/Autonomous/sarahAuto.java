@@ -13,11 +13,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Autonomous.sarahAutoUtility;
+
 @Autonomous()
 public class sarahAuto extends LinearOpMode {
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
-    private double power = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
