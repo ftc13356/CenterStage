@@ -1,14 +1,22 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap; //idk what this is
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class sarahAutoUtility {
-    public DcMotor backLeft = hardwareMap.get(DcMotor.class, "motorLeftBack");
-    public DcMotor backRight = hardwareMap.get(DcMotor.class, "motorRightBack");
+    public DcMotor backLeft;
+    public DcMotor backRight;
+    private HardwareMap hardwareMap;
+
+    public sarahAutoUtility(HardwareMap hwMap) {
+        hardwareMap = hwMap;
+        backLeft = hardwareMap.get(DcMotor.class, "motorLeftBack");
+        backRight = hardwareMap.get(DcMotor.class, "motorRightBack");
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
 
     public void moveForward(double distance){ //timer
         ElapsedTime elapsedTime = new ElapsedTime();
@@ -22,7 +30,7 @@ public class sarahAutoUtility {
 
     public void turn(double degrees){
         ElapsedTime elapsedTime = new ElapsedTime();
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD); //leftmotor rotates forward and rightmotor rotates backward
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         setPower(.5,.5);
         if(elapsedTime.time() > 3){ //timer
