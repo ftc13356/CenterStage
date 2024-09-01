@@ -18,14 +18,15 @@ public class sarahAutoUtility {
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    public void moveForward(double distance){ //timer
+    public void moveForward(double distance){
         ElapsedTime elapsedTime = new ElapsedTime();
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         setPower(1,1);
-        if(elapsedTime.time() > 2.5){ //timer
-            setPower(0,0);
+        elapsedTime.reset();
+        while(elapsedTime.time() < 2.5){
         }
+        setPower(0,0);
     }
 
     public void turn(double degrees){
@@ -33,9 +34,10 @@ public class sarahAutoUtility {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         setPower(.5,.5);
-        if(elapsedTime.time() > 3){ //timer
-            setPower(0,0);
+        elapsedTime.reset();
+        while(elapsedTime.time() < 3){
         }
+        setPower(0,0);
     }
 
     public void setPower(double powerLeft, double powerRight){

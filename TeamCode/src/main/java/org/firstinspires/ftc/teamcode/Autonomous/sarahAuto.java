@@ -15,13 +15,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous()
 public class sarahAuto extends LinearOpMode {
     private sarahAutoUtility fatty;
+
     @Override
     public void runOpMode() throws InterruptedException {
         fatty = new sarahAutoUtility(hardwareMap);
 
         waitForStart();
-
-        fatty.moveForward(10);
-        fatty.turn(90);
+        if (!isStopRequested() && opModeIsActive()) {
+            fatty.moveForward(10);
+            fatty.turn(90);
+        }
     }
 }
