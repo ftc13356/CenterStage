@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class sarahAutoUtility {
+public class sarahAutoUtilityTimer {
     public DcMotor backLeft;
     public DcMotor backRight;
     private HardwareMap hardwareMap;
 
-    public sarahAutoUtility(HardwareMap hwMap) {
+    public sarahAutoUtilityTimer(HardwareMap hwMap) {
         hardwareMap = hwMap;
         backLeft = hardwareMap.get(DcMotor.class, "motorLeftBack");
         backRight = hardwareMap.get(DcMotor.class, "motorRightBack");
