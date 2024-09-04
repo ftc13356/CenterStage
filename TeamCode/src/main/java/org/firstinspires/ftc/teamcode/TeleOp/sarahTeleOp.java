@@ -21,8 +21,8 @@ public class sarahTeleOp extends LinearOpMode {
 
         while(!isStopRequested()&&opModeIsActive()){
             telemetry.update();
-            double drive = -gamepad1.left_stick_y;
-            double turn = gamepad1.left_stick_x;
+            double drive = -gamepad1.left_stick_y * 0.7;
+            double turn = gamepad1.left_stick_x * 0.8;
             telemetry.addData("drive", Double.toString(drive));
             telemetry.addData("turn", Double.toString(turn));
 

@@ -26,19 +26,18 @@ public class sarahAutoUtilityTimer {
     }
 
     public void moveForward(double distance){
-        setPower(.4,.4);
-        op.sleep(5000);
-        setPower(0,0);
+        backLeft.setPower(.4);
+        backRight.setPower(.4);
+        op.sleep(3000);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
 
     public void turn(double degrees){
-        setPower(-.15,.15);
-        op.sleep(5000);
-        setPower(0,0);
-    }
-
-    public void setPower(double powerLeft, double powerRight){
-        backLeft.setPower(powerLeft);
-        backRight.setPower(powerRight);
+        //backLeft.setPower(-.4); //may want to remove?
+        backRight.setPower(.4);
+        op.sleep(3000);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
 }
