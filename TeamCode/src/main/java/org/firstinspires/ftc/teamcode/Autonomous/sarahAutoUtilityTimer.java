@@ -9,8 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.Line;
 
 public class sarahAutoUtilityTimer {
-    public DcMotor backLeft;
-    public DcMotor backRight;
+    public DcMotor backLeft, backRight;
     private HardwareMap hardwareMap;
     public LinearOpMode op;
 
@@ -21,23 +20,19 @@ public class sarahAutoUtilityTimer {
         backRight = hardwareMap.get(DcMotor.class, "motorRightBack");
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void moveForward(double distance){
         backLeft.setPower(.4);
         backRight.setPower(.4);
-        op.sleep(3000);
+        op.sleep(500);
         backLeft.setPower(0);
         backRight.setPower(0);
     }
 
     public void turn(double degrees){
-        //backLeft.setPower(-.4); //may want to remove?
-        backRight.setPower(.4);
-        op.sleep(3000);
+        backLeft.setPower(.4);
+        op.sleep(800);
         backLeft.setPower(0);
-        backRight.setPower(0);
     }
 }
