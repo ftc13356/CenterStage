@@ -25,14 +25,14 @@ public class sarahAutoUtilityTimer {
     public void moveForward(double distance){
         backLeft.setPower(.4);
         backRight.setPower(.4);
-        op.sleep(500);
+        op.sleep(700);
         backLeft.setPower(0);
         backRight.setPower(0);
     }
 
     public void turn(double degrees){
         backLeft.setPower(.4);
-        op.sleep(800);
+        op.sleep(1500);
         backLeft.setPower(0);
     }
 }
