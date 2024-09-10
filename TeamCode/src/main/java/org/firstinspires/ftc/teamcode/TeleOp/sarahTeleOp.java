@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class sarahTeleOp extends LinearOpMode {
     private DcMotor backRight = null;
     private DcMotor backLeft = null;
-    private Servo claw = null; //idk the class but whatever
+    private Servo claw = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,12 +25,12 @@ public class sarahTeleOp extends LinearOpMode {
         while(!isStopRequested()&&opModeIsActive()){
             telemetry.update();
             double drive = -gamepad1.left_stick_y * 0.7;
-            double turn = gamepad1.left_stick_x * 0.8;
+            double turn = gamepad1.left_stick_x * 0.7;
             telemetry.addData("drive", Double.toString(drive));
             telemetry.addData("turn", Double.toString(turn));
 
-            backLeft.setPower(drive+turn);
-            backRight.setPower(drive-turn);
+            backLeft.setPower(drive+turn-0.2);
+            backRight.setPower(drive-turn-0.2);
 
             if(gamepad1.a) {
                 claw.setPosition(1);
