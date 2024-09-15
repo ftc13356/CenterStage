@@ -20,17 +20,21 @@ public class sarahTeleOp extends LinearOpMode {
 
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
         waitForStart();
 
         while(!isStopRequested()&&opModeIsActive()){
             telemetry.update();
             double drive = -gamepad1.left_stick_y * 0.7;
-            double turn = gamepad1.left_stick_x * 0.7;
+            double turn = gamepad1.left_stick_x * 0.5;
             telemetry.addData("drive", Double.toString(drive));
             telemetry.addData("turn", Double.toString(turn));
 
-            backLeft.setPower(drive+turn-0.2);
-            backRight.setPower(drive-turn-0.2);
+            backLeft.setPower((drive+turn)*0.8);
+            backRight.setPower((drive-turn)*0.8);
 
             if(gamepad1.a) {
                 claw.setPosition(1);

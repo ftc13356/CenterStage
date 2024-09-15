@@ -13,7 +13,9 @@ public class sarahAutoEncoder extends LinearOpMode {
 
         waitForStart();
         if (!isStopRequested() && opModeIsActive()) {
+            fatty.resetEncoders();
             fatty.moveForward(10);
+            fatty.resetEncoders();
             fatty.turn(90);
         }
     }
