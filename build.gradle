@@ -12,11 +12,7 @@ buildscript {
 
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
-<<<<<<< Updated upstream
-        classpath 'com.android.tools.build:gradle:8.6.1'
-=======
         classpath 'com.android.tools.build:gradle:8.7.0'
->>>>>>> Stashed changes
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0'
 
     }
