@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.localization.tuning.LocalizationTest.op;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -77,21 +79,21 @@ public class ThreeWheelLocalizer extends Localizer {
      * @param setStartPose the Pose to start from
      */
     public ThreeWheelLocalizer(HardwareMap map, Pose setStartPose) {
-        leftEncoderPose = new Pose(5, 2.25, 0);
-        rightEncoderPose = new Pose(-5, 2.25, 0);
-        strafeEncoderPose = new Pose(0, -4.75, Math.toRadians(90));
+        leftEncoderPose = new Pose(2.25, 5, 0);
+        rightEncoderPose = new Pose(2.25, -5, 0);
+        strafeEncoderPose = new Pose(-4.75, 0, Math.toRadians(90));
 
         hardwareMap = map;
 
         // TODO: replace these with your encoder ports
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
-        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "strafeEncoder"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftBack"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightBack"));
+        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
 
         // TODO: reverse any encoders necessary
-        leftEncoder.setDirection(Encoder.REVERSE);
-        rightEncoder.setDirection(Encoder.REVERSE);
-        strafeEncoder.setDirection(Encoder.FORWARD);
+        leftEncoder.setDirection(Encoder.FORWARD);
+        rightEncoder.setDirection(Encoder.FORWARD);
+        strafeEncoder.setDirection(Encoder.REVERSE);
 
         setStartPose(setStartPose);
         timer = new NanoTimer();
@@ -215,6 +217,9 @@ public class ThreeWheelLocalizer extends Localizer {
         leftEncoder.update();
         rightEncoder.update();
         strafeEncoder.update();
+        op.telemetry.addData("left", leftEncoder.currentPosition);
+        op.telemetry.addData("right", rightEncoder.currentPosition);
+        op.telemetry.addData("strafe", strafeEncoder.currentPosition);
     }
 
     /**

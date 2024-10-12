@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class Encoder {
     private DcMotorEx motor;
     private double previousPosition;
-    private double currentPosition;
+    public double currentPosition;
     private double multiplier;
 
     public final static double FORWARD = 1, REVERSE = -1;
