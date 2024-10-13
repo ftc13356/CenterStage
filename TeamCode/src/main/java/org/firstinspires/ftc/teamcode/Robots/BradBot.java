@@ -1202,7 +1202,7 @@ public class BradBot extends BasicRobot {
 //            Magazine.pixels =0;
 //            intaked=false;
 //          }
-            cv.update();
+//            cv.update();
         }
         if (!isTeleop && abs(intake.getIntakePower()) > 0) {
             magazine.updateSensors();

@@ -44,7 +44,7 @@ public class RFLocalizerTest extends LinearOpMode {
 //                drive.changeIMUInterval();
 //                doneImud=true;
 //            }
-//            drive.setWeightedDrivePower(new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
+            robot.roadrun.setWeightedDrivePower(new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
 //            packet.put("rrPose", drive.getPoseEstimate());
 //            packet.put("rrPOVVelocity", drive.getPoseVelocity());
         }

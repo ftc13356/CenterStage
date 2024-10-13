@@ -389,18 +389,19 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        logger.log("/RobotLogs/GeneralRobot", "curPose"+currentPose);
         updatePoseEstimate();
         packet.put("lastImu", lastImuTime);
-        if (time - lastImuTime > IMU_INTERVAL) {
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-            Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
-            lastImuPos = (1-fishMoley)*angles.firstAngle+fishMoley*angles2.firstAngle;
-            lastImuTime = time;
-            packet.put("imu", lastImuPos);
-            packet.put("offset", poseHeadOffset);
-           currentPose = new Pose2d(currentPose.getX(), currentPose.getY(), lastImuPos+poseHeadOffset);
-        }
+//        if (time - lastImuTime > IMU_INTERVAL) {
+//            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+//            Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
+//            lastImuPos = (1-fishMoley)*angles.firstAngle+fishMoley*angles2.firstAngle;
+//            lastImuTime = time;
+//            packet.put("imu", lastImuPos);
+//            packet.put("offset", poseHeadOffset);
+//           currentPose = new Pose2d(currentPose.getX(), currentPose.getY(), lastImuPos+poseHeadOffset);
+//        }
 //        logger.log("/RobotLogs/GeneralRobot", "curPose2"+currentPose);
 
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        currentPose = getPoseEstimate();
         if (signal != null) setDriveSignal(signal);
     }
 

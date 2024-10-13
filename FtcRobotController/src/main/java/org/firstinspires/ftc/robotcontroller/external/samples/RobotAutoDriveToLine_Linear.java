@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 /*
@@ -67,6 +68,8 @@ public class RobotAutoDriveToLine_Linear extends LinearOpMode {
     /* Declare OpMode members. */
     private DcMotor         leftDrive   = null;
     private DcMotor         rightDrive  = null;
+
+    private Servo servo = null;
 
     /** The variable to store a reference to our color sensor hardware object */
     NormalizedColorSensor colorSensor;
