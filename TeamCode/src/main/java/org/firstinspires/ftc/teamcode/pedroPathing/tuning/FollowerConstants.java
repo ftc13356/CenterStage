@@ -30,14 +30,14 @@ public class FollowerConstants {
 
     // This section is for setting the actual drive vector for the front left wheel, if the robot
     // is facing a heading of 0 radians with the wheel centered at (0,0)
-    private static double xMovement = 68.78459412129808;
-    private static double yMovement = 50.865058670724004;
+    private static double xMovement = 58.01363984855611;
+    private static double yMovement = 43.673850397772654;
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0],convertToPolar[1]));
 
     // Translational PIDF coefficients (don't use integral)
     public static CustomPIDFCoefficients translationalPIDFCoefficients = new CustomPIDFCoefficients(
-            0.08,
+            0.069,
             0,
             0,
             0);
@@ -55,7 +55,7 @@ public class FollowerConstants {
 
     // Heading error PIDF coefficients
     public static CustomPIDFCoefficients headingPIDFCoefficients = new CustomPIDFCoefficients(
-            1.34,
+            1.32,
             0,
             0.08,
             0);
@@ -90,11 +90,11 @@ public class FollowerConstants {
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
-    public static double forwardZeroPowerAcceleration = -29.44826386538987;
+    public static double forwardZeroPowerAcceleration = -26.9983848779339;
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
-    public static double lateralZeroPowerAcceleration = -83.9114834856681;
+    public static double lateralZeroPowerAcceleration = -90.4552400923719;
 
     // A multiplier for the zero power acceleration to change the speed the robot decelerates at
     // the end of paths.
