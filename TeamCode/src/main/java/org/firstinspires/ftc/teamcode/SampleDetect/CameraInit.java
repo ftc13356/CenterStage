@@ -66,7 +66,7 @@ public class CameraInit {
                         else
                             webcam.setPipeline(nor);
                         webcam.startStreaming(
-                                    640, 480, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
+                                    1280, 720, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
                         dashboard.startCameraStream(webcam, 10);
                         LOGGER.log("Camera Streaming now!");

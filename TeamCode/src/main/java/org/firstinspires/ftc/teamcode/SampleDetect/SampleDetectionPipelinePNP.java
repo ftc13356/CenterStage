@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.SampleDetect;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.opencv.calib3d.Calib3d.Rodrigues;
+
+import static java.lang.Double.max;
 
 import com.acmerobotics.dashboard.config.Config;
 
+//import org.opencv.imgproc.CLAHE;
+import org.opencv.imgproc.CLAHE;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import org.opencv.calib3d.Calib3d;
@@ -22,11 +27,12 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Config
-public class SampleDetectionPipelinePNP extends OpenCvPipeline
-{
+public class SampleDetectionPipelinePNP extends OpenCvPipeline {
     /*
      * Our working image buffers
      */
@@ -52,19 +58,23 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
     /*
      * Threshold values
      */
-    public static  int YELLOW_MASK_THRESHOLD = 57;
-    public static  int BLUE_MASK_THRESHOLD = 150;
+    public static int YELLOW_MASK_THRESHOLD = 57;
+    public static int BLUE_MASK_THRESHOLD = 150;
 
     public static int retVal = 0;
 
-    public static int threshold1 = 50, threshold2 = 100;
-    public static  int RED_MASK_THRESHOLD = 178;
+    public static int threshold1 = 0, threshold2 = 60;
+    public static int RED_MASK_THRESHOLD = 178;
 
     /*
      * The elements we use for noise reduction
      */
     Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3.5, 3.5));
     Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3.5, 3.5));
+
+    public static double DISTANCe = 7.77;
+
+    List<MatOfPoint> contours = new ArrayList<>();
 
     /*
      * Colors
@@ -74,8 +84,8 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
     static final Scalar YELLOW = new Scalar(255, 255, 0);
 
     // Define the color range for filtering
-    public static double H = 90, S = 50, V = 90;
-    Scalar upperBlue = new Scalar(140, 255, 255);
+    public static double H = 100, S = 90, V = 50;
+    Scalar upperBlue = new Scalar(150, 255, 255);
     Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2));
     Mat hsv = new Mat();
     Mat maskedImage = new Mat();
@@ -86,15 +96,44 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat();
 
-    public static int BLUR = 5, UPPER_THRESH = 25, LOWER_THRESH = 0, KERNEL_SIZE = 3;
+    public static int BLUR = 1, CLAHE = 1, UPPER_THRESH = 130, LOWER_THRESH = 130, KERNEL_SIZE = 2;
+    public static double BYPASS_RATIO = 0.1, FCL = 0.7, EPSILON = 0.04, UP_TOLERANCE = 2, DOWN_TOLERANCE = 1.0, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7, PLUS_ULTRA = 0.5,UP_TOLERANCE2 = .3, DOWN_TOLERANCE2 = .3;
+
+    // Prepare object points and image points for solvePnP
+    // Assuming the object is a rectangle with known dimensions
+    double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
+    double objectHeight = 1.5;  // Replace with your object's height in real-world units
+
+    // Define the 3D coordinates of the object corners in the object coordinate space
+    MatOfPoint3f objectPoints = new MatOfPoint3f(
+            new Point3(objectWidth / 2, objectHeight / 2, 0),
+            new Point3(-objectWidth / 2, objectHeight / 2, 0),
+            new Point3(-objectWidth / 2, -objectHeight / 2, 0),
+            new Point3(objectWidth / 2, -objectHeight / 2, 0));
+    MatOfPoint3f objectPoints1 = new MatOfPoint3f(
+            new Point3(-objectWidth / 2, objectHeight / 2, 0),
+            new Point3(-objectWidth / 2, -objectHeight / 2, -1),
+            new Point3(objectWidth / 2, -objectHeight / 2, -1),
+            new Point3(objectWidth / 2, objectHeight / 2, 0));
+    MatOfPoint3f objectPoints2 = new MatOfPoint3f(
+            new Point3(objectWidth / 2, -objectHeight / 2, -1),
+            new Point3(-objectWidth / 2, -objectHeight / 2, 0),
+            new Point3(-objectWidth / 2, objectHeight / 2, 0),
+            new Point3(objectWidth / 2, objectHeight / 2, -1)
+    );
+
+    Point[] orderedRectPoints;
+    Mat rvec = new Mat();
+    Mat tvec = new Mat();
+    MatOfPoint2f imagePoints = new MatOfPoint2f(), contour2f = new MatOfPoint2f(), approx = new MatOfPoint2f();
+    MatOfPoint approxMat;
 
 
     static final int CONTOUR_LINE_THICKNESS = 2;
 
-    double[] center;
+    double[] center = {0, 0, 0};
 
-    static class AnalyzedStone
-    {
+    static class AnalyzedStone {
         double angle;
         String color;
         Mat rvec;
@@ -113,8 +152,7 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
     /*
      * Some stuff to handle returning our various buffers
      */
-    enum Stage
-    {
+    enum Stage {
         FINAL,
         YCrCb,
         MASKS,
@@ -126,17 +164,22 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
 
     // Keep track of what stage the viewport is showing
     int stageNum = 0;
+    RotatedRect minAreaRect;
 
-    public SampleDetectionPipelinePNP()
-    {
+    public SampleDetectionPipelinePNP() {
         // Initialize camera parameters
         // Replace these values with your actual camera calibration parameters
 
         // Focal lengths (fx, fy) and principal point (cx, cy)
-        double fx = 622.001; // Replace with your camera's focal length in pixels
-        double fy = 622.001;
-        double cx = 319.803; // Replace with your camera's principal point x-coordinate (usually image width / 2)
-        double cy = 241.251; // Replace with your camera's principal point y-coordinate (usually image height / 2)
+        // Focals (pixels) - Fx: 396.39 Fy: 396.39
+        //Optical center - Cx: 646.424 Cy: 340.884
+        //Radial distortion (Brown's Model)
+        //K1: 0.00981454 K2: -0.0292495 K3: 0.00489965
+        //P1: -0.000205308 P2: -4.06933e-05
+        double fx = 396.39 * FCL; // Replace with your camera's focal length in pixels
+        double fy = 396.39 * FCL;
+        double cx = 646.424; // Replace with your camera's principal point x-coordinate (usually image width / 2)
+        double cy = 360.884; // Replace with your camera's principal point y-coordinate (usually image height / 2)
 
         cameraMatrix.put(0, 0,
                 fx, 0, cx,
@@ -146,25 +189,26 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
         // Distortion coefficients (k1, k2, p1, p2, k3)
         // If you have calibrated your camera and have these values, use them
         // Otherwise, you can assume zero distortion for simplicity
-        distCoeffs = new MatOfDouble(.1208, -0.261599, 0, 0, 0.10308, 0, 0, 0);
+        distCoeffs = new MatOfDouble(0.00981454, -0.0292495, 0.00489965, -0.000205308, -4.06933e-05);
     }
 
     @Override
-    public void onViewportTapped()
-    {
+    public void onViewportTapped() {
         int nextStageNum = stageNum + 1;
 
-        if(nextStageNum >= stages.length)
-        {
+        if (nextStageNum >= stages.length) {
             nextStageNum = 0;
         }
 
         stageNum = nextStageNum;
     }
 
+    public void resetCenter() {
+        center = new double[]{0, 0, 0};
+    }
+
     @Override
-    public Mat processFrame(Mat input)
-    {
+    public Mat processFrame(Mat input) {
         // Convert the image to HSV
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
@@ -184,27 +228,37 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
 
         // Apply Gaussian blur to the masked image
         Imgproc.GaussianBlur(maskedImage, blurredImage, new Size(BLUR, BLUR), 0);
+        Mat grayBlur = new Mat();
+        Imgproc.cvtColor(blurredImage, grayBlur, Imgproc.COLOR_BGR2GRAY);
+        Mat claheIm = new Mat();
+        CLAHE clahe = Imgproc.createCLAHE();
+        clahe.setClipLimit(CLAHE);
+        clahe.apply(grayBlur, claheIm);
+
 
         edges = new Mat();
         // Apply Canny edge detection
-        Imgproc.Canny(blurredImage, edges, LOWER_THRESH, UPPER_THRESH);
+        Imgproc.Canny(claheIm, edges, LOWER_THRESH, UPPER_THRESH);
 
-        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNEL_SIZE, KERNEL_SIZE));
-        // Morphological close operation
+        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(KERNEL_SIZE, KERNEL_SIZE));
+//        // Morphological close operation
         closedEdges = new Mat();
-        Imgproc.morphologyEx(edges, closedEdges, Imgproc.MORPH_CLOSE, kernel);
+        Imgproc.dilate(edges, closedEdges, kernel);
+        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNEL_SIZE, KERNEL_SIZE));
+        Imgproc.morphologyEx(closedEdges, edges,Imgproc.MORPH_CLOSE, kernel);
 
         // Find contours
-        List<MatOfPoint> contours = new ArrayList<>();
-        hierarchy = new Mat();
+        contours = new ArrayList<>();
         Imgproc.findContours(closedEdges, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-
         boundingImage = input.clone();
 
         // Set acceptable aspect ratio range
-        double minAspectRatio = 3.5/1.5-0.3;
-        double maxAspectRatio = 3.5/1.5+0.3;
-        double minAreaThreshold = 800;  // Minimum area threshold
+        double minAspectRatio = 3.5 / 1.5 - DOWN_TOLERANCE;
+        double maxAspectRatio = 3.5 / 1.5 + UP_TOLERANCE;
+        double minAspectRatio2 = 3.5 / 1.5 - DOWN_TOLERANCE2;
+        double maxAspectRatio2 = 3.5 / 1.5 + UP_TOLERANCE2;
+        double minAreaThreshold = 10000;  // Minimum area threshold
+//        Imgproc.drawContours(boundingImage, contours, -1,new Scalar(255,0,0),2);
 
         // Iterate over contours
         for (MatOfPoint contour : contours) {
@@ -214,326 +268,453 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
             }
 
             // Approximate the contour to a polygon
-            MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
-            MatOfPoint2f approx = new MatOfPoint2f();
-            double epsilon = 0.08 * Imgproc.arcLength(contour2f, true);
+            contour2f = new MatOfPoint2f(contour.toArray());
+            double epsilon = EPSILON * Imgproc.arcLength(contour2f, true);
+            approx = new MatOfPoint2f();
             Imgproc.approxPolyDP(contour2f, approx, epsilon, true);
-            MatOfPoint approxMat = new MatOfPoint(approx.toArray());
+            approxMat = new MatOfPoint(approx.toArray());
+            minAreaRect = Imgproc.minAreaRect(contour2f);
 
             // Check if the approximated contour has 4 points (quadrilateral) and is convex
             if (approx.total() == 4 && Imgproc.isContourConvex(approxMat)) {
-                RotatedRect minAreaRect = Imgproc.minAreaRect(approx);
-                Point[] box = new Point[4];
-                minAreaRect.points(box); // Get the rectangle's corner points
+//                minAreaRect.points(box); // Get the rectangle's corner points
 
                 // Calculate width and height from the rectangle
-                double width = minAreaRect.size.width;
-                double height = minAreaRect.size.height;
+                Point[] orded = orderPoints(approx.toArray());
+                double[] distances = {distance(orded[0], orded[1]), distance(orded[1],orded[2]), distance(orded[0], orded[2])};
+                Arrays.sort(distances);
+                double width = distances[1];
+                double height = distances[0];
+                double expectedD = width*width+height*height;
+                double actD = distances[2]*distances[2];
+
 
                 // Calculate the aspect ratio
                 if (height != 0) {  // Avoid division by zero
-                    double aspectRatio = Math.max(width, height) / Math.min(width, height);
-
+                    double aspectRatio = width/height;
+                    packet.put("aspecticor", aspectRatio);
                     // Check if the aspect ratio is within the specified range
-                    if (minAspectRatio <= aspectRatio && aspectRatio <= maxAspectRatio) {
+                    if (minAspectRatio <= aspectRatio && aspectRatio <= maxAspectRatio && (actD -expectedD)/expectedD<BYPASS_RATIO ) {
                         // Draw the bounding rectangle on the image
                         for (int j = 0; j < 4; j++) {
-                            Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);
+                            Imgproc.line(boundingImage, approx.toArray()[j], approx.toArray()[(j + 1) % 4], new Scalar(0, 255, 0), 2);
                         }
-                        drawTagText(minAreaRect, Double.toString(minAreaRect.angle), boundingImage, "Blue");
-                        // Prepare object points and image points for solvePnP
-                        // Assuming the object is a rectangle with known dimensions
-                        double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
-                        double objectHeight = 1.5;  // Replace with your object's height in real-world units
+                        double rotRectAngle = minAreaRect.angle;
+                        if (minAreaRect.size.width < minAreaRect.size.height) {
+                            rotRectAngle += 90;
+                        }
 
-                        // Define the 3D coordinates of the object corners in the object coordinate space
-                        MatOfPoint3f objectPoints = new MatOfPoint3f(
-                                new Point3(-objectWidth / 2, -objectHeight / 2, 0),
-                                new Point3(objectWidth / 2, -objectHeight / 2, 0),
-                                new Point3(objectWidth / 2, objectHeight / 2, 0),
-                                new Point3(-objectWidth / 2, objectHeight / 2, 0)
-                        );
+                        // Compute the angle and store it
+                        double angle = -(90 + rotRectAngle - 180);
+                        drawTagText(minAreaRect, angle + " deg", boundingImage, "Blue");
 
 
                         // Order the image points in the same order as object points
-                        Point[] orderedRectPoints = orderPoints(approx.toArray());
+                        orderedRectPoints = orderPoints(approx.toArray());
 
-                        MatOfPoint2f imagePoints = new MatOfPoint2f(orderedRectPoints);
 
                         // Solve PnP
-                        Mat rvec = new Mat();
-                        Mat tvec = new Mat();
+//                        rvec = new Mat();
+//                        tvec = new Mat();
+
+                        MatOfPoint3f rlObjectPoints = new MatOfPoint3f();
+                        int classify = 0;
+                        if(aspectRatio<3.5/1.5 - CLASSDOWN_TOL){
+                            classify = 1;
+                        }
+                        else if(aspectRatio>3.5/1.5+CLASSUP_TOL){
+                            classify =2;
+                        }
+                        if(classify==2){
+                            rlObjectPoints = objectPoints2;
+                        }
+                        else if (classify==1){
+                            rlObjectPoints = objectPoints1;
+                        }
+                        else{
+                            rlObjectPoints = objectPoints;
+                            orderedRectPoints = orderCorner(orderedRectPoints);
+                        }
+                        imagePoints = new MatOfPoint2f(orderedRectPoints);
 
                         boolean success = Calib3d.solvePnP(
-                                objectPoints, // Object points in 3D
+                                rlObjectPoints, // Object points in 3D
                                 imagePoints,  // Corresponding image points
                                 cameraMatrix,
                                 distCoeffs,
                                 rvec,
                                 tvec
                         );
-                        if(success){
+                        if (success) {
                             double[] coords = new double[3];
                             tvec.get(0, 0, coords);
-                            this.center[0] = coords[0];
+                            tvec.get(0,0, coords);
                             this.center[1] = coords[1];
                             this.center[2] = coords[2];
-                            drawTagText(minAreaRect, (this.center[0]+","+this.center[1]+","+this.center[2]), boundingImage, "Blue");
+//                            double expectH = DISTANCe;
+//                            if(classify != 0){
+//                                expectH += PLUS_ULTRA;
+//                            }
+//                            double consta = expectH/ coords[2];
+                            double consta = 1;
+                            center[0] = coords[0] * consta;
+                            center[1] = coords[1] * consta;
+                            center[2] = coords[2] * consta;
+
+                            packet.put("CAM X", coords[0]);
+                            packet.put("CAM y", coords[1]);
+                            packet.put("CAM Z", coords[2]);
+                            packet.put("classif", classify);
+                            packet.put("aspectRatio", aspectRatio);
+                            packet.put("area", Imgproc.contourArea(contour));
+
+//                            drawTagText(minAreaRect, (test), boundingImage, "Red");
 
                         }
+                        else{
+                        }
+                        break;
+                    }
+                }
+            }
+            else if(minAreaRect.size.width!=0 && minAreaRect.size.height!= 0 && Imgproc.contourArea(contour)/(minAreaRect.size.height*minAreaRect.size.width)>1){
+// Calculate width and height from the rectangle
+                Point[] box = new Point[4];
+                minAreaRect.points(box);
+                Point[] orded = orderPoints(box);
+                double[] distances = {distance(orded[0], orded[1]), distance(orded[1],orded[2]), distance(orded[0], orded[2])};
+                Arrays.sort(distances);
+                double width = distances[1];
+                double height = distances[0];
 
+                // Calculate the aspect ratio
+                if (height != 0) {  // Avoid division by zero
+                    double aspectRatio = width/height;
+
+                    // Check if the aspect ratio is within the specified range
+                    if (minAspectRatio2 <= aspectRatio && aspectRatio <= maxAspectRatio2) {
+                        // Draw the bounding rectangle on the image
+                        for (int j = 0; j < 4; j++) {
+                            Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);
+                        }
+                        double rotRectAngle = minAreaRect.angle;
+                        if (minAreaRect.size.width < minAreaRect.size.height) {
+                            rotRectAngle += 90;
+                        }
+
+                        // Compute the angle and store it
+                        double angle = -(90 + rotRectAngle - 180);
+                        drawTagText(minAreaRect, angle + " deg", boundingImage, "Blue");
+
+
+                        // Order the image points in the same order as object points
+                        orderedRectPoints = orderPoints(box);
+
+
+                        // Solve PnP
+//                        rvec = new Mat();
+//                        tvec = new Mat();
+
+                        MatOfPoint3f rlObjectPoints = new MatOfPoint3f();
+                        int classify = 0;
+                        if(aspectRatio<3.5/1.5 - CLASSDOWN_TOL){
+                            classify = 1;
+                        }
+                        else if(aspectRatio>3.5/1.5+CLASSUP_TOL){
+                            classify =2;
+                        }
+                        if(classify==2){
+                            rlObjectPoints = objectPoints2;
+                        }
+                        else if (classify==1){
+                            rlObjectPoints = objectPoints1;
+                        }
+                        else{
+                            rlObjectPoints = objectPoints;
+                            orderedRectPoints = orderCorner(orderedRectPoints);
+                        }
+                        imagePoints = new MatOfPoint2f(orderedRectPoints);
+
+                        boolean success = Calib3d.solvePnP(
+                                rlObjectPoints, // Object points in 3D
+                                imagePoints,  // Corresponding image points
+                                cameraMatrix,
+                                distCoeffs,
+                                rvec,
+                                tvec
+                        );
+                        if (success) {
+                            double[] coords = new double[3];
+                            tvec.get(0, 0, coords);
+                            tvec.get(0,0, coords);
+                            this.center[1] = coords[1];
+                            this.center[2] = coords[2];
+//                            double expectH = DISTANCe;
+//                            if(classify != 0){
+//                                expectH += PLUS_ULTRA;
+//                            }
+//                            double consta = expectH/ coords[2];
+                            double consta = 1;
+                            center[0] = coords[0] * consta;
+                            center[1] = coords[1] * consta;
+                            center[2] = coords[2] * consta;
+
+                            packet.put("CAM X", coords[0]);
+                            packet.put("CAM y", coords[1]);
+                            packet.put("CAM Z", coords[2]);
+                            packet.put("classif", classify);
+                            packet.put("aspectRatio", aspectRatio);
+                            packet.put("area", Imgproc.contourArea(contour));
+
+//                            drawTagText(minAreaRect, (test), boundingImage, "Red");
+
+                        }
+                        else{
+                        }
                         break;
                     }
                 }
             }
         }
+//        contours.clear();
 //        input.release();
 //        hsv.release();
-        if(retVal==0){
+//        boundingImage.release();
+//        mask.release();
+//        edges.release();
+//        blurredImage.release();
+//        hsv.release();
+//        input.release();
+        if (retVal == 0) {
             return boundingImage;
-        }
-        else if(retVal ==1){
+        } else if (retVal == 1) {
             return mask;
-        }
-        else if(retVal ==2){
+        } else if (retVal == 2) {
             return blurredImage;
-        }
-        else if(retVal ==3){
+        } else if (retVal == 3) {
             return edges;
-        }
-        else if(retVal == 4){
+        } else if (retVal == 4) {
             return closedEdges;
+        }
+        else if(retVal == 5){
+            return input;
         }
         return boundingImage;
     }
 
-    public ArrayList<AnalyzedStone> getDetectedStones()
-    {
-        return clientStoneList;
-    }
 
-    void findContours(Mat input)
-    {
-        // Convert the input image to YCrCb color space
-        Imgproc.cvtColor(input, ycrcbMat, Imgproc.COLOR_RGB2YCrCb);
-
-        // Extract the Cb channel for blue detection
-        Core.extractChannel(ycrcbMat, cbMat, 2); // Cb channel index is 2
-
-        // Extract the Cr channel for red detection
-        Core.extractChannel(ycrcbMat, crMat, 1); // Cr channel index is 1
-
-        // Threshold the Cb channel to form a mask for blue
-        Imgproc.threshold(cbMat, blueThresholdMat, BLUE_MASK_THRESHOLD, 255, Imgproc.THRESH_BINARY);
-
-        // Threshold the Cr channel to form a mask for red
-        Imgproc.threshold(crMat, redThresholdMat, RED_MASK_THRESHOLD, 255, Imgproc.THRESH_BINARY);
-
-        // Threshold the Cb channel to form a mask for yellow
-        Imgproc.threshold(cbMat, yellowThresholdMat, YELLOW_MASK_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
-        morphMask(blueThresholdMat, morphedBlueThreshold);
+    // Thresholds for noise handling
+    public static double DISTANCE_THRESHOLD = 15.0; // Adjust based on your needs
+    public static double SLOPE_THRESHOLD = 0.08; // Adjust for slope similarity
 
 
-        Imgproc.Canny(input,blueEdgeMat, threshold1,threshold2);
-        Imgproc.Canny(redThresholdMat,redEdgeMat, 75,175);
-        Imgproc.Canny(yellowThresholdMat,yellowEdgeMat, 75,175);
-
-
-        // Apply morphology to the masks
-        morphMask(blueEdgeMat, morphedBlueThreshold);
-        morphMask(redEdgeMat, morphedRedThreshold);
-        morphMask(yellowEdgeMat, morphedYellowThreshold);
-
-        // Find contours in the masks
-        ArrayList<MatOfPoint> blueContoursList = new ArrayList<>();
-        Imgproc.findContours(morphedBlueThreshold, blueContoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_NONE);
-
-        Imgproc.drawContours(blueEdgeMat, blueContoursList, -1, new Scalar (0, 255, 0), 2);
-
-        ArrayList<MatOfPoint> redContoursList = new ArrayList<>();
-        Imgproc.findContours(morphedRedThreshold, redContoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_NONE);
-
-        ArrayList<MatOfPoint> yellowContoursList = new ArrayList<>();
-        Imgproc.findContours(morphedYellowThreshold, yellowContoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_NONE);
-
-        // Now analyze the contours
-        int contourNum = 0;
-        for(MatOfPoint contour : blueContoursList)
-        {
-            analyzeContour(contour, input, "Blue", contourNum);
-            contourNum++;
+    public int classifyShape(Point[] points) {
+        if (points.length != 4) {
+            throw new IllegalArgumentException("Exactly four points are required.");
         }
-        contourNum = 0;
-        for(MatOfPoint contour : redContoursList)
-        {
-            analyzeContour(contour, input, "Red",contourNum);
-            contourNum++;
-        }
-        contourNum = 0;
-        for(MatOfPoint contour : yellowContoursList)
-        {
-            analyzeContour(contour, input, "Yellow",contourNum);
-            contourNum++;
-        }
-    }
 
-    void morphMask(Mat input, Mat output)
-    {
-        /*
-         * Apply some erosion and dilation for noise reduction
-         */
+        // Sort points in counter-clockwise order
+        points = orderPoints(points);
 
-        Imgproc.erode(input, output, erodeElement);
-        Imgproc.erode(output, output, erodeElement);
+        // Now points are ordered as A, B, C, D
+        Point A = points[0];
+        Point B = points[1];
+        Point C = points[2];
+        Point D = points[3];
 
-        Imgproc.dilate(output, output, dilateElement);
-        Imgproc.dilate(output, output, dilateElement);
-    }
+        // Calculate distances
+        double AB = distance(A, B);
+        double BC = distance(B, C);
+        double CD = distance(C, D);
+        double DA = distance(D, A);
 
-    void analyzeContour(MatOfPoint contour, Mat input, String color, int contourNum)
-    {
-        // Transform the contour to a different format
-        Point[] points = contour.toArray();
-        MatOfPoint2f contour2f = new MatOfPoint2f(points);
+        // Check for parallelogram
+//        if (Math.abs(AB - CD) < DISTANCE_THRESHOLD && Math.abs(DA - BC) < DISTANCE_THRESHOLD) {
+//            return 0;
+//        }
 
-        double epsilon = .02*Imgproc.arcLength(contour2f, true);
-        MatOfPoint2f approx = new MatOfPoint2f();
+        // Calculate slopes
+        Double slopeAB = calculateSlope(A, B);
+        Double slopeCD = calculateSlope(C, D);
+        Double slopeAD = calculateSlope(A, D);
+        Double slopeBC = calculateSlope(B, C);
 
-        Imgproc.approxPolyDP(contour2f, approx, epsilon, true);
-        if(approx.total()==4) {
-            // Do a rect fit to the contour, and draw it on the screen
-            RotatedRect rotatedRectFitToContour = Imgproc.minAreaRect(contour2f);
-            drawRotatedRect(approx, input, color);
+        // Check if AB and CD are parallel
+        boolean isParallelAB_CD = slopeAB != null && slopeCD != null && Math.abs(slopeAB - slopeCD) < SLOPE_THRESHOLD;
 
-            // The angle OpenCV gives us can be ambiguous, so look at the shape of
-            // the rectangle to fix that.
-            double rotRectAngle = rotatedRectFitToContour.angle;
-            if (rotatedRectFitToContour.size.width < rotatedRectFitToContour.size.height) {
-                rotRectAngle += 90;
-            }
+        // Check if AD and BC are parallel
+        boolean isParallelAD_BC = slopeAD != null && slopeBC != null && Math.abs(slopeAD - slopeBC) < SLOPE_THRESHOLD;
 
-            // Compute the angle and store it
-            double angle = -(rotRectAngle - 180);
-            drawTagText(rotatedRectFitToContour, Integer.toString(contourNum) + " deg", input, color);
-
-            // Prepare object points and image points for solvePnP
-            // Assuming the object is a rectangle with known dimensions
-            double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
-            double objectHeight = 1.5;  // Replace with your object's height in real-world units
-
-            // Define the 3D coordinates of the object corners in the object coordinate space
-            MatOfPoint3f objectPoints = new MatOfPoint3f(
-                    new Point3(-objectWidth / 2, -objectHeight / 2, 0),
-                    new Point3(objectWidth / 2, -objectHeight / 2, 0),
-                    new Point3(objectWidth / 2, objectHeight / 2, 0),
-                    new Point3(-objectWidth / 2, objectHeight / 2, 0)
-            );
-
-            // Get the 2D image points from the detected rectangle corners
-            Point[] rectPoints = new Point[4];
-            rotatedRectFitToContour.points(rectPoints);
-
-            // Order the image points in the same order as object points
-            Point[] orderedRectPoints = orderPoints(approx.toArray());
-
-            MatOfPoint2f imagePoints = new MatOfPoint2f(orderedRectPoints);
-
-            // Solve PnP
-            Mat rvec = new Mat();
-            Mat tvec = new Mat();
-
-            boolean success = Calib3d.solvePnP(
-                    objectPoints, // Object points in 3D
-                    imagePoints,  // Corresponding image points
-                    cameraMatrix,
-                    distCoeffs,
-                    rvec,
-                    tvec
-            );
-
-            if (success) {
-                // Draw the coordinate axes on the image
-                drawAxis(input, rvec, tvec, cameraMatrix, distCoeffs);
-
-                // Store the pose information
-                AnalyzedStone analyzedStone = new AnalyzedStone();
-                analyzedStone.angle = rotRectAngle;
-                analyzedStone.color = color;
-                analyzedStone.rvec = rvec;
-                analyzedStone.tvec = tvec;
-                internalStoneList.add(analyzedStone);
+        if (!isParallelAB_CD) {
+            // Determine which is the long side
+            if (AB > BC) {
+                return 2; // AB is the long side, top left bottom right
+            } else {
+                return 1; // CD is the long side, top front bottom back
             }
         }
+        if (!isParallelAD_BC) {
+            // Determine which is the long side
+            if (AB > BC) {
+                return 1; // AB is the long side, top left bottom right
+            } else {
+                return 2; // CD is the long side, top front bottom back
+            }
+        }
+
+        return 0;
     }
 
-    void drawAxis(Mat img, Mat rvec, Mat tvec, Mat cameraMatrix, MatOfDouble distCoeffs)
-    {
-        // Length of the axis lines
-        double axisLength = 5.0;
-
-        // Define the points in 3D space for the axes
-        MatOfPoint3f axisPoints = new MatOfPoint3f(
-                new Point3(0, 0, 0),
-                new Point3(axisLength, 0, 0),
-                new Point3(0, axisLength, 0),
-                new Point3(0, 0, -axisLength) // Z axis pointing away from the camera
-        );
-
-        // Project the 3D points to 2D image points
-        MatOfPoint2f imagePoints = new MatOfPoint2f();
-        Calib3d.projectPoints(axisPoints, rvec, tvec, cameraMatrix, distCoeffs, imagePoints);
-
-        Point[] imgPts = imagePoints.toArray();
-
-        // Draw the axis lines
-        Imgproc.line(img, imgPts[0], imgPts[1], new Scalar(0, 0, 255), 2); // X axis in red
-        Imgproc.line(img, imgPts[0], imgPts[2], new Scalar(0, 255, 0), 2); // Y axis in green
-        Imgproc.line(img, imgPts[0], imgPts[3], new Scalar(255, 0, 0), 2); // Z axis in blue
+    private static double distance(Point p1, Point p2) {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
     }
 
-    static Point[] orderPoints(Point[] pts)
-    {
-        // Orders the array of 4 points in the order: top-left, top-right, bottom-right, bottom-left
+    private static Double calculateSlope(Point p1, Point p2) {
+        if (p2.x == p1.x) {
+            return null; // Vertical line, slope is undefined
+        }
+        return (double) (p2.y - p1.y) / (p2.x - p1.x);
+    }
+    public static Point[] orderCorner(Point[] pts){
+        if (pts.length != 4) {
+            throw new IllegalArgumentException("Exactly four points are required.");
+        }
+        Point[] sortedByDistance={pts[0], null, null};
+        double d1 = distance(pts[0],pts[1]);
+        double d2 = distance(pts[0], pts[2]);
+        double d3 = distance(pts[0], pts[3]);
         Point[] orderedPts = new Point[4];
-
-        // Sum and difference of x and y coordinates
-        double[] sum = new double[4];
-        double[] diff = new double[4];
-
-        for (int i = 0; i < 4; i++)
-        {
-            sum[i] = pts[i].x + pts[i].y;
-            diff[i] = pts[i].y - pts[i].x;
+        if(d1<d2 && d1 < d3){
+            //  3 0 1 2, 3 1 0 2, 2 1 0 3, 2 0 1 3
+            int[] shorts = {0,1};
+            int[] longs = {2,3};
+            if(isCC(pts[longs[0]], pts[shorts[0]],pts[shorts[1]],pts[longs[1]])){
+                orderedPts = new Point[]{pts[longs[0]],pts[shorts[0]], pts[shorts[1]], pts[longs[1]]};
+            }
+            else if(isCC(pts[longs[1]], pts[shorts[0]],pts[shorts[1]],pts[longs[0]])){
+                orderedPts = new Point[]{pts[longs[1]],pts[shorts[0]], pts[shorts[1]], pts[longs[0]]};
+            }
+            else if(isCC(pts[longs[0]], pts[shorts[1]],pts[shorts[0]],pts[longs[1]])){
+                orderedPts = new Point[]{pts[longs[0]],pts[shorts[1]], pts[shorts[0]], pts[longs[1]]};
+            }
+            else {
+                orderedPts = new Point[]{pts[longs[1]],pts[shorts[1]], pts[shorts[0]], pts[longs[0]]};
+            }
+        }
+        else if (d2<d3) {
+            int[] shorts = {0,2};
+            int[] longs = {1,3};
+            if(isCC(pts[longs[0]], pts[shorts[0]],pts[shorts[1]],pts[longs[1]])){
+                orderedPts = new Point[]{pts[longs[0]],pts[shorts[0]], pts[shorts[1]], pts[longs[1]]};
+            }
+            else if(isCC(pts[longs[1]], pts[shorts[0]],pts[shorts[1]],pts[longs[0]])){
+                orderedPts = new Point[]{pts[longs[1]],pts[shorts[0]], pts[shorts[1]], pts[longs[0]]};
+            }
+            else if(isCC(pts[longs[0]], pts[shorts[1]],pts[shorts[0]],pts[longs[1]])){
+                orderedPts = new Point[]{pts[longs[0]],pts[shorts[1]], pts[shorts[0]], pts[longs[1]]};
+            }
+            else {
+                orderedPts = new Point[]{pts[longs[1]],pts[shorts[1]], pts[shorts[0]], pts[longs[0]]};
+            }
+        }
+        else {
+            int[] shorts = {0,3};
+            int[] longs = {1,2};
+            if(isCC(pts[longs[0]], pts[shorts[0]],pts[shorts[1]],pts[longs[1]])){
+                orderedPts = new Point[]{pts[longs[0]],pts[shorts[0]], pts[shorts[1]], pts[longs[1]]};
+            }
+            else if(isCC(pts[longs[1]], pts[shorts[0]],pts[shorts[1]],pts[longs[0]])){
+                orderedPts = new Point[]{pts[longs[1]],pts[shorts[0]], pts[shorts[1]], pts[longs[0]]};
+            }
+            else if(isCC(pts[longs[0]], pts[shorts[1]],pts[shorts[0]],pts[longs[1]])){
+                orderedPts = new Point[]{pts[longs[0]],pts[shorts[1]], pts[shorts[0]], pts[longs[1]]};
+            }
+            else {
+                orderedPts = new Point[]{pts[longs[1]],pts[shorts[1]], pts[shorts[0]], pts[longs[0]]};
+            }
         }
 
-        // Top-left point has the smallest sum
-        int tlIndex = indexOfMin(sum);
-        orderedPts[0] = pts[tlIndex];
-
-        // Bottom-right point has the largest sum
-        int brIndex = indexOfMax(sum);
-        orderedPts[2] = pts[brIndex];
-
-        // Top-right point has the smallest difference
-        int trIndex = indexOfMin(diff);
-        orderedPts[1] = pts[trIndex];
-
-        // Bottom-left point has the largest difference
-        int blIndex = indexOfMax(diff);
-        orderedPts[3] = pts[blIndex];
 
         return orderedPts;
     }
 
-    static int indexOfMin(double[] array)
-    {
+    public static Point[] orderPoints(Point[] pts) {
+        if (pts.length != 4) {
+            throw new IllegalArgumentException("Exactly four points are required.");
+        }
+
+        // Calculate the center of the frame
+        double centerX = 640;
+        double centerY =360;
+        Point center = new Point((int) centerX, (int) centerY);
+
+        // Calculate distances from each point to the center
+        double[] distances = new double[4];
+        for (int i = 0; i < 4; i++) {
+            distances[i] = distance(center, pts[i]);
+        }
+
+        // Sort points by proximity to center
+        Point[] sortedByDistance = Arrays.copyOf(pts, 4);
+        Arrays.sort(sortedByDistance, Comparator.comparingDouble(p -> distance(center, p)));
+
+        // Start with the two closest points
+        Point[] orderedPts = new Point[4];
+        orderedPts[0] = sortedByDistance[0]; // Closest point
+        orderedPts[1] = sortedByDistance[1]; // Second closest point
+
+        // Remaining points
+        Point thirdPoint = sortedByDistance[2];
+        Point fourthPoint = sortedByDistance[3];
+
+        // Determine the order of the remaining points in clockwise manner
+        if (isCC(thirdPoint, orderedPts[0], orderedPts[1],fourthPoint)) {
+            orderedPts = new Point[]{thirdPoint, orderedPts[0], orderedPts[1],fourthPoint};
+        } else if(isCC(thirdPoint, orderedPts[1],orderedPts[0], fourthPoint)) {
+            orderedPts = new Point[]{thirdPoint, orderedPts[1],orderedPts[0], fourthPoint};
+
+        } else if(isCC(fourthPoint, orderedPts[1],orderedPts[0], thirdPoint)) {
+            orderedPts = new Point[]{fourthPoint, orderedPts[1],orderedPts[0], thirdPoint};
+
+        }
+        else{
+            orderedPts = new Point[]{fourthPoint, orderedPts[0],orderedPts[1], thirdPoint};
+
+        }
+
+        return orderedPts;
+    }
+
+    // Helper method to determine if three points are in clockwise order
+//    public static boolean isCC(Point pt1, Point pt2, Point pt3, Point pt4) {
+//        Point[] pts = new Point[] { pt1, pt2, pt3, pt4};
+//        // Calculate the signed area using the shoelace formula
+//        double area = 0;
+//        for (int i = 0; i < 4; i++) {
+//            Point p1 = pts[i];
+//            Point p2 = pts[(i + 1) % 4]; // Wrap around using modulus
+//            area += (p2.x - p1.x) * (p2.y + p1.y);
+//        }
+//
+//        return area > 0; // Positive area indicates counterclockwise order
+//    }
+    public static boolean isCC(Point p1, Point p2, Point p3, Point p4) {
+        return isCCW(p1, p2, p3) && isCCW(p1, p3, p4) &&
+                isCCW(p2, p3, p4) && isCCW(p1, p2, p4);
+    }
+
+    private static boolean isCCW(Point a, Point b, Point c) {
+        // Calculate the cross product of vector AB and AC
+        double crossProduct = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+        return crossProduct > 0; // Returns true if the points are in counter-clockwise order
+    }
+
+    static int indexOfMin(double[] array) {
         int index = 0;
         double min = array[0];
 
-        for (int i = 1; i < array.length; i++)
-        {
-            if (array[i] < min)
-            {
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] < min) {
                 min = array[i];
                 index = i;
             }
@@ -541,15 +722,12 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
         return index;
     }
 
-    static int indexOfMax(double[] array)
-    {
+    static int indexOfMax(double[] array) {
         int index = 0;
         double max = array[0];
 
-        for (int i = 1; i < array.length; i++)
-        {
-            if (array[i] > max)
-            {
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > max) {
                 max = array[i];
                 index = i;
             }
@@ -557,8 +735,7 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
         return index;
     }
 
-    static void drawTagText(RotatedRect rect, String text, Mat mat, String color)
-    {
+    static void drawTagText(RotatedRect rect, String text, Mat mat, String color) {
         Scalar colorScalar = getColorScalar(color);
 
         Imgproc.putText(
@@ -573,8 +750,7 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
                 1); // Font thickness
     }
 
-    static void drawRotatedRect(MatOfPoint2f approx, Mat drawOn, String color)
-    {
+    static void drawRotatedRect(MatOfPoint2f approx, Mat drawOn, String color) {
         Point[] points2f = approx.toArray();
         Point[] points = new Point[points2f.length];
 
@@ -607,14 +783,13 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline
 //            Imgproc.line(drawOn, points[i], points[(i + 1) % 4], colorScalar, 2);
 //        }
     }
-    public double[] getCenter(){
+
+    public double[] getCenter() {
         return center;
     }
 
-    static Scalar getColorScalar(String color)
-    {
-        switch (color)
-        {
+    static Scalar getColorScalar(String color) {
+        switch (color) {
             case "Blue":
                 return BLUE;
             case "Yellow":

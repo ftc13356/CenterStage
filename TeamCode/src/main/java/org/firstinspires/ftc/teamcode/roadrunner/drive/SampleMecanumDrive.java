@@ -94,7 +94,7 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0.0, 0.5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, .1);
 
     public static double LATERAL_MULTIPLIER = 1.2, NEW_WEIGHT=1.2, NEW_COEFF=0.19;
     public static double imuMultiply = 1.0132,fishMoley = 1.0, IMU_INTERVAL = 10000, funnyIMUOffset =2.5;
@@ -237,13 +237,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+            setLocalizer(new OTOSLocalizer(hardwareMap));
         } else if (trackType == Tracker.TrackType.ROADRUN_IMU_LEFT) {
             setLocalizer(new TwoWheelTrackingLocalizerLeft(hardwareMap, this));
         } else if (trackType == Tracker.TrackType.ROADRUN_IMU_RIGHT) {
             setLocalizer(new TwoWheelTrackingLocalizerRight(hardwareMap, this));
         } else {
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+            setLocalizer(new OTOSLocalizer(hardwareMap));
         }
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);

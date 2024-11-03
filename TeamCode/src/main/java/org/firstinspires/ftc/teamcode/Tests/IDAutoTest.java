@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -64,6 +66,7 @@ public class IDAutoTest extends LinearOpMode {
             loops++;
             robot.update();
             queuer.setFirstLoop(false);
+            packet.put("errah", new Pose2d(-32,-52.5, toRadians(-90)).minus(currentPose).toString());
             roadrun.update();
         }
     }

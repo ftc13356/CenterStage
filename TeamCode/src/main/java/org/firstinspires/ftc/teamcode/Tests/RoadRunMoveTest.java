@@ -37,9 +37,11 @@ public class RoadRunMoveTest extends LinearOpMode {
         Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         roadrun.setPoseEstimate(startPose);
+        roadrun.setPoseEstimate(startPose);
         queuer = new Queuer();
         int loops = 0;
-
+        roadrun.update();
+        robot.update();
         waitForStart();
         if (isStopRequested()) return;
         TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))

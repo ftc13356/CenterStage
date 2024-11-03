@@ -13,24 +13,45 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 @Autonomous
 public class SamplePnpTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BradBot robot = new BradBot(this, false, false);
+//        BradBot robot = new BradBot(this, false, false);
+//        robot.roadrun.setPoseEstimate(new Pose2d(0,0,0));
+        BasicRobot robot = new BasicRobot(this,false);
+        currentPose = new Pose2d(0,0,0);
         CameraInit cam = new CameraInit(true, this);
         cam.startStreamin();
         double lastTime = 0;
+        int buhs = 0;
+        double bps = 0;
+
         waitForStart();
+        resetRuntime();
         while(opModeIsActive()&&!isStopRequested()){
-//            packet.put("center", cam.getCenter());
-//            if(BasicRobot.time>lastTime+5) {
-//                robot.roadrun.followTrajectory(robot.roadrun.trajectoryBuilder(currentPose)
-//                        .lineTo(currentPose.vec().plus(new Vector2d(cam.getCenter()[0], cam.getCenter()[1]))).build());
+//            if(getRuntime()>lastTime+5 && !Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
+//                if(new Vector2d(cam.getCenter()[0], cam.getCenter()[1]).norm()>1) {
+//                    robot.roadrun.followTrajectoryAsync(robot.roadrun.trajectoryBuilder(currentPose)
+//                            .lineTo(currentPose.vec().plus(new Vector2d(cam.getCenter()[0], -cam.getCenter()[1]))).build());
+//                                    packet.put("TARGET", currentPose.vec().plus(new Vector2d(cam.getCenter()[0], -cam.getCenter()[1])));
+//                    cam.pnp.resetCenter();
+//                    lastTime = getRuntime();
+//                }
 //            }
-//            robot.update();
-//            robot.queuer.setFirstLoop(false);
+            if(!Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
+                BasicRobot.time = getRuntime();
+                packet.put("TARGET", currentPose.vec().plus(new Vector2d(cam.getCenter()[0], -cam.getCenter()[1])));
+                buhs++;
+                packet.put("BUHPERSEC(BPS)", buhs/BasicRobot.time);
+                cam.pnp.resetCenter();
+                dashboard.sendTelemetryPacket(packet);
+                packet.clearLines();
+            }
         }
 
         stop();
