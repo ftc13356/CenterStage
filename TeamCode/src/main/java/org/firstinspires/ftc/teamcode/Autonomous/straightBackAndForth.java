@@ -7,11 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class straightBackAndForth extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        straightBackAndForthUtil copy;
-        copy = new straightBackAndForthUtil(this);
+        SBAF robot;
+        robot = new SBAF(this);
         waitForStart();
         while(!isStopRequested() && opModeIsActive()){
-            copy.setBackdropGoalPose();
+            robot.setBackdropGoalPose();
+            robot.buildPaths();
+            robot.update(); //this might just constantly switch between forward and backward, since idk if followPath follows the path till the very end or it just sets the robot along the path
         }
+
     }
 }
