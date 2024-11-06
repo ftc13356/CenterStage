@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
@@ -13,6 +14,8 @@ public class straightBackForthQueuer extends LinearOpMode {
     PathChain square;
     double distance = 12;
 
+    private Follower follower;
+
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
@@ -21,9 +24,10 @@ public class straightBackForthQueuer extends LinearOpMode {
 
         waitForStart();
         if(isStopRequested()) return;
-        square = new PathChain(new BezierCurve(
+        square = follower.pathBuilder((new BezierCurve(
                 new Point(0,0, Point.CARTESIAN),
                 new Point(-21.5, 0, Point.CARTESIAN),
-                new Point(-13.75, 57.75, Point.CARTESIAN), new Point(0, 57.75, Point.CARTESIAN)));
+                new Point(-13.75, 57.75, Point.CARTESIAN), new Point(0, 57.75, Point.CARTESIAN)))
+                .buildPath();
     }
 }
