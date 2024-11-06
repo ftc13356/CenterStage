@@ -13,13 +13,14 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 public class SBAF {
     private Telemetry telemetryA;
+
     public static double distance = 24;
     private String navigation = "forward";
     private Follower follower;
     private Path forward, backward;
     private Boolean forwardStatus, backwardStatus;
 
-    private Pose endPose;
+    private Pose forwardEndPose, backwardEndPose;
 
     public LinearOpMode op;
 
@@ -28,70 +29,77 @@ public class SBAF {
         follower = new Follower(op.hardwareMap);
     }
 
+
     public void hmph () {
-        forward = new Path(new BezierCurve(new Point(0,0,Point.CARTESIAN), new Point(0,distance, Point.CARTESIAN)));
+        forward = new Path(new BezierCurve(
+                new Point(0,0,Point.CARTESIAN),
+                new Point(distance,0, Point.CARTESIAN)));
         follower.followPath(forward);
     }
-    /*
+
+    public void help () {
+        if(!follower.atParametricEnd()){
+            follower.update();
+        }
+        telemetryA.addData("what", navigation);
+    }
 
 
     public void setBackdropGoalPose() {
-            switch (navigation){
-                default:
-                case "forward":
-                    endPose = new Pose(distance, 0, Point.CARTESIAN);
-                    break;
-                case "backward":
-                    endPose = new Pose(-distance, 0, Point.CARTESIAN);
-                    break;
-            }
+        forwardEndPose = new Pose(distance, 0, Point.CARTESIAN);
+
+        backwardEndPose = new Pose(-distance, 0, Point.CARTESIAN);
+
+
         }
 
     public void buildPaths(){
-        switch(navigation){
-            default:
-            case "forward":
                 forward = new Path(new BezierLine(
                         new Point(0,0,Point.CARTESIAN),
-                        new Point(endPose.getX(), endPose.getY(), Point.CARTESIAN))); //convert this to use buildPaths() and do 0,0, endPose, 0,0
+                        new Point(forwardEndPose.getX(), forwardEndPose.getY(), Point.CARTESIAN))); //convert this to use buildPaths() and do 0,0, endPose, 0,0
                 forward.setConstantHeadingInterpolation(0);
-                break;
-            case "backward":
+
                 backward = new Path(new BezierLine(
                         new Point(0,0, Point.CARTESIAN),
-                        new Point(endPose.getX(), endPose.getY(), Point.CARTESIAN)));//convert this to use buildPaths() and do 0,0, endPose, 0,0
+                        new Point(backwardEndPose.getX(), backwardEndPose.getY(), Point.CARTESIAN)));//convert this to use buildPaths() and do 0,0, endPose, 0,0
                 backward.setConstantHeadingInterpolation(0);
-                break;
-        }
+
+
     }
 
-    public void update() {
+    public void updateFollower() {
         telemetryA.addData("direction", navigation);
-        telemetryA.addData("running", forwardStatus);
+        follower.update(); //Updates path
         switch(navigation){
             default:
             case "forward":
+                telemetryA.addData("not running", forwardStatus);
                 follower.followPath(forward);
-                setNavigation("backward");
                 forwardStatus = follower.atParametricEnd();
-                setStatus(forwardStatus);
+                setStatus(navigation, forwardStatus);
+                if(forwardStatus){
+                    setNavigation("backward");
+                }
                 break;
             case "backward":
+                telemetryA.addData("not running", backwardStatus);
                 follower.followPath(backward);
-                setNavigation("forward");
                 backwardStatus = follower.atParametricEnd();
-                setStatus(backwardStatus);
+                setStatus(navigation, backwardStatus);
+                if(backwardStatus){
+                    setNavigation("forward");
+                }
                 break;
         }
     }
 
     public void setNavigation(String pathNavigation){
         navigation = pathNavigation;
-        update();
+        updateFollower();
     }
 
-    public void setStatus(Boolean pathStatus){
-        switch(navigation){
+    public void setStatus(String Navigation, Boolean pathStatus){
+        switch(Navigation){
             default:
             case "forward":
                 forwardStatus = pathStatus;
@@ -99,6 +107,5 @@ public class SBAF {
             case "backward":
                 backwardStatus = pathStatus;
         }
-    }*/
-
+    }
 }

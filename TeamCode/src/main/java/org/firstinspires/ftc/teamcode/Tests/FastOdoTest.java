@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 //@Disabled
 @Autonomous
 public class FastOdoTest extends LinearOpMode {
-    Queuer queuer;
+        Queuer queuer;
     SampleMecanumDrive roadrun;
 
     @Override
