@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
 
 @Config
 public class SBAF extends BasicRobot {
-    public static double distance = 5;
+    public static double distance = 12;
     private String navigation = "forward";
 
     private DashboardPoseTracker dashboardPoseTracker;
@@ -26,7 +26,7 @@ public class SBAF extends BasicRobot {
     private Telemetry telemetryA;
     private Follower follower;
     private Path forward, backward;
-    private Boolean forwardStatus, backwardStatus, firstRun;
+    private Boolean forwardStatus, backwardStatus;
     private Pose forwardEndPose, backwardEndPose;
     public LinearOpMode op;
 

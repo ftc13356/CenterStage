@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
@@ -19,8 +20,24 @@ public class straightBackForthQueuer extends LinearOpMode {
     Queuer queuer;
     PathChain square;
     double distance = 12;
+    private String navigation = "forward";
 
     private Follower follower;
+    private PathChain trajSeq2;
+    private Pose forwardEndPose, backwardEndPose;
+
+    public void setBackdropGoalPose() {
+        forwardEndPose = new Pose(distance, 0, Point.CARTESIAN);
+        backwardEndPose = new Pose(-distance, 0, Point.CARTESIAN);
+    }
+
+    public void buildPaths() {
+        trajSeq2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(0,0,Point.CARTESIAN), new Point(forwardEndPose.getX(), forwardEndPose.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(0)
+                .addPath(new BezierLine(new Point(0,0, Point.CARTESIAN),new Point(backwardEndPose.getX(), backwardEndPose.getY(), Point.CARTESIAN))).setConstantHeadingInterpolation(0)
+                .build();
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -30,13 +47,11 @@ public class straightBackForthQueuer extends LinearOpMode {
         int loops = 0;
 
         waitForStart();
+
         if (isStopRequested()) return;
-        PathChain trajSeq2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(0,0, Point.CARTESIAN), new Point(distance,0,Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(0)
-                .addPath(new BezierLine(new Point(distance,0, Point.CARTESIAN), new Point(0,0,Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(0)
-                .build();
+
+        setBackdropGoalPose();
+        buildPaths();
 
         resetRuntime();
         BasicRobot.time = 0;
