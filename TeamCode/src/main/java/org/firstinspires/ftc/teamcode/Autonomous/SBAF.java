@@ -86,11 +86,10 @@ public class SBAF extends BasicRobot {
             }
         }
 
-        telemetryA.addData("x", poseUpdater.getPose().getX());
-        telemetryA.addData("y", poseUpdater.getPose().getY());
-        telemetryA.addData("heading", poseUpdater.getPose().getHeading());
-        telemetryA.addData("total heading", poseUpdater.getTotalHeading());
-        telemetryA.update();
+        packet.put("x", poseUpdater.getPose().getX());
+        packet.put("y", poseUpdater.getPose().getY());
+        packet.put("heading", poseUpdater.getPose().getHeading());
+        packet.put("total heading", poseUpdater.getTotalHeading());
         update();
     }
 
