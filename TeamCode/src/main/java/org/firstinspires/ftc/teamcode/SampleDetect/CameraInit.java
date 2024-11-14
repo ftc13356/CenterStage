@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.SampleDetect;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -15,20 +16,38 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class CameraInit {
     OpenCvWebcam webcam;
     SampleDetectionPipelinePNP pnp;
+
+    BluePipeline blue;
+    RedPipeline red;
+    YellowPipeline yellow;
+
+    boolean[] current = {false, false, false};
     SampleDetectionPipeline nor;
     boolean isPnp = true;
     public CameraInit(boolean isPnp, LinearOpMode opMode){
         op = opMode;
         webcam = OpenCvCameraFactory.getInstance()
                 .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
-        if(isPnp)
-            pnp = new SampleDetectionPipelinePNP();
+        if(isPnp) {
+            yellow = new YellowPipeline();
+            red = new RedPipeline();
+            blue = new BluePipeline();
+        }
         else
             nor = new SampleDetectionPipeline();
         this.isPnp = isPnp;
     }
     public double[] getCenter(){
-        return pnp.getCenter();
+        if(current[0])
+            return blue.getCenter();
+        else if(current[1])
+            return red.getCenter();
+        return yellow.getCenter();
+    }
+    public void setTrue(int i){
+        for(int j =0;j<3;j++)
+            current[j] = false;
+        current[i]=true;
     }
     public void startStreamin(){
         webcam.openCameraDeviceAsync(
@@ -61,8 +80,10 @@ public class CameraInit {
                         //            else {
                         //              webcam.setPipeline(openSleeve);
                         //            }
-                        if(isPnp)
-                            webcam.setPipeline(pnp);
+                        if(isPnp) {
+                            webcam.setPipeline(blue);
+                            setTrue(0);
+                        }
                         else
                             webcam.setPipeline(nor);
                         webcam.startStreaming(
@@ -79,5 +100,54 @@ public class CameraInit {
                          */
                     }
                 });
+    }
+    public int getCurrent(){
+        if(current[0])
+            return 1;
+        else if(current[1])
+            return 2;
+        else if(current[2])
+            return 3;
+        return 0;
+    }
+    public void swapInt(int swap){
+        if(swap==2) {
+            swapRed();
+        }
+        else if(swap==3) {
+            swapYellow();
+        }
+        else {
+            swapBlue();
+        }
+    }
+    public void swapNext(){
+        swapInt(getCurrent()+1);
+    }
+    public void swapRed(){
+        if(!current[1]){
+            webcam.setPipeline(red);
+            setTrue(1);
+        }
+    }
+    public void swapBlue(){
+        if(!current[0]){
+            webcam.setPipeline(blue);
+            setTrue(0);
+        }
+    }
+    public void swapYellow(){
+        if(!current[2]){
+            webcam.setPipeline(yellow);
+            setTrue(2);
+        }
+    }
+    public void resetCenter(){
+        if(current[0])
+            blue.resetCenter();
+        else if(current[1])
+            red.resetCenter();
+        else
+            yellow.resetCenter();
     }
 }

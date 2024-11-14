@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.SampleDetect;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.gampad;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
@@ -43,12 +45,16 @@ public class SamplePnpTest extends LinearOpMode {
 //                    lastTime = getRuntime();
 //                }
 //            }
+
+            if(gampad.readGamepad(op.gamepad1.a,"gamepad1_a", "swapCam"))
+                cam.swapNext();
+
             if(!Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
                 BasicRobot.time = getRuntime();
                 packet.put("TARGET", currentPose.vec().plus(new Vector2d(cam.getCenter()[0], -cam.getCenter()[1])));
                 buhs++;
                 packet.put("BUHPERSEC(BPS)", buhs/BasicRobot.time);
-                cam.pnp.resetCenter();
+                cam.resetCenter();
                 dashboard.sendTelemetryPacket(packet);
                 packet.clearLines();
             }
