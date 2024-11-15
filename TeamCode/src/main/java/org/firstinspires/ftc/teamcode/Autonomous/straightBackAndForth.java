@@ -15,6 +15,5 @@ public class straightBackAndForth extends LinearOpMode {
         while(!isStopRequested() && opModeIsActive()){
             robot.updateFollower();
         }
-
     }
 }

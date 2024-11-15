@@ -85,7 +85,6 @@ public class SBAF extends BasicRobot {
                     break;
             }
         }
-
         packet.put("x", poseUpdater.getPose().getX());
         packet.put("y", poseUpdater.getPose().getY());
         packet.put("heading", poseUpdater.getPose().getHeading());

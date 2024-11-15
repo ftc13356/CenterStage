@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 @Autonomous
 public class straightBackForthQueuer extends LinearOpMode {
     Queuer queuer;
-    PathChain square;
     double distance = 12;
     private String navigation = "forward";
 

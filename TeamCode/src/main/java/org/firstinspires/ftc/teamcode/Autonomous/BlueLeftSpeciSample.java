@@ -13,7 +13,7 @@ public class BlueLeftSpeciSample extends LinearOpMode {
         while(!isStopRequested()&&opModeIsActive()){
             robot.placeSpeci();
             robot.placeSample();
-            robot.update();
+            robot.updateFollower();
         }
     }
 }
