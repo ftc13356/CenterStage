@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.Components.FutureComponents;
 
 import static java.lang.Math.abs;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
 /**
  * Hyun
  * Twist
  */
+@Config
 public class Twist {
     RFServo twist;
     public static double PARALLEL_POS = 0;
