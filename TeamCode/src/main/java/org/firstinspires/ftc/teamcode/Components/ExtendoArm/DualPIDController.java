@@ -65,4 +65,11 @@ public class DualPIDController {
     public double getExt(){
         return ext.getCurrentPosition()*TICKS_PER_IN;
     }
+    public double getExtPosition(){
+        return ext.getCurrentPosition();
+    }
+
+    public double getRotPosition(){
+        return rot.getCurrentPosition();
+    }
 }
