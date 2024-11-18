@@ -46,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 16; // in
+    public static double TRACK_WIDTH = 11; // in
 
     public static double kPTrans = 8;
     public static double kDTrans = 3.000;
@@ -62,8 +62,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.02;
-    public static double kA = 0.005;
+    public static double kV = 0.01;
+    public static double kA = 0.002;
     public static double kStatic = 0.05;
 
     /*
@@ -73,10 +73,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 75;
-    public static double MAX_ACCEL = 42;
-    public static double MAX_ANG_VEL = 4;
-    public static double MAX_ANG_ACCEL = 3;
+    public static double MAX_VEL = 80;
+    public static double MAX_ACCEL = 60;
+    public static double MAX_ANG_VEL = 6;
+    public static double MAX_ANG_ACCEL = 4;
 
 
     public static double encoderTicksToInches(double ticks) {

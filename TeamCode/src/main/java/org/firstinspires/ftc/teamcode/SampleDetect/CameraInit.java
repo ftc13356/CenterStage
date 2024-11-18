@@ -21,6 +21,8 @@ public class CameraInit {
     RedPipeline red;
     YellowPipeline yellow;
 
+    ExcludePipline exclude;
+
     boolean[] current = {false, false, false};
     SampleDetectionPipeline nor;
     boolean isPnp = true;
@@ -32,17 +34,14 @@ public class CameraInit {
             yellow = new YellowPipeline();
             red = new RedPipeline();
             blue = new BluePipeline();
+            exclude = new ExcludePipline();
         }
         else
             nor = new SampleDetectionPipeline();
         this.isPnp = isPnp;
     }
     public double[] getCenter(){
-        if(current[0])
-            return blue.getCenter();
-        else if(current[1])
-            return red.getCenter();
-        return yellow.getCenter();
+        return exclude.getCenter();
     }
     public void setTrue(int i){
         for(int j =0;j<3;j++)
@@ -81,7 +80,7 @@ public class CameraInit {
                         //              webcam.setPipeline(openSleeve);
                         //            }
                         if(isPnp) {
-                            webcam.setPipeline(blue);
+                            webcam.setPipeline(exclude);
                             setTrue(0);
                         }
                         else
@@ -111,43 +110,23 @@ public class CameraInit {
         return 0;
     }
     public void swapInt(int swap){
-        if(swap==2) {
-            swapRed();
-        }
-        else if(swap==3) {
-            swapYellow();
-        }
-        else {
-            swapBlue();
-        }
+        exclude.setColor(swap);
     }
     public void swapNext(){
-        swapInt(getCurrent()+1);
+        int newy = exclude.getColor()+1;
+        if (newy > 2) newy = 0;
+        exclude.setColor(newy);
     }
     public void swapRed(){
-        if(!current[1]){
-            webcam.setPipeline(red);
-            setTrue(1);
-        }
+        exclude.setColor(0);
     }
     public void swapBlue(){
-        if(!current[0]){
-            webcam.setPipeline(blue);
-            setTrue(0);
-        }
+        exclude.setColor(1);
     }
     public void swapYellow(){
-        if(!current[2]){
-            webcam.setPipeline(yellow);
-            setTrue(2);
-        }
+        exclude.setColor(2);
     }
     public void resetCenter(){
-        if(current[0])
-            blue.resetCenter();
-        else if(current[1])
-            red.resetCenter();
-        else
-            yellow.resetCenter();
+        exclude.resetCenter();
     }
 }

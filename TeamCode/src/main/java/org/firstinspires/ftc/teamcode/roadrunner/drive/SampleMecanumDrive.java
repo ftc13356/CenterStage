@@ -113,7 +113,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BNO055IMU imu,imu2;
+    private BNO055IMU imu/*,imu2*/;
     private VoltageSensor batteryVoltageSensor;
     private Pose2d endPose = new Pose2d(0, 0, 0);
 
@@ -229,11 +229,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
-        imu2 = op.hardwareMap.get(BNO055IMU.class, "imu2");
-        BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
-        parameters2.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters2.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu2.initialize(parameters2);
+//        imu2 = op.hardwareMap.get(BNO055IMU.class, "imu2");
+//        BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
+//        parameters2.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+//        parameters2.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        imu2.initialize(parameters2);
 
 
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
@@ -273,8 +273,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void startIMU(){
-        Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
-        poseHeadOffset = currentPose.getHeading()-angles2.firstAngle+toRadians(funnyIMUOffset);
+//        Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
+//        poseHeadOffset = currentPose.getHeading()-angles2.firstAngle+toRadians(funnyIMUOffset);
     }
     public void changeIMUInterval(){
         IMU_INTERVAL = 0.1;

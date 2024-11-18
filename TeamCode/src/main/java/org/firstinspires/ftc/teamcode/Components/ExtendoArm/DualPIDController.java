@@ -40,7 +40,7 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         double err = extension - ext.getCurrentPosition()*TICKS_PER_IN;
         double d = ext.getVelocity();
-        ext.setPower(P*err+D*d+G*Math.cos(rot.getCurrentPosition()*TICKS_PER_RAD));
+        ext.setPower(P*err+D*d+G*Math.sin(rot.getCurrentPosition()*TICKS_PER_RAD));
         double rErr = rotation - rot.getCurrentPosition()*TICKS_PER_DEG;
         double rd = -rot.getVelocity()*TICKS_PER_DEG;
         double r = TEST_LEN/MAX;

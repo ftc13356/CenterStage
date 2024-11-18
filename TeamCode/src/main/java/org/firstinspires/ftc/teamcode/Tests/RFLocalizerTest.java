@@ -20,36 +20,24 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * 8/22
  * TeleOp + RR odometry test
  */
-//@Disabled
-//@Disabled
-//@Disabled
+
 @Config
 @Autonomous(name = "OdometryLocalizerTest")
 public class RFLocalizerTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        BradBot robot = new BradBot(this,false);
-//        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
-//        boolean imud = false, doneImud = false;
-        robot.roadrun.setPoseEstimate(new Pose2d(0,0,toRadians(-90)));
-
+        BasicRobot robot = new BasicRobot(this,false);
+        SampleMecanumDrive roadrun = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
+        roadrun.setPoseEstimate(new Pose2d(0,0,toRadians(-90)));
         waitForStart();
-        robot.roadrun.setPoseEstimate(new Pose2d(0,0,toRadians(-90)));
-
         while (opModeIsActive()) {
             robot.update();
-//            drive.update();
-//            if(!imud && BasicRobot.time>4){
-//                drive.startIMU();
-//                imud=true;
-//            }
-//            if(!doneImud && BasicRobot.time>5){
-//                drive.changeIMUInterval();
-//                doneImud=true;
-//            }
-            robot.roadrun.setWeightedDrivePower(new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
+            roadrun.update();
+            roadrun.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x));
+            packet.put("POSE",roadrun.getPoseEstimate());
 //            packet.put("rrPose", drive.getPoseEstimate());
-            packet.put("rrPOVVelocity", robot.roadrun.getPoseVelocity());
+            packet.put("rrPOVVelocity", roadrun.getPoseVelocity());
+            packet.put("veloMag", roadrun.getPoseVelocity().vec().norm());
         }
     }
 }

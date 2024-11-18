@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Math.toRadians;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -14,10 +17,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+@Config
 
 public class OTOSLocalizer implements Localizer {
     SparkFunOTOS otos;
-    Vector2d offset = new Vector2d(-7, 3);
+    public static double OFFSET_X = 7, OFFSET_Y = 4, OFFSET_H = -90;
     public OTOSLocalizer(HardwareMap hardwareMap){
         otos = hardwareMap.get(SparkFunOTOS.class, "otos");
         otos.setLinearUnit(DistanceUnit.INCH);
@@ -35,7 +39,7 @@ public class OTOSLocalizer implements Localizer {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(3, -7, 0);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(OFFSET_X, OFFSET_Y, toRadians(OFFSET_H));
         otos.setOffset(offset);
 
         // Here we can set the linear and angular scalars, which can compensate for
@@ -54,8 +58,8 @@ public class OTOSLocalizer implements Localizer {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        otos.setLinearScalar(24.0/22);
-        otos.setAngularScalar(3600/3630.0);
+        otos.setLinearScalar(1);
+        otos.setAngularScalar((360*8)/(360*8.0+29));
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
@@ -66,7 +70,7 @@ public class OTOSLocalizer implements Localizer {
         // calibrateImu(), you can specify the number of samples to take and whether
         // to wait until the calibration is complete. If no parameters are provided,
         // it will take 255 samples and wait until done; each sample takes about
-        // 2.4ms, so about 612ms total
+        // 2.4ms, so about 612ms totalx
         otos.calibrateImu();
 
         // Reset the tracking algorithm - this resets the position to the origin,
@@ -84,21 +88,21 @@ public class OTOSLocalizer implements Localizer {
     @Override
     public Pose2d getPoseEstimate() {
         SparkFunOTOS.Pose2D pos = otos.getPosition();
-        currentPose = new Pose2d(pos.y, -pos.x, pos.h);
+        currentPose = new Pose2d(pos.x, pos.y, pos.h);
         return currentPose;
     }
 
     @Override
     public void setPoseEstimate(@NonNull Pose2d pose2d) {
         currentPose = pose2d;
-        otos.setPosition(new SparkFunOTOS.Pose2D(-pose2d.getY(), pose2d.getX(), pose2d.getHeading()));
+        otos.setPosition(new SparkFunOTOS.Pose2D(pose2d.getX(), pose2d.getY(), pose2d.getHeading()));
     }
 
     @Nullable
     @Override
     public Pose2d getPoseVelocity() {
         SparkFunOTOS.Pose2D pos = otos.getVelocity();
-        return new Pose2d (new Vector2d(pos.y, -pos.x).rotated(-currentPose.getHeading()),  pos.h);
+        return new Pose2d (new Vector2d(pos.x, pos.y).rotated(currentPose.getHeading()),  pos.h);
     }
 
     @Override
