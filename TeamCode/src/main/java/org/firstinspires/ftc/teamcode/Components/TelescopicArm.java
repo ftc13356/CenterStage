@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDController;
@@ -31,11 +32,14 @@ public class TelescopicArm extends DualPIDController {
     private final double EXTEND_MOTOR_BUFFER = 0;
     private final double PITCH_MOTOR_BUFFER = 0;
 
+    double lastManualTime = -100;
+
     /**
      * init
      */
     public TelescopicArm(){
         super();
+        lastManualTime = -100;
     }
 
     /**
@@ -106,7 +110,12 @@ public class TelescopicArm extends DualPIDController {
 
         public boolean getState(){return this.state;}
     }
-
+    public void manualGoTo(double p_extend, double p_pitch){
+        super.goTo(p_extend,p_pitch);
+        for (var i : TelescopicArm.ArmTargetStates.values()) {
+            i.state = false;
+        }
+    }
     public void goTo(TelescopicArm.ArmStates p_state) {
         super.goTo(p_state.extendPos, p_state.pitchPos);
     }
@@ -118,16 +127,23 @@ public class TelescopicArm extends DualPIDController {
      * updates the state machine
      */
     public void update() {
-        for (var i : TelescopicArm.ArmStates.values()) {
-            if (abs(super.getExtPosition()-i.extendPos) < EXTEND_MOTOR_BUFFER && abs(super.getRotPosition()-i.pitchPos) < PITCH_MOTOR_BUFFER) {
-                i.setStateTrue();
-                TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
+        boolean targeted = false;
+        if(time - lastManualTime>.5) {
+            for (var i : TelescopicArm.ArmStates.values()) {
+                if (abs(super.getExtPosition() - i.extendPos) < EXTEND_MOTOR_BUFFER && abs(super.getRotPosition() - i.pitchPos) < PITCH_MOTOR_BUFFER) {
+                    i.setStateTrue();
+                    TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
+                }
             }
-        }
-        for (var i : TelescopicArm.ArmTargetStates.values()) {
-            if (i.state && abs(super.getExtPosition()-i.extendPos) > EXTEND_MOTOR_BUFFER && abs(super.getRotPosition()-i.pitchPos) > PITCH_MOTOR_BUFFER) {
-                goTo(TelescopicArm.ArmStates.values()[i.ordinal()]);
+            for (var i : TelescopicArm.ArmTargetStates.values()) {
+                if (i.state && abs(super.getExtPosition() - i.extendPos) > EXTEND_MOTOR_BUFFER && abs(super.getRotPosition() - i.pitchPos) > PITCH_MOTOR_BUFFER) {
+                    goTo(TelescopicArm.ArmStates.values()[i.ordinal()]);
+                    targeted = true;
+                }
             }
+
         }
+        if(!targeted)
+            goTo(getTargetExt(), getTargetRot());
     }
 }

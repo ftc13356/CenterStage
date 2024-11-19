@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @Autonomous
 @Config
-public class TestDualPIDController extends LinearOpMode {
+public class TeleArmTest extends LinearOpMode {
     public static double TARGET_ROT = 0, TARGET_EXT = 0;
     @Override
     public void runOpMode() throws InterruptedException {

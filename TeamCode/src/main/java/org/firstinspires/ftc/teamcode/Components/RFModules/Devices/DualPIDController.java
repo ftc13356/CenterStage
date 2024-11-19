@@ -23,6 +23,7 @@ public class DualPIDController {
     public static double  MAX=20, MIN=0, ROTMAX = 100, ROTMIN = -10, TICKS_PER_IN = 20, TICKS_PER_DEG = 360/537.7,P=0,D=0, rP = 0.016, rP2 =0.016,rD2= 1.2, rD = 0.7,G = 0,rG = 0.1, rG2 = 0.1,middle,TEST_LEN = 10;
     boolean mid;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
+    double targetExt, targetRot;
     public DualPIDController() {
         ext = (DcMotorEx) op.hardwareMap.dcMotor.get("extendMotor");
         rot = (DcMotorEx) op.hardwareMap.dcMotor.get("rotateMotor");
@@ -38,6 +39,8 @@ public class DualPIDController {
     public void goTo(double extension, double rotation){
         extension = min(max(extension,MIN),MAX);
         rotation = min(max(rotation,ROTMIN),ROTMAX);
+        targetExt = extension;
+        targetRot = rotation;
         double err = extension - ext.getCurrentPosition()*TICKS_PER_IN;
         double d = ext.getVelocity();
         ext.setPower(P*err+D*d+G*Math.sin(rot.getCurrentPosition()*TICKS_PER_RAD));
@@ -64,6 +67,12 @@ public class DualPIDController {
     }
     public double getExt(){
         return ext.getCurrentPosition()*TICKS_PER_IN;
+    }
+    public double getTargetExt(){
+        return targetExt;
+    }
+    public double getTargetRot(){
+        return targetRot;
     }
     public double getExtPosition(){
         return ext.getCurrentPosition();
