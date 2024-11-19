@@ -35,7 +35,6 @@ public class BasicRobot{
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
     public static final boolean isSim = false;
-    public static boolean isFlipped = false;
 
     /**
      * instantiates basic robot
@@ -65,7 +64,6 @@ public class BasicRobot{
         gampad = new RFGamepad();
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        BasicRobot.isFlipped = isFlipped;
         voltage = voltageSensor.getVoltage();
     }
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){

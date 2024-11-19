@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class SamplePnpTest extends LinearOpMode {
 //        robot.roadrun.setPoseEstimate(new Pose2d(0,0,0));
         BasicRobot robot = new BasicRobot(this,false);
         currentPose = new Pose2d(0,0,0);
-        CameraInit cam = new CameraInit(true, this);
+        CVMaster cam = new CVMaster();
         cam.startStreamin();
         double lastTime = 0;
         int buhs = 0;
