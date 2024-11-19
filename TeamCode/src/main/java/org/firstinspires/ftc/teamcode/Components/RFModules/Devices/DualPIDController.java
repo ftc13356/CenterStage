@@ -8,6 +8,7 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.outoftheboxrobotics.photoncore.Photon;
@@ -20,10 +21,10 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  MAX=20, MIN=0, ROTMAX = 100, ROTMIN = -10, TICKS_PER_IN = 20, TICKS_PER_DEG = 360/537.7,P=0,D=0, rP = 0.016, rP2 =0.016,rD2= 1.2, rD = 0.7,G = 0,rG = 0.1, rG2 = 0.1,middle,TEST_LEN = 10;
+    public static double  MAX=20, MIN=0, ROTMAX = 100, ROTMIN = -10, TICKS_PER_IN = 20, TICKS_PER_DEG = 360/537.7,P=0,D=0, rP = 0.016, rP2 =0.016,rD2= 1.2, rD = 0.7,G = 0,rG = 0.1, rG2 = 0.1,TEST_LEN = 10;
     boolean mid;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
-    double targetExt, targetRot;
+    double targetExt, targetRot, middle, middleRot;
     public DualPIDController() {
         ext = (DcMotorEx) op.hardwareMap.dcMotor.get("extendMotor");
         rot = (DcMotorEx) op.hardwareMap.dcMotor.get("rotateMotor");
@@ -34,6 +35,7 @@ public class DualPIDController {
         rot.setDirection(DcMotorSimple.Direction.REVERSE);
         mid=true;
         middle=-100;
+        middleRot = 0;
     }
 
     public void goTo(double extension, double rotation){
@@ -53,13 +55,18 @@ public class DualPIDController {
         packet.put("rG", rG);
         packet.put("rGcostheta", rG*Math.cos(rot.getCurrentPosition()*TICKS_PER_RAD));
     }
-    public void goTo(double extension, double rotation, double middle){
-        if(middle != this.middle)
+    public void goTo(double extension, double rotation, double middle, double middleRot){
+        if(middle != this.middle || middleRot != this.middleRot)
             mid=false;
-        if(!mid && ext.getCurrentPosition()*TICKS_PER_IN - middle < 0)
+        if(!mid && abs(ext.getCurrentPosition()*TICKS_PER_IN - middle) < 3 && abs(rot.getCurrentPosition()*TICKS_PER_DEG-middleRot)<5)
             mid=true;
-        if(!mid)
+        if(!mid) {
             extension = middle;
+            rotation = middleRot;
+            this.middle = middle;
+            this.middleRot = middleRot;
+
+        }
         goTo(extension,rotation);
     }
     public double getRot(){

@@ -73,6 +73,42 @@ public class IDRobot extends BasicRobot{
         follower.setTeleOpMovementVectors(op.gamepad1.left_stick_y,op.gamepad1.left_stick_x,op.gamepad1.right_stick_x);
         double extend = op.gamepad1.right_trigger-op.gamepad1.left_trigger, rotate = op.gamepad2.right_trigger-op.gamepad2.left_trigger;
         if(abs(extend)>.1 || abs(rotate)>.1)
-            arm.goTo(arm.getTargetExt()+extend, arm.getTargetRot()+rotate);
+            arm.manualGoTo(arm.getTargetExt()+extend, arm.getTargetRot()+rotate);
+        if(isY){
+            arm.goTo(TelescopicArm.ArmStates.HIGH_BUCKET);
+            flip.flipTo(Flip.FlipStates.BASKET);
+            twist.twistTo(Twist.TwistStates.PARALLEL);
+        }
+        if(isB){
+            arm.goTo(TelescopicArm.ArmStates.SPECIMEN_GRAB);
+            flip.flipTo(Flip.FlipStates.SPECIMEN_GRAB);
+            twist.twistTo(Twist.TwistStates.PARALLEL);
+            claw.goTo(Claw.ClawStates.OPEN);
+        }
+        if(isA){
+            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
+            flip.flipTo(Flip.FlipStates.RESET);
+            twist.twistTo(Twist.TwistStates.PARALLEL);
+        }
+        if(isX){
+            arm.goTo(TelescopicArm.ArmStates.HIGH_SPECIMEN);
+            flip.flipTo(Flip.FlipStates.SPECIMEN);
+        }
+        if(isRB){
+            if(TelescopicArm.ArmStates.HOVER.getState()){
+                arm.goTo(TelescopicArm.ArmStates.INTAKE);
+                flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
+            }
+            else if(Claw.ClawStates.OPEN.getState()){
+                claw.goTo(Claw.ClawStates.CLOSED);
+            }
+            else{
+                claw.goTo(Claw.ClawStates.OPEN);
+            }
+        }
+        if(isLB){
+            arm.goTo(TelescopicArm.ArmStates.HOVER);
+            flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
+        }
     }
 }
