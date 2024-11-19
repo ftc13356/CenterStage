@@ -22,10 +22,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * 9/6/23
  * Odom localizer 8 24x24 squares
  */
-//@Disabled
-//@Disabled
-//@Photon
-//@Disabled
+
+@Disabled
 @Autonomous
 public class FastOdoTest extends LinearOpMode {
     Queuer queuer;

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static com.acmerobotics.roadrunner.util.Angle.normDelta;
-import static org.firstinspires.ftc.teamcode.Components.Lift.liftHeight;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -472,6 +471,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         double x = vel.getY();
         double nx = x;
         double nhead = head;
+        double liftHeight = 0;
 
         if(abs(head)>0.002){
 //            nhead = 0.9*(abs(head) + .18)*(abs(head) + .18)+0.1;

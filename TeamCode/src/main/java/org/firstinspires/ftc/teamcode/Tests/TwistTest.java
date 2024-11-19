@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Components.FutureComponents.Twist;
+import org.firstinspires.ftc.teamcode.Components.Twist;
 
 @Config
 @Autonomous(name = "TwistTest")
