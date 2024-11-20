@@ -3,9 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -83,13 +80,7 @@ public class CapCam {
                 });
     }
     public int getCurrent(){
-        if(current[0])
-            return 1;
-        else if(current[1])
-            return 2;
-        else if(current[2])
-            return 3;
-        return 0;
+        return pipe.getColor();
     }
     public void swapInt(int swap){
         pipe.setColor(swap);

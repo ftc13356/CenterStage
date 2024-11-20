@@ -192,7 +192,7 @@ public class CapCamPipline extends OpenCvPipeline {
                 continue;
             }
 
-            // Approximate the contour to a polygon
+            // Approximate the contour to a polygonum
             contour2f = new MatOfPoint2f(contour.toArray());
 
             double epsilon = EPSILON * Imgproc.arcLength(contour2f, true);
