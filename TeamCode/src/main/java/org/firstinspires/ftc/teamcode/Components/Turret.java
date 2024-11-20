@@ -50,5 +50,8 @@ public class Turret {
 
     public void update(){
         goTo((rotTarget));
+        packet.put("rotTarget", rotTarget);
+        packet.put("vel", rot.getVelocity());
+        packet.put("pos", rot.getCurrentPosition());
     }
 }

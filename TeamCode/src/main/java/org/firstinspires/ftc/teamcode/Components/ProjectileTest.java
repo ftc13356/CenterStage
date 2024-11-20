@@ -23,47 +23,28 @@ import java.util.Arrays;
 
 @Autonomous
 @Config
-public class Capstone extends LinearOpMode {
-    public static double G = 9.8, theta = 30, vt;
+public class ProjectileTest extends LinearOpMode {
+    public static double G = 9.8, theta = 30, vt, TARGET_X = 50, TARGET_Y = -20;
 
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, true);
         Spinna spinna = new Spinna();
         Turret turret = new Turret();
-        CapCam cam = new CapCam();
         Colorsens color = new Colorsens();
         Trigga trigger = new Trigga();
-        boolean isReset = false;
         int targ = 0;
         waitForStart();
         while (opModeIsActive()){
             targ = color.getColor();
             if(targ!=0) {
-                cam.swapInt(targ - 1);
                 if (turret.isStationary()) {
-                    if (!isReset) {
-                        cam.resetCenter();
-                        isReset = true;
-                    }
-                    if (!Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
-                        double[] center = cam.getCenter();
-                        cam.resetCenter();
-                        if (center[1] != 0) {
-                            double angle = atan2(center[2], center[1]);
-                            turret.goTo(turret.getRot() + angle);
-                            packet.put("dletaangle", angle);
-                            packet.put("target", turret.getRot() + angle);
-                            continue;
-                        }
-                        double speeed = rangeToVelo(center[2], center[0]);
-                        spinna.spin(speeed);
-                        if (abs(speeed - spinna.getVel()) < 30 && trigger.loaded) {
-                            trigger.shoot();
-                        }
-                    }
-                } else {
-                    isReset = false;
+                     turret.goTo(0);
+                     double speeed = rangeToVelo(TARGET_X, TARGET_Y);
+                     spinna.spin(speeed);
+                     if (abs(speeed - spinna.getVel()) < 30 && trigger.loaded) {
+                         trigger.shoot();
+                     }
                 }
                 trigger.update();
                 turret.update();
