@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDController;
 
@@ -27,7 +29,7 @@ public class TelescopicArm extends DualPIDController {
     public static double HOVER_EXTEND_POS = 0;
     public static double HOVER_PITCH_POS = 0;
     public static double HANG_EXTEND_POS = 0;
-    public static double HANG_PITCH_POS = 0, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS;
+    public static double HANG_PITCH_POS = 0, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS, MANUAL_EXT_SPEED = 0.01, MANUAL_ROT_SPEED = 0.2;
 
     private final double EXTEND_MOTOR_BUFFER = 0;
     private final double PITCH_MOTOR_BUFFER = 0;
@@ -121,10 +123,18 @@ public class TelescopicArm extends DualPIDController {
     }
 
     public void manualGoTo(double p_extend, double p_pitch) {
-        super.goTo(p_extend, p_pitch);
-        for (var i : TelescopicArm.ArmTargetStates.values()) {
-            i.state = false;
+        if(abs(p_pitch)>.1||!ArmStates.HOVER.getState()) {
+            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, super.getTargetRot()+p_pitch*MANUAL_ROT_SPEED);
+            for (var i : TelescopicArm.ArmTargetStates.values()) {
+                i.state = false;
+            }
+        } else{
+            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(6, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED));
         }
+    }
+    public void lowerToIntake(){
+        super.goTo(super.getExt()*cos(super.getRot()),0);
+        ArmStates.INTAKE.setStateTrue();
     }
 
     public void goTo(TelescopicArm.ArmStates p_state) {
@@ -169,24 +179,31 @@ public class TelescopicArm extends DualPIDController {
 
     /**
      * updates the state machine
+     * TODO: ZEROING SYSTEM
      */
     public void update() {
         boolean targeted = false;
         if (time - lastManualTime > .5) {
             for (var i : TelescopicArm.ArmStates.values()) {
-                if (abs(super.getExtPosition() - i.extendPos) < EXTEND_MOTOR_BUFFER && abs(super.getRotPosition() - i.pitchPos) < PITCH_MOTOR_BUFFER) {
+                if (abs(super.getExt() - i.extendPos) < EXTEND_MOTOR_BUFFER && abs(super.getRot() - i.pitchPos) < PITCH_MOTOR_BUFFER) {
                     i.setStateTrue();
                     TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
                 }
-                if(i == ArmStates.RETRACTED){
+                else if(i == ArmStates.RETRACTED){
                     if(abs(super.getExtPosition())<3){
+                        i.setStateTrue();
+                        TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
+                    }
+                }
+                else if(i == ArmStates.INTAKE || i == ArmStates.HOVER){
+                    if(abs(super.getRot()-i.pitchPos)<PITCH_MOTOR_BUFFER){
                         i.setStateTrue();
                         TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
                     }
                 }
             }
             for (var i : TelescopicArm.ArmTargetStates.values()) {
-                if (i.state && abs(super.getExtPosition() - i.extendPos) > EXTEND_MOTOR_BUFFER && abs(super.getRotPosition() - i.pitchPos) > PITCH_MOTOR_BUFFER) {
+                if (i.state && abs(super.getExt() - i.extendPos) > EXTEND_MOTOR_BUFFER && abs(super.getRot() - i.pitchPos) > PITCH_MOTOR_BUFFER) {
                     goTo(TelescopicArm.ArmStates.values()[i.ordinal()]);
                     targeted = true;
                 }
@@ -195,5 +212,10 @@ public class TelescopicArm extends DualPIDController {
         }
         if (!targeted)
             goTo(getTargetExt(), getTargetRot());
+        packet.put("targExt", super.getTargetExt());
+        packet.put("targRot", super.getTargetRot());
+        packet.put("curExt", super.getExt());
+        packet.put("curRot", super.getRot());
     }
+
 }
