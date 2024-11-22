@@ -24,16 +24,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    packagingOptions {
-        jniLibs {
-            pickFirsts += ['**/*.so']
-        }
-    }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17
-    }
-    androidResources {
-        noCompress 'tflite'
     }
 }
 
@@ -42,18 +34,16 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     implementation 'org.openftc:easyopencv:1.7.3'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
-    implementation 'org.openftc:apriltag:2.1.0'
     implementation 'org.ftclib.ftclib:core:2.1.1'
+    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v3.0.3-ALPHA'
+
 }
 repositories {
-    // Add this line
-    maven { url = "https://maven.catboy.camp" }
     maven {
         url = 'https://maven.brott.dev/'
     }

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static com.acmerobotics.roadrunner.util.Angle.normDelta;
-import static org.firstinspires.ftc.teamcode.Components.Lift.liftHeight;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -94,7 +93,7 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0.0, 0.5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, .1);
 
     public static double LATERAL_MULTIPLIER = 1.2, NEW_WEIGHT=1.2, NEW_COEFF=0.19;
     public static double imuMultiply = 1.0132,fishMoley = 1.0, IMU_INTERVAL = 10000, funnyIMUOffset =2.5;
@@ -113,7 +112,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BNO055IMU imu,imu2;
+    private BNO055IMU imu/*,imu2*/;
     private VoltageSensor batteryVoltageSensor;
     private Pose2d endPose = new Pose2d(0, 0, 0);
 
@@ -229,21 +228,21 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
-        imu2 = op.hardwareMap.get(BNO055IMU.class, "imu2");
-        BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
-        parameters2.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters2.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu2.initialize(parameters2);
+//        imu2 = op.hardwareMap.get(BNO055IMU.class, "imu2");
+//        BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
+//        parameters2.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+//        parameters2.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        imu2.initialize(parameters2);
 
 
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+            setLocalizer(new OTOSLocalizer(hardwareMap));
         } else if (trackType == Tracker.TrackType.ROADRUN_IMU_LEFT) {
             setLocalizer(new TwoWheelTrackingLocalizerLeft(hardwareMap, this));
         } else if (trackType == Tracker.TrackType.ROADRUN_IMU_RIGHT) {
             setLocalizer(new TwoWheelTrackingLocalizerRight(hardwareMap, this));
         } else {
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+            setLocalizer(new OTOSLocalizer(hardwareMap));
         }
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
@@ -273,8 +272,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void startIMU(){
-        Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
-        poseHeadOffset = currentPose.getHeading()-angles2.firstAngle+toRadians(funnyIMUOffset);
+//        Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
+//        poseHeadOffset = currentPose.getHeading()-angles2.firstAngle+toRadians(funnyIMUOffset);
     }
     public void changeIMUInterval(){
         IMU_INTERVAL = 0.1;
@@ -472,6 +471,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         double x = vel.getY();
         double nx = x;
         double nhead = head;
+        double liftHeight = 0;
 
         if(abs(head)>0.002){
 //            nhead = 0.9*(abs(head) + .18)*(abs(head) + .18)+0.1;

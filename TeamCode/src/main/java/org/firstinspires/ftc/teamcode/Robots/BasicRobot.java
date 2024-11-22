@@ -35,7 +35,6 @@ public class BasicRobot{
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
     public static final boolean isSim = false;
-    public static boolean isFlipped = false;
 
     /**
      * instantiates basic robot
@@ -65,7 +64,6 @@ public class BasicRobot{
         gampad = new RFGamepad();
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        BasicRobot.isFlipped = isFlipped;
         voltage = voltageSensor.getVoltage();
     }
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
@@ -81,7 +79,7 @@ public class BasicRobot{
         loops++;
         double newTime = op.getRuntime();
         if(newTime!=time){
-            packet.put("loopTime", 1/(newTime-time));
+//            packet.put("loopTime", 1/(newTime-time));
         }
         time = newTime;
         dashboard.sendTelemetryPacket(packet);
@@ -101,6 +99,7 @@ public class BasicRobot{
         LOGGER.log("queuer reset");
         queuer.reset();
     }
+
 
     /**
      * gets the current voltage

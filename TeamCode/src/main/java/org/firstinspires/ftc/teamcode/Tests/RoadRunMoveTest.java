@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -37,9 +38,11 @@ public class RoadRunMoveTest extends LinearOpMode {
         Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         roadrun.setPoseEstimate(startPose);
+        roadrun.setPoseEstimate(startPose);
         queuer = new Queuer();
         int loops = 0;
-
+        roadrun.update();
+        robot.update();
         waitForStart();
         if (isStopRequested()) return;
         TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
@@ -58,6 +61,7 @@ public class RoadRunMoveTest extends LinearOpMode {
             }
             loops++;
             packet.put("loopTime", loops/BasicRobot.time);
+            packet.put("errah", currentPose.minus(startPose));
             queuer.setFirstLoop(false);
             robot.update();
             roadrun.update();

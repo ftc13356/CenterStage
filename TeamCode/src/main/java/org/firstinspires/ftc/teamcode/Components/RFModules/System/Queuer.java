@@ -166,15 +166,15 @@ public class Queuer {
   }
 
   public boolean isExecuted() {
-    return queueElements.get(currentlyQueueing).isExecuted();
+    if(queueElements.size()>currentlyQueueing)
+      return queueElements.get(currentlyQueueing).isExecuted();
+    return false;
   }
 
   public boolean isNextExecuted() {
-    if (queueElements.size() > currentlyQueueing + 1) {
+    if (queueElements.size() > currentlyQueueing + 1)
       return queueElements.get(currentlyQueueing + 1).isExecuted();
-    } else {
-      return false;
-    }
+    return false;
   }
 
   /**

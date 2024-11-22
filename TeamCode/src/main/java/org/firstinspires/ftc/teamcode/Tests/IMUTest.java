@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
-
+@Disabled
 @TeleOp(name = "IMUTest")
 public class IMUTest extends LinearOpMode {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
