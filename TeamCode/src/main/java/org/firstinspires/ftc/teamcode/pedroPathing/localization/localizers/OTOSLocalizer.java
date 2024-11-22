@@ -67,11 +67,6 @@ public class OTOSLocalizer extends Localizer {
     public OTOSLocalizer(HardwareMap map, Pose setStartPose) {
         hardwareMap = map;
 
-        /*
-         TODO: If you want to use the "SparkFunOTOSCorrected" version of OTOS, then replace the
-          'SparkFunOTOS.class' below with 'SparkFunOTOSCorrected.class' and set the OTOS as a
-          "SparkFunOTOS Corrected" in your robot config
-         */
         otos = hardwareMap.get(SparkFunOTOS.class, "otos");
 
         otos.setLinearUnit(DistanceUnit.INCH);
