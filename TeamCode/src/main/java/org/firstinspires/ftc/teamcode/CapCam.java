@@ -62,7 +62,6 @@ public class CapCam {
                         //            }
                         if(isPnp) {
                             webcam.setPipeline(pipe);
-                            setTrue(0);
                         }
                         webcam.startStreaming(
                                 640, 480, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);

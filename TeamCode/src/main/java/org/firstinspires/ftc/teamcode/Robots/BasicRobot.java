@@ -57,16 +57,13 @@ public class BasicRobot{
         queuer = new Queuer();
         isTeleop = p_isTeleop;
         op.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
-        if(!isSim) {
-            voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
-        }
         dashboard.setTelemetryTransmissionInterval(25);
         packet=new TelemetryPacket();
         gampad = new RFGamepad();
-        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+//        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
+//            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         BasicRobot.isFlipped = isFlipped;
-        voltage = voltageSensor.getVoltage();
+//        voltage = voltageSensor.getVoltage();
     }
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         this(opMode, p_isTeleop, false);
@@ -88,8 +85,8 @@ public class BasicRobot{
         packet = new TelemetryPacket();
         packet.clearLines();
         op.telemetry.update();
-        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
-            module.clearBulkCache();
+//        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
+//            module.clearBulkCache();
     }
 
     /**

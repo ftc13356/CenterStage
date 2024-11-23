@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.CapCam;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 
@@ -27,7 +28,7 @@ public class SamplePnpTest extends LinearOpMode {
 //        robot.roadrun.setPoseEstimate(new Pose2d(0,0,0));
         BasicRobot robot = new BasicRobot(this,false);
         currentPose = new Pose2d(0,0,0);
-        CameraInit cam = new CameraInit(true, this);
+        CapCam cam = new CapCam();
         cam.startStreamin();
         double lastTime = 0;
         int buhs = 0;
@@ -54,10 +55,13 @@ public class SamplePnpTest extends LinearOpMode {
                 packet.put("TARGET", currentPose.vec().plus(new Vector2d(cam.getCenter()[0], -cam.getCenter()[1])));
                 buhs++;
                 packet.put("BUHPERSEC(BPS)", buhs/BasicRobot.time);
+                packet.put("color", cam.getCurrent());
                 cam.resetCenter();
                 dashboard.sendTelemetryPacket(packet);
                 packet.clearLines();
             }
+            packet.put("color", cam.getCurrent());
+            dashboard.sendTelemetryPacket(packet);
         }
 
         stop();
