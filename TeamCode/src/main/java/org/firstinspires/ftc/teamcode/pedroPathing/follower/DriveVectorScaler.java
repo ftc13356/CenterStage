@@ -71,8 +71,10 @@ public class DriveVectorScaler {
             truePathingVectors[1] = MathFunctions.copyVector(correctivePower);
         } else {
             // corrective power did not take up all the power, so add on heading power
-            Vector leftSideVector = MathFunctions.subtractVectors(correctivePower, headingPower);
-            Vector rightSideVector = MathFunctions.addVectors(correctivePower, headingPower);
+            Vector urg = new Vector();
+            urg.setOrthogonalComponents(correctivePower.getXComponent(), -correctivePower.getYComponent());
+            Vector leftSideVector = MathFunctions.subtractVectors(MathFunctions.scalarMultiplyVector(correctivePower,1), headingPower);
+            Vector rightSideVector = MathFunctions.addVectors(urg, headingPower);
 
             if (leftSideVector.getMagnitude() > 1 || rightSideVector.getMagnitude() > 1) {
                 //if the combined corrective and heading power is greater than 1, then scale down heading power
@@ -144,9 +146,9 @@ public class DriveVectorScaler {
      * @return returns the scaling factor for the variable Vector.
      */
     public double findNormalizingScaling(Vector staticVector, Vector variableVector) {
-            double a = Math.pow(variableVector.getXComponent(), 2) + Math.pow(variableVector.getYComponent(), 2);
-            double b = staticVector.getXComponent() * variableVector.getXComponent() + staticVector.getYComponent() * variableVector.getYComponent();
-            double c = Math.pow(staticVector.getXComponent(), 2) + Math.pow(staticVector.getYComponent(), 2) - 1.0;
-            return (-b + Math.sqrt(Math.pow(b, 2) - a*c))/(a);
+        double a = Math.pow(variableVector.getXComponent(), 2) + Math.pow(variableVector.getYComponent(), 2);
+        double b = staticVector.getXComponent() * variableVector.getXComponent() + staticVector.getYComponent() * variableVector.getYComponent();
+        double c = Math.pow(staticVector.getXComponent(), 2) + Math.pow(staticVector.getYComponent(), 2) - 1.0;
+        return (-b + Math.sqrt(Math.pow(b, 2) - a*c))/(a);
     }
 }
