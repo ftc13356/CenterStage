@@ -25,9 +25,8 @@ public class BLSS extends BasicRobot {
 
     public BLSS(LinearOpMode opmode){
         super(opmode,false);
-        op = opmode;
-        follower = new Follower(op.hardwareMap);
-        poseUpdater = new PoseUpdater(op.hardwareMap);
+        follower = new Follower(opmode.hardwareMap);
+        poseUpdater = new PoseUpdater(opmode.hardwareMap);
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
         speciPose = new Pose(33.243,28.017,Point.CARTESIAN);
