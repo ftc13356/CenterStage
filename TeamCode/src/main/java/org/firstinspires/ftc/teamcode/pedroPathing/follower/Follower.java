@@ -990,13 +990,6 @@ public class Follower {
         return dashboardPoseTracker;
     }
 
-    public void stopTeleopDrive(){
-        teleopDrive = false;
-    }
-    public boolean isTeleDrive(){
-        return teleopDrive;
-    }
-
     /**
      * This resets the IMU, if applicable.
      */
