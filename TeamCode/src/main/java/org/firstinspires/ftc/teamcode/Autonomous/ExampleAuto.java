@@ -19,6 +19,11 @@ public class ExampleAuto {
         //u can use op for opMode, i just use this line to demonstrate u don't want to make one of these
         HardwareMap map = op.hardwareMap;
 
-//        robot.follower
+        robot.follower.setStartingPose(poses);
+        path = robot.follower.pathBuilder().build();
+    }
+    public void update(){
+        robot.update();
+        robot.queuer.setFirstLoop(false);
     }
 }
