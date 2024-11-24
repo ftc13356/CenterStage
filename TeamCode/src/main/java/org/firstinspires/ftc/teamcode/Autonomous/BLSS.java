@@ -37,28 +37,26 @@ public class BLSS extends BasicRobot {
         yellowSampleTwo = new Pose(26.243,30.017,Point.CARTESIAN);
         yellowSampleThree = new Pose(26.243,36.017,Point.CARTESIAN);
 
-        specimeny = follower.pathBuilder() //x = forward/backward, y = side
-                //(-9.757, -84.983)
-                //tbh this shouldnt need to be subtracted every time idk what im doing
+        specimeny = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(34.243, -8.983, Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(0,0)
                 //.addPath(new BezierLine(new Point(9.757, 84.983, Point.CARTESIAN), new Point(44, 76, Point.CARTESIAN)))
                 .build();
         sampley = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(speciPose.getX(), speciPose.getY(), Point.CARTESIAN), new Point(26.243, 3.017, Point.CARTESIAN))) //Back up
+                .addPath(new BezierCurve(new Point(speciPose.getX(), speciPose.getY(), Point.CARTESIAN), new Point(26.243, 3.017, Point.CARTESIAN)))
                 .setPathEndTimeoutConstraint(2.0)
                 .addPath(new BezierCurve(new Point(19.243,5.017,Point.CARTESIAN), new Point(yellowSampleOne.getX(), yellowSampleOne.getY(),Point.CARTESIAN)))
                 .setPathEndTimeoutConstraint(2.0)
                 .addPath(new BezierCurve(new Point(yellowSampleOne.getX(), yellowSampleOne.getY(), Point.CARTESIAN), new Point(samplePose.getX(), samplePose.getY(), Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(90,90)
+                .setLinearHeadingInterpolation(Math.PI/2,Math.PI/2)
                 .addPath(new BezierCurve(new Point(samplePose.getX(), samplePose.getY(), Point.CARTESIAN), new Point(yellowSampleTwo.getX(), yellowSampleTwo.getY(),Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(90,-55)
+                .setLinearHeadingInterpolation(Math.PI/2,Math.PI*3/4)
                 .addPath(new BezierCurve(new Point(yellowSampleTwo.getX(), yellowSampleTwo.getY(), Point.CARTESIAN), new Point(samplePose.getX(), samplePose.getY(), Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(-55,90)
+                .setLinearHeadingInterpolation(Math.PI*3/4,Math.PI/2)
                 .addPath(new BezierCurve(new Point(samplePose.getX(), samplePose.getY(), Point.CARTESIAN), new Point(yellowSampleThree.getX(), yellowSampleThree.getY(), Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(90,-55)
+                .setLinearHeadingInterpolation(Math.PI/2,Math.PI*3/4)
                 .addPath(new BezierCurve(new Point(yellowSampleThree.getX(), yellowSampleThree.getY(), Point.CARTESIAN), new Point(samplePose.getX(), samplePose.getY(), Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(90,90)
+                .setLinearHeadingInterpolation(Math.PI/2,Math.PI/2)
                 .build();
 
         follower.setMaxPower(0.7);
