@@ -23,7 +23,7 @@ public class IDRobot extends BasicRobot {
     Claw claw;
     CVMaster cv;
     Flip flip;
-    Follower follower;
+    public Follower follower;
     TelescopicArm arm;
     Twist twist;
     boolean isAutoGrab = false, targeted = false;
