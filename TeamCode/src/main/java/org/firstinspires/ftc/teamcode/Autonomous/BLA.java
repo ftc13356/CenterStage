@@ -25,6 +25,7 @@ public class BLA extends IDRobot {
 
     public BLA(LinearOpMode opmode){
         super(opmode, false);
+
         op=opmode;
         follower = new Follower(op.hardwareMap);
         starting = new Pose(12,108,0);
@@ -60,6 +61,9 @@ public class BLA extends IDRobot {
                 .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(60,110,Point.CARTESIAN), new Point(60,96,Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(Math.PI*3/4, -Math.PI/2)
                 .build();
+
+        autoReset();
+        setClaw(Claw.ClawStates.CLOSED, false);
     }
     /**
     * builds path to go from current point -> sample-scoring
@@ -107,7 +111,9 @@ public class BLA extends IDRobot {
         setClaw(Claw.ClawStates.CLOSED, true);
         setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
         queuer.waitForFinish();
-        sampleNum++;
+        if(!follower.isBusy()){
+            sampleNum++;
+        } //sampleNum should increase only once it drops sample but my fatass does NOT know how
     }
 
     /**
