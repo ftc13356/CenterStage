@@ -15,8 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 
 public class BL20 {
-    PoseUpdater poseUpdater;
-    Follower builder;
+    //Follower builder;
     PathChain scoreSample, yellow1, yellow2, submersible;
     IDRobot robot;
 
@@ -25,20 +24,20 @@ public class BL20 {
     public BL20(LinearOpMode opmode){
         robot = new IDRobot(opmode,false);
 
-        builder = new Follower(opmode.hardwareMap);
-        builder.setStartingPose(starting);
+        robot.follower = new Follower(opmode.hardwareMap);
+        robot.follower.setStartingPose(starting);
 
-        yellow1 = builder.pathBuilder()
+        yellow1 = robot.follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(12,108,Point.CARTESIAN), new Point(24,120,0)))
                 .setLinearHeadingInterpolation(0,0)
                 .build();
 
-        yellow2 = builder.pathBuilder()
+        yellow2 = robot.follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(24,130,Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(Math.PI*3/4, 0)
                 .build();
 
-        submersible = builder.pathBuilder()
+        submersible = robot.follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(60,110,Point.CARTESIAN), new Point(60,96,Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(Math.PI*3/4, -Math.PI/2)
                 .build();
@@ -50,8 +49,8 @@ public class BL20 {
     * builds + follows path to go from current point -> (20,124)
      */
     public void placeSample () {
-        Pose current = builder.getPose();
-        scoreSample = builder.pathBuilder()
+        Pose current = robot.follower.getPose();
+        scoreSample = robot.follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), new Point(20,124,Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(0, Math.PI*3/4)
                 .build();
@@ -86,14 +85,8 @@ public class BL20 {
     }
 
     public void updateFollower() {
-        builder.update();
         robot.queuer.setFirstLoop(false);
 
-        poseUpdater.update();
-        robot.packet.put("x", poseUpdater.getPose().getX());
-        robot.packet.put("y", poseUpdater.getPose().getY());
-        robot.packet.put("heading", poseUpdater.getPose().getHeading());
-        robot.packet.put("total heading", poseUpdater.getTotalHeading());
         robot.update();
     }
 }
