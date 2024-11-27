@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.Twist.TwistStates.PARALLEL;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -14,14 +17,21 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Claw {
     RFServo claw;
 
-    public static double OPEN_POS = 0;
-    public static double CLOSED_POS = 0;
-    private final double CLAW_SERVO_BUFFER = 0;
+    public static double OPEN_POS = 0.6;
+    public static double CLOSED_POS = 0.38;
+
+    public static double FLIP_TIME = 0.5;
+    private final double CLAW_SERVO_BUFFER = 0.05;
     /**
      * init
      */
     public Claw(){
         claw = new RFServo("clawServo",1);
+        if(!isTeleop) {
+            claw.setPosition(OPEN_POS);
+            ClawStates.OPEN.setStateTrue();
+        }
+        claw.setLastTime(-100);
     }
 
     /**
@@ -82,9 +92,9 @@ public class Claw {
      */
     public void update() {
         for (var i : Claw.ClawStates.values()) {
-            if (abs(claw.getPosition() - i.position) < CLAW_SERVO_BUFFER) {
+            if (abs(claw.getPosition() - i.position) < CLAW_SERVO_BUFFER && time - claw.getLastTime() > FLIP_TIME) {
                 i.setStateTrue();
-                Claw.ClawStates.values()[i.ordinal()].state = false;
+                Claw.ClawTargetStates.values()[i.ordinal()].state = false;
             }
         }
         for (var i : Claw.ClawTargetStates.values()) {

@@ -71,10 +71,10 @@ public class DriveVectorScaler {
             truePathingVectors[1] = MathFunctions.copyVector(correctivePower);
         } else {
             // corrective power did not take up all the power, so add on heading power
-            Vector urg = new Vector();
-            urg.setOrthogonalComponents(correctivePower.getXComponent(), -correctivePower.getYComponent());
+//            Vector urg = new Vector();
+//            urg.setOrthogonalComponents(correctivePower.getXComponent(), -correctivePower.getYComponent());
             Vector leftSideVector = MathFunctions.subtractVectors(MathFunctions.scalarMultiplyVector(correctivePower,1), headingPower);
-            Vector rightSideVector = MathFunctions.addVectors(urg, headingPower);
+            Vector rightSideVector = MathFunctions.addVectors(correctivePower, headingPower);
 
             if (leftSideVector.getMagnitude() > 1 || rightSideVector.getMagnitude() > 1) {
                 //if the combined corrective and heading power is greater than 1, then scale down heading power

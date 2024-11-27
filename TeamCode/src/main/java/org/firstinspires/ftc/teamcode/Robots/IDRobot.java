@@ -124,7 +124,6 @@ public class IDRobot extends BasicRobot {
         claw.update();
         flip.update();
         follower.update();
-        arm.update();
         twist.update();
     }
 
@@ -136,12 +135,12 @@ public class IDRobot extends BasicRobot {
         boolean isRB = gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "down to grab /close claw/open claw");
         boolean isLB = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "ground_hover");
         boolean isRD = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "auto grab");
-        if (follower.isTeleDrive() || (abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001)) {
+//        if (follower.isTeleDrive() || (abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001)) {
             if (!follower.isTeleDrive())
                 follower.startTeleopDrive();
-            follower.setTeleOpMovementVectors(op.gamepad1.left_stick_y, op.gamepad1.left_stick_x, op.gamepad1.right_stick_x);
+            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y*.3, -op.gamepad1.left_stick_x*.3, op.gamepad1.right_stick_x*.3);
             isAutoGrab = false;
-        }
+//        }
         double extend = op.gamepad1.right_trigger - op.gamepad1.left_trigger, rotate = op.gamepad2.right_trigger - op.gamepad2.left_trigger;
         if (abs(extend) > .1 || abs(rotate) > .1) {
             arm.manualGoTo(extend, rotate);
