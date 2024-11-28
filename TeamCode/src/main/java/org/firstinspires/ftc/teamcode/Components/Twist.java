@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.Twist.TwistStates.PARALLEL;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -14,15 +17,21 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Twist {
     RFServo twist;
     public static double PARALLEL_POS = 0;
-    public static double PERPENDICULAR_POS = 0;
-    public static double GRAB_POS = 0;
-    private final double TWIST_SERVO_BUFFER = 0;
+    public static double PERPENDICULAR_POS = 0.55;
+    public static double GRAB_POS = 0, FLIP_TIME = 0.5;
+    private final double TWIST_SERVO_BUFFER = 0.05;
 
     /**
      * init
      */
     public Twist(){
         twist = new RFServo("twistServo",1);
+        if(!isTeleop) {
+            twist.setPosition(PARALLEL_POS);
+            PARALLEL.setStateTrue();
+        }
+        twist.setLastTime(-100);
+
     }
 
     /**
@@ -85,9 +94,9 @@ public class Twist {
      */
     public void update() {
         for (var i : Twist.TwistStates.values()) {
-            if (abs(twist.getPosition()-i.position) < TWIST_SERVO_BUFFER) {
+            if (abs(twist.getPosition()-i.position) < TWIST_SERVO_BUFFER && time - twist.getLastTime() > FLIP_TIME) {
                 i.setStateTrue();
-                Twist.TwistStates.values()[i.ordinal()].state = false;
+                Twist.TwistTargetStates.values()[i.ordinal()].state = false;
             }
         }
         for (var i : Twist.TwistTargetStates.values()) {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.follower;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFFeedForward;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFSwitch;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.forwardZeroPowerAcceleration;
@@ -169,7 +170,8 @@ public class Follower {
 
         // TODO: Make sure that this is the direction your motors need to be reversed in.
 //        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-//        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
 
@@ -180,7 +182,10 @@ public class Follower {
         }
 
         for (DcMotorEx motor : motors) {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            if(!isTeleop)
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            else
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
@@ -796,7 +801,7 @@ public class Follower {
         Vector corrective = MathFunctions.addVectors(centripetal, translational);
 
         if (corrective.getMagnitude() > 1) {
-            return MathFunctions.addVectors(centripetal, MathFunctions.scalarMultiplyVector(translational, driveVectorScaler.findNormalizingScaling(centripetal, translational)));
+            corrective =  MathFunctions.addVectors(centripetal, MathFunctions.scalarMultiplyVector(translational, driveVectorScaler.findNormalizingScaling(centripetal, translational)));
         }
 
         correctiveVector = MathFunctions.copyVector(corrective);

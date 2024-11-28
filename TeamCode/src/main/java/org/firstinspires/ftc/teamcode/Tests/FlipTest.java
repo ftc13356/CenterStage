@@ -6,19 +6,22 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Flip;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @Config
 @Autonomous(name = "FlipTest")
 public class FlipTest extends LinearOpMode{
     //0reset, 1sub, 2spec, 3specgrab, 4basket
-    public static int WHICH_STATE = 0;
+    public static double POS = 0;
     Flip flipServo;
 
     public void runOpMode() throws InterruptedException{
+        BasicRobot robot = new BasicRobot(this, true);
         flipServo = new Flip();
+
         waitForStart();
+        flipServo.flipTo(POS);
         while(opModeIsActive() && !isStopRequested()){
-            flipServo.flipTo(Flip.FlipStates.values()[WHICH_STATE]);
         }
     }
 }

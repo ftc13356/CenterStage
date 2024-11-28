@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.Flip.FlipStates.RESET;
+import static org.firstinspires.ftc.teamcode.Components.Twist.TwistStates.PARALLEL;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -13,12 +17,13 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Flip {
     RFServo flip;
-    public static double RESET_POS = 0;
-    public static double SUBMERSIBLE_POS = 0;
-    public static double SPECIMEN_POS = 0;
-    public static double SPECIMENGRAB_POS = 0;
-    public static double BASKET_POS = 0;
-    private final double FLIP_SERVO_BUFFER = 0;
+    public static double RESET_POS = 0.65;
+    public static double SUBMERSIBLE_POS = 0.2;
+    public static double SPECIMEN_POS = 0.825;
+    public static double SPECIMENGRAB_POS = 1;
+    public static double BASKET_POS = 1, FLIP_TIME = 0.5;
+
+    private final double FLIP_SERVO_BUFFER = 0.05;
 
 
     /**
@@ -26,6 +31,11 @@ public class Flip {
      */
     public Flip(){
         flip = new RFServo("flipServo",1);
+        if(!isTeleop) {
+            flip.setPosition(RESET_POS);
+            RESET.setStateTrue();
+        }
+        flip.setLastTime(-100);
     }
 
     /**
@@ -92,9 +102,9 @@ public class Flip {
      */
     public void update() {
         for (var i : Flip.FlipStates.values()) {
-            if (abs(flip.getPosition() - i.position) < FLIP_SERVO_BUFFER) {
+            if (abs(flip.getPosition() - i.position) < FLIP_SERVO_BUFFER && time - flip.getLastTime() > FLIP_TIME) {
                 i.setStateTrue();
-                Flip.FlipStates.values()[i.ordinal()].state = false;
+                Flip.FlipTargetStates.values()[i.ordinal()].state = false;
             }
         }
         for (var i : Flip.FlipTargetStates.values()) {
