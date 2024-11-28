@@ -22,10 +22,10 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -14, MAX=32, MIN=0, ROTMAX = 150, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.016, rP2 =0.02,rD2= 4, rD = 2.1, rF = .12, G = 0.15,rG = 0.15, rG2 = .73,TEST_LEN = 0;
-    boolean mid;
+    public static double  A_OFF = -14, MAX=28, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.02, rP2 =0.02,rD2= 5.55, rD = .65, rF = .1, G = 0.15,rG = 0.3, rG2 = .5,TEST_LEN = 0;
+    boolean mid=true;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
-    double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot;
+    double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot;
     public DualPIDController() {
         ext = (DcMotorEx) op.hardwareMap.dcMotor.get("extendMotor");
         rot = (DcMotorEx) op.hardwareMap.dcMotor.get("rotateMotor");
@@ -36,8 +36,10 @@ public class DualPIDController {
         rot.setDirection(DcMotorSimple.Direction.REVERSE);
         ext.setDirection(DcMotorSimple.Direction.REVERSE);
         mid=true;
-        middle=-100;
+        middle=0;
         middleRot = 0;
+        curExt =0;
+        curRot = 0;
     }
 
     public void goTo(double extension, double rotation){
@@ -45,26 +47,29 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         targetExt = extension;
         targetRot = rotation;
-        double err = extension - ext.getCurrentPosition()*TICKS_PER_IN;
+        curExt = ext.getCurrentPosition();
+        curRot = rot.getCurrentPosition();
+        double err = extension - curExt*TICKS_PER_IN;
         double d = ext.getVelocity()*TICKS_PER_IN;
-        ext.setPower(P*err+D*d+G*Math.sin(rot.getCurrentPosition()*TICKS_PER_RAD));
-        double rErr = rotation - rot.getCurrentPosition()*TICKS_PER_DEG;
+        ext.setPower(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD));
+        double rErr = rotation - curRot*TICKS_PER_DEG;
         double rd = -rot.getVelocity()*TICKS_PER_DEG;
-        double r = ext.getCurrentPosition()*TICKS_PER_IN/MAX;
-        double power = (rP+rP2*r*r)*rErr+.001*(rD+rD2*r*r)*rd+Math.cos(rot.getCurrentPosition()*TICKS_PER_RAD+(A_OFF+11*r)*PI/180)*(rG+ rG2*r);
-        if(abs(rd)<5 && abs(rErr)>2 && getExt()<10 || getRot()<15 && targetRot!=0){
+        double r = curExt*TICKS_PER_IN/MAX;
+        double power = (rP+rP2*r*r)*rErr+.001*(rD+rD2*r*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+11*r)*PI/180)*(rG+ rG2*r);
+        if(abs(rd)<5 && abs(rErr)>2 && targetRot>3){
             power+=rF*signum(rErr);
         }
-        if(abs(rErr)<10&&rd>-5&&targetRot<3)
+        if(abs(rErr)<10&&rd>-1&&targetRot<3 || (targetRot<3 && lastPower==0))
             power=0;
         rot.setPower(power);
-        if(power ==0 && abs(rd)<1 && targetRot ==0 && abs(getRot())>1) {
+        lastPower = power;
+        if(power ==0 && abs(rd)<1 && targetRot <3 && abs(getRot())>1) {
             rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         packet.put("powa",power);
         packet.put("rD", rd);
-        packet.put("rGcostheta", rG*Math.cos(rot.getCurrentPosition()*TICKS_PER_RAD));
+        packet.put("rGcostheta", rG*Math.cos(curRot*TICKS_PER_RAD));
     }
     public void goTo(double extension, double rotation, double middle){
         if(middle != this.middle || targetExt != min(max(extension,MIN),MAX) || targetRot != min(max(rotation,ROTMIN),ROTMAX))
@@ -94,10 +99,10 @@ public class DualPIDController {
         goTo(extension,rotation);
     }
     public double getRot(){
-        return rot.getCurrentPosition()*TICKS_PER_DEG;
+        return curRot*TICKS_PER_DEG;
     }
     public double getExt(){
-        return ext.getCurrentPosition()*TICKS_PER_IN;
+        return curExt*TICKS_PER_IN;
     }
     public double getTargetExt(){
         return targetExt;

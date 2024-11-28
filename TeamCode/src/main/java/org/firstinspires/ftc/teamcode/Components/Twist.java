@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Twist {
     RFServo twist;
     public static double PARALLEL_POS = 0;
-    public static double PERPENDICULAR_POS = 0.55;
+    public static double SPECIMEN_POS = 1;
     public static double GRAB_POS = 0, FLIP_TIME = 0.5;
     private final double TWIST_SERVO_BUFFER = 0.05;
 
@@ -39,7 +39,7 @@ public class Twist {
      */
     public enum TwistStates{
         PARALLEL(true, PARALLEL_POS),
-        PERPENDICULAR(false, PERPENDICULAR_POS),
+        PERPENDICULAR(false, SPECIMEN_POS),
         GRAB(false, GRAB_POS);
         boolean state;
         double position;
@@ -61,7 +61,7 @@ public class Twist {
 
     public enum TwistTargetStates{
         PARALLEL(true, PARALLEL_POS),
-        PERPENDICULAR(false, PERPENDICULAR_POS),
+        PERPENDICULAR(false, SPECIMEN_POS),
         GRAB(false, GRAB_POS);
         boolean state;
         double position;

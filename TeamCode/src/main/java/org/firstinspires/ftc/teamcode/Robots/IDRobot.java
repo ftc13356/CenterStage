@@ -140,7 +140,7 @@ public class IDRobot extends BasicRobot {
 //        if (follower.isTeleDrive() || (abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001)) {
             if (!follower.isTeleDrive())
                 follower.startTeleopDrive();
-            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y*.3, -op.gamepad1.left_stick_x*.3, op.gamepad1.right_stick_x*.3);
+            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y*.3, -op.gamepad1.left_stick_x*.3, -op.gamepad1.right_stick_x*.3);
             isAutoGrab = false;
 //        }
         double extend = op.gamepad1.right_trigger - op.gamepad1.left_trigger, rotate = op.gamepad2.right_trigger - op.gamepad2.left_trigger;
@@ -157,19 +157,19 @@ public class IDRobot extends BasicRobot {
         if (isB) {
             arm.goTo(TelescopicArm.ArmStates.SPECIMEN_GRAB);
             flip.flipTo(Flip.FlipStates.SPECIMEN_GRAB);
-            twist.twistTo(Twist.TwistStates.PARALLEL);
+            twist.twistTo(Twist.TwistStates.PERPENDICULAR);
             claw.goTo(Claw.ClawStates.OPEN);
             isAutoGrab = false;
         }
         if (isA) {
             arm.goTo(TelescopicArm.ArmStates.RETRACTED);
-            flip.flipTo(Flip.FlipStates.RESET);
-            twist.twistTo(Twist.TwistStates.PARALLEL);
+            flip.flipTo(Flip.FlipStates.SPECIMEN);
             isAutoGrab = false;
         }
         if (isX) {
             arm.goTo(TelescopicArm.ArmStates.HIGH_SPECIMEN);
             flip.flipTo(Flip.FlipStates.SPECIMEN);
+            twist.twistTo(Twist.TwistStates.PARALLEL);
             isAutoGrab = false;
         }
         if (isRD || isAutoGrab) {
@@ -207,6 +207,7 @@ public class IDRobot extends BasicRobot {
         if (isLB) {
             arm.goTo(TelescopicArm.ArmStates.HOVER);
             flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
+            twist.twistTo(Twist.TwistStates.PARALLEL);
             isAutoGrab = false;
         }
         if (isRB) {
