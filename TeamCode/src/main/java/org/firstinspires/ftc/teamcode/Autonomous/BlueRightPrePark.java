@@ -24,8 +24,8 @@ public class BlueRightPrePark extends LinearOpMode{
 
     public void runOpMode() throws InterruptedException{
         IDRobot robot = new IDRobot(this,false);
-        robot.autoReset();
-        robot.setClaw(Claw.ClawStates.CLOSED, false);
+//        robot.autoReset();
+//        robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.follower.setStartingPose(new Pose(10,63,0));
         preload = robot.follower.pathBuilder().addPath(
                         new BezierLine(
@@ -45,11 +45,11 @@ public class BlueRightPrePark extends LinearOpMode{
             //preload
             robot.followPath(preload);
             robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN,true);
-            robot.setTwist(Twist.TwistStates.PERPENDICULAR,true);
+            robot.setTwist(Twist.TwistStates.PARALLEL,true);
             robot.setFlip(Flip.FlipStates.SPECIMEN,true);
-
-            robot.autoReset();
+            robot.setClaw(Claw.ClawStates.OPEN,false);
             robot.followPath(park);
+            robot.autoReset(true);
             robot.update();
             robot.queuer.setFirstLoop(false);
         }

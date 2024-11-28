@@ -40,11 +40,13 @@ public class IDRobot extends BasicRobot {
         targeted = false;
     }
 
-    public void autoReset(){
-        arm.goTo(TelescopicArm.ArmStates.HOVER);
-        claw.goTo(Claw.ClawStates.OPEN);
-        twist.twistTo(Twist.TwistStates.PARALLEL);
-        flip.flipTo(Flip.FlipStates.RESET);
+    public void autoReset(boolean p_async){
+        if(queuer.queue(p_async, TelescopicArm.ArmStates.RETRACTED.getState())) {
+            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
+            claw.goTo(Claw.ClawStates.OPEN);
+            twist.twistTo(Twist.TwistStates.PARALLEL);
+            flip.flipTo(Flip.FlipStates.RESET);
+        }
     }
 
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {

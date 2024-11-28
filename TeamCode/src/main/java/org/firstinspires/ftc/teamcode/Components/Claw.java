@@ -28,9 +28,10 @@ public class Claw {
     public Claw(){
         claw = new RFServo("clawServo",1);
         if(!isTeleop) {
-            claw.setPosition(OPEN_POS);
-            ClawStates.OPEN.setStateTrue();
+            claw.setPosition(CLOSED_POS);
+            ClawStates.CLOSED.setStateTrue();
         }
+
         claw.setLastTime(-100);
     }
 

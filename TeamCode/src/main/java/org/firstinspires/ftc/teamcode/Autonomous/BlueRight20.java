@@ -26,7 +26,7 @@ public class BlueRight20 extends LinearOpMode{
 
     public void runOpMode() throws InterruptedException{
         IDRobot robot = new IDRobot(this,false);
-        robot.autoReset();
+//        robot.autoReset();
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.follower.setStartingPose(new Pose(10,63,0));
         preload = robot.follower.pathBuilder().addPath(
@@ -75,7 +75,7 @@ public class BlueRight20 extends LinearOpMode{
             robot.setTwist(Twist.TwistStates.PERPENDICULAR,true);
             robot.setFlip(Flip.FlipStates.SPECIMEN,true);
             robot.followPath(deposit);
-            robot.autoReset();
+            robot.autoReset(false);
             //park
             robot.followPath(park);
         }
