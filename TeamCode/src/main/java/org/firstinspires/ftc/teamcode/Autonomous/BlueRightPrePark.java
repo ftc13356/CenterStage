@@ -18,10 +18,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 @Autonomous
-public class BlueRight20 extends LinearOpMode{
+public class BlueRightPrePark extends LinearOpMode{
     private PathChain preload;
-    private PathChain intake;
-    private PathChain deposit;
     private PathChain park;
 
     public void runOpMode() throws InterruptedException{
@@ -30,29 +28,15 @@ public class BlueRight20 extends LinearOpMode{
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.follower.setStartingPose(new Pose(10,63,0));
         preload = robot.follower.pathBuilder().addPath(
-                new BezierLine(
-                        new Point(10,63,Point.CARTESIAN),
-                        new Point(35,63,Point.CARTESIAN)
-                ))
-                .setConstantHeadingInterpolation(toRadians(0))
-                .build();
-        intake = robot.follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Point(35,63,Point.CARTESIAN),
-                                new Point(25,35,Point.CARTESIAN)
-                        ))
-                .setConstantHeadingInterpolation(toRadians(0))
-                .build();
-        deposit = robot.follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Point(25,35,Point.CARTESIAN),
-                                new Point(35,63,Point.CARTESIAN)
+                                new Point(10,63,Point.CARTESIAN),
+                                new Point(36,63,Point.CARTESIAN)
                         ))
                 .setConstantHeadingInterpolation(toRadians(0))
                 .build();
         park = robot.follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Point(35,63,Point.CARTESIAN),
+                                new Point(36,63,Point.CARTESIAN),
                                 new Point(10,10,Point.CARTESIAN)
                         ))
                 .setLinearHeadingInterpolation(toRadians(0), toRadians(90))
@@ -63,21 +47,11 @@ public class BlueRight20 extends LinearOpMode{
             robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN,true);
             robot.setTwist(Twist.TwistStates.PERPENDICULAR,true);
             robot.setFlip(Flip.FlipStates.SPECIMEN,true);
-            //intake
-            robot.setClaw(Claw.ClawStates.OPEN,false);
-            robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB,true);
-            robot.setTwist(Twist.TwistStates.GRAB,true);
-            robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB,true);
-            robot.followPath(intake);
-            robot.setClaw(Claw.ClawStates.CLOSED,true);
-            //deposit
-            robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN,false);
-            robot.setTwist(Twist.TwistStates.PERPENDICULAR,true);
-            robot.setFlip(Flip.FlipStates.SPECIMEN,true);
-            robot.followPath(deposit);
+
             robot.autoReset();
-            //park
             robot.followPath(park);
+            robot.update();
+            robot.queuer.setFirstLoop(false);
         }
     }
 }
