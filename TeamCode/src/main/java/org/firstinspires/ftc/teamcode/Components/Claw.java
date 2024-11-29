@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Twist.TwistStates.PARALLEL;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
 
@@ -27,11 +28,14 @@ public class Claw {
      */
     public Claw(){
         claw = new RFServo("clawServo",1);
+        claw.setLastTime(-100);
+        for(int i=0;i<ClawTargetStates.values().length;i++){
+            ClawTargetStates.values()[i].state=false;
+        }
         if(!isTeleop) {
             claw.setPosition(CLOSED_POS);
             ClawStates.CLOSED.setStateTrue();
         }
-
         claw.setLastTime(-100);
     }
 
@@ -60,7 +64,7 @@ public class Claw {
     }
 
     public enum ClawTargetStates{
-        OPEN(true, OPEN_POS),
+        OPEN(false, OPEN_POS),
         CLOSED(false, CLOSED_POS);
         boolean state;
         double position;
@@ -97,11 +101,15 @@ public class Claw {
                 i.setStateTrue();
                 Claw.ClawTargetStates.values()[i.ordinal()].state = false;
             }
+            packet.put("condom1" + i.ordinal(), abs(claw.getPosition() - i.position) < CLAW_SERVO_BUFFER);
+            packet.put("condom2" + i.ordinal(), time - claw.getLastTime() > FLIP_TIME);
+            packet.put("clawpos", claw.getPosition());
         }
         for (var i : Claw.ClawTargetStates.values()) {
             if (i.state && abs(claw.getPosition() - i.position) > CLAW_SERVO_BUFFER) {
                 goTo(Claw.ClawStates.values()[i.ordinal()]);
             }
         }
+        packet.put("claw open", ClawStates.OPEN.getState());
     }
 }

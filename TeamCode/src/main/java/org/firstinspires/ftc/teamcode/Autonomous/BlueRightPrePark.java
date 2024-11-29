@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,30 +18,32 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
-@Autonomous
+@Config
+@Autonomous (name = "BlueRightPrePark")
 public class BlueRightPrePark extends LinearOpMode{
     private PathChain preload;
     private PathChain park;
 
     public void runOpMode() throws InterruptedException{
         IDRobot robot = new IDRobot(this,false);
-//        robot.autoReset();
-//        robot.setClaw(Claw.ClawStates.CLOSED, false);
-        robot.follower.setStartingPose(new Pose(10,63,0));
+        robot.follower.setStartingPose(new Pose(10,57,0));
+        robot.follower.setMaxPower(0.7);
         preload = robot.follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Point(10,63,Point.CARTESIAN),
-                                new Point(36,63,Point.CARTESIAN)
+                                new Point(10,57,Point.CARTESIAN),
+                                new Point(34,63,Point.CARTESIAN)
                         ))
                 .setConstantHeadingInterpolation(toRadians(0))
                 .build();
         park = robot.follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Point(36,63,Point.CARTESIAN),
-                                new Point(10,10,Point.CARTESIAN)
+                                new Point(34,63,Point.CARTESIAN),
+                                new Point(20,20,Point.CARTESIAN)
                         ))
                 .setLinearHeadingInterpolation(toRadians(0), toRadians(90))
                 .build();
+        waitForStart();
+        robot.queuer.reset();
         while(!isStopRequested() && opModeIsActive()){
             //preload
             robot.followPath(preload);

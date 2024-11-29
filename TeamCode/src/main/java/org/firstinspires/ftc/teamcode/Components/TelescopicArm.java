@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.PI;
@@ -25,7 +26,7 @@ public class TelescopicArm extends DualPIDController {
     public static double LOWBUCKET_EXTEND_POS = 15;
     public static double LOWBUCKET_PITCH_POS = 115;
     public static double HIGHSPECIMEN_EXTEND_POS = 15;
-    public static double HIGHSPECIMEN_PITCH_POS = 47;
+    public static double HIGHSPECIMEN_PITCH_POS = 50;
     public static double LOWSPECIMEN_EXTEND_POS = 5;
     public static double LOWSPECIMEN_PITCH_POS = 25;
     public static double SPECIMENGRAB_EXTEND_POS = 0;
@@ -46,6 +47,12 @@ public class TelescopicArm extends DualPIDController {
     public TelescopicArm() {
         super();
         lastManualTime = -100;
+        for (int i = 0; i < ArmTargetStates.values().length; i++) {
+            ArmTargetStates.values()[i].state = false;
+        }
+        if(!isTeleop){
+            ArmStates.RETRACTED.setStateTrue();
+        }
     }
 
     /**

@@ -26,12 +26,14 @@ public class Twist {
      */
     public Twist(){
         twist = new RFServo("twistServo",1);
+        twist.setLastTime(-100);
+        for(int i=0;i<TwistTargetStates.values().length;i++){
+            TwistTargetStates.values()[i].state=false;
+        }
         if(!isTeleop) {
             twist.setPosition(PARALLEL_POS);
             PARALLEL.setStateTrue();
         }
-        twist.setLastTime(-100);
-
     }
 
     /**
@@ -60,7 +62,7 @@ public class Twist {
     }
 
     public enum TwistTargetStates{
-        PARALLEL(true, PARALLEL_POS),
+        PARALLEL(false, PARALLEL_POS),
         PERPENDICULAR(false, SPECIMEN_POS),
         GRAB(false, GRAB_POS);
         boolean state;

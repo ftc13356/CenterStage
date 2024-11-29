@@ -50,17 +50,17 @@ public class IDRobot extends BasicRobot {
     }
 
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {
-        if (queuer.queue(p_async, targ.getState()))
+        if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(targ);
     }
 
     public void setClaw(Claw.ClawStates targ, boolean p_async) {
-        if (queuer.queue(p_async, targ.getState()))
+        if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
             claw.goTo(targ);
     }
 
     public void setFlip(Flip.FlipStates targ, boolean p_async) {
-        if (queuer.queue(p_async, targ.getState()))
+        if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
             flip.flipTo(targ);
     }
 

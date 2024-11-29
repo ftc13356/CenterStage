@@ -31,11 +31,14 @@ public class Flip {
      */
     public Flip(){
         flip = new RFServo("flipServo",1);
+        flip.setLastTime(-100);
+        for(int i=0;i<FlipTargetStates.values().length;i++){
+            FlipTargetStates.values()[i].state=false;
+        }
         if(!isTeleop) {
             flip.setPosition(RESET_POS);
             RESET.setStateTrue();
         }
-        flip.setLastTime(-100);
     }
 
     /**
@@ -66,7 +69,7 @@ public class Flip {
     }
 
     public enum FlipTargetStates{
-        RESET(true, RESET_POS),
+        RESET(false, RESET_POS),
         SUBMERSIBLE(false, SUBMERSIBLE_POS),
         SPECIMEN(false, SPECIMEN_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
