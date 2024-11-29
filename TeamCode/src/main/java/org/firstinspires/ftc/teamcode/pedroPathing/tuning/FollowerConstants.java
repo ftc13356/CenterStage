@@ -70,7 +70,7 @@ public class FollowerConstants {
             0,
             0.000,
             0.6,
-            0);
+            0.1);
 
     // Feed forward constant added on to the drive PIDF
     public static double drivePIDFFeedForward = 0.0;

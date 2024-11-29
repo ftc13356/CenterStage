@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 
@@ -27,6 +28,7 @@ public class IDRobot extends BasicRobot {
     TelescopicArm arm;
     Twist twist;
     boolean isAutoGrab = false, targeted = false;
+    double lastReadTime;
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
@@ -38,6 +40,7 @@ public class IDRobot extends BasicRobot {
         twist = new Twist();
         isAutoGrab = false;
         targeted = false;
+        lastReadTime = -100;
     }
 
     public void autoReset(boolean p_async){
@@ -137,12 +140,12 @@ public class IDRobot extends BasicRobot {
         boolean isRB = gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "down to grab /close claw/open claw");
         boolean isLB = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "ground_hover");
         boolean isRD = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "auto grab");
-//        if (follower.isTeleDrive() || (abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001)) {
+        if (follower.isTeleDrive() || (abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_y) > 0.001)) {
             if (!follower.isTeleDrive())
                 follower.startTeleopDrive();
             follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y*.3, -op.gamepad1.left_stick_x*.3, -op.gamepad1.right_stick_x*.3);
             isAutoGrab = false;
-//        }
+        }
         double extend = op.gamepad1.right_trigger - op.gamepad1.left_trigger, rotate = op.gamepad2.right_trigger - op.gamepad2.left_trigger;
         if (abs(extend) > .1 || abs(rotate) > .1) {
             arm.manualGoTo(extend, rotate);
@@ -172,6 +175,16 @@ public class IDRobot extends BasicRobot {
             twist.twistTo(Twist.TwistStates.PARALLEL);
             isAutoGrab = false;
         }
+        if(time-lastReadTime > 1 && !isAutoGrab) {
+            double[] relCen = cv.getCenter().clone();
+            if (!Arrays.equals(relCen, new double[]{0, 0, 0})) {
+                targeted = true;
+                relCen[0] = relCen[2] * Math.sin(arm.getRot() * PI / 180) + relCen[0] * Math.cos(arm.getRot() * PI / 180) - 2.5;
+                packet.put("relCent0", relCen[0]);
+                packet.put("relCent1", relCen[1]);
+            }
+            lastReadTime = time;
+        }
         if (isRD || isAutoGrab) {
             if (TelescopicArm.ArmStates.HOVER.getState()) {
                 if (!isAutoGrab) {
@@ -179,22 +192,29 @@ public class IDRobot extends BasicRobot {
                     targeted = false;
                 }
                 isAutoGrab = true;
-                follower.stopTeleopDrive();
-                double[] relCent = cv.getCenter();
+                if(follower.isTeleDrive())
+                    follower.stopTeleopDrive();
+                double[] relCent = cv.getCenter().clone();
                 if (!Arrays.equals(relCent, new double[]{0, 0, 0})) {
                     targeted = true;
-                    relCent[0] = relCent[2]*Math.sin(arm.getRot())+relCent[0]*Math.cos(arm.getRot());
-                    if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 1) {
-                        isRB = true;
-                        isAutoGrab = false;
-                        targeted = false;
+                    cv.resetCenter();
+                    relCent[0] = relCent[2]*Math.sin(arm.getRot()*PI/180)+relCent[0]*Math.cos(arm.getRot()*PI/180)-2.85;
+                    packet.put("relCent0", relCent[0]);
+                    packet.put("relCent1", relCent[1]);
+                    if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 0.25) {
+//                        isRB = true;
+//                        isAutoGrab = false;
+//                        targeted = false;
                     } else {
                         Vector2d relVect = new Vector2d(0, -relCent[1]).rotated(-follower.getPose().getHeading());
                         Pose pos = follower.getPose();
                         pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
                         follower.holdPoint(new BezierPoint(new Point(pos)), pos.getHeading());
                         double newExt = arm.getExt() + relCent[0];
-                        arm.goTo(newExt, atan2(6, newExt));
+                        arm.goToResetManual(newExt, Math.atan2(4.5, newExt+8)*180/PI);
+                        packet.put("newExt", newExt);
+                        packet.put("relVect", relVect);
+                        isAutoGrab = false;
                     }
                 } else if (!targeted) {
                     arm.manualGoTo(0.5, 0);

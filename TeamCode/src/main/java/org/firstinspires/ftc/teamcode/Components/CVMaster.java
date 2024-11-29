@@ -34,6 +34,7 @@ public class CVMaster {
             red = new RedPipeline();
             blue = new BluePipeline();
             exclude = new ExcludePipline();
+        startStreamin();
     }
     public double[] getCenter(){
         return exclude.getCenter();
@@ -74,7 +75,7 @@ public class CVMaster {
                         webcam.startStreaming(
                                     1280, 720, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
-                        dashboard.startCameraStream(webcam, 10);
+                        dashboard.startCameraStream(webcam, 4);
                         LOGGER.log("Camera Streaming now!");
                     }
 

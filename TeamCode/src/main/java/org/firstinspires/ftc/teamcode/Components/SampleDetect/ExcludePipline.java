@@ -273,7 +273,7 @@ public class ExcludePipline extends OpenCvPipeline {
                                 multiplia = 1/multiplia;
                             }
                             double consta = 1.16* Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width)*multiplia;
-                            centers.add(new Double[]{coords[0] * consta,coords[1] * consta,coords[2] * consta});
+                            centers.add(new Double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta});
                             packet.put("CAM X", center[0]);
                             packet.put("CAM y", center[1]);
                             packet.put("CAM Z", center[2]);
