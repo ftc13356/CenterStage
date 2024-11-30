@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-@Disabled
 
 @TeleOp()
 public class OutreachClawbot extends LinearOpMode {
@@ -16,6 +15,7 @@ public class OutreachClawbot extends LinearOpMode {
     private DcMotor backRight = null;
     private DcMotor backLeft = null;
     private Servo claw = null;
+    boolean openclaw = false;
 
 
     @Override
@@ -29,8 +29,9 @@ public class OutreachClawbot extends LinearOpMode {
 
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        openclaw = false;
         waitForStart();
 
 
@@ -39,8 +40,6 @@ public class OutreachClawbot extends LinearOpMode {
             double drive = -gamepad1.left_stick_y;
             double turn = gamepad1.left_stick_x;
             double strafe = gamepad1.right_stick_x;
-            boolean openclaw = gamepad1.x;
-            boolean closeclaw = gamepad1.y;
             telemetry.addData("strafe", Double.toString(strafe));
             telemetry.addData("drive", Double.toString(drive));
             telemetry.addData("turn", Double.toString(turn));
@@ -49,11 +48,12 @@ public class OutreachClawbot extends LinearOpMode {
             backLeft.setPower(drive-turn+strafe);
             frontRight.setPower(drive-turn-strafe);
             backRight.setPower(drive+turn-strafe);
-            if (openclaw == true){
-                claw.setPosition(1);
-            }
-            if (openclaw == false){
+            if (gamepad1.x && openclaw == true){
+                claw.setPosition(0.4);
+                openclaw = false;
+            } else if (!gamepad1.x && !openclaw){
                 claw.setPosition(0);
+                openclaw=true;
             }
 
 

@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -14, MAX=28, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.02, rP2 =0.02,rD2= 5.55, rD = .65, rF = .1, G = 0.15,rG = 0.3, rG2 = .5,TEST_LEN = 0;
+    public static double  A_OFF = -14, MAX=27.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.02, rP2 =0.02,rD2= 5.55, rD = .65, rF = .1, G = 0.15,rG = 0.3, rG2 = .5,TEST_LEN = 0;
     boolean mid=true;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot;
@@ -47,7 +47,7 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         targetExt = extension;
         targetRot = rotation;
-        curExt = ext.getCurrentPosition();
+        curExt = ext.getCurrentPosition() - (rot.getCurrentPosition()*TICKS_PER_DEG)/90/TICKS_PER_IN;
         curRot = rot.getCurrentPosition();
         double err = extension - curExt*TICKS_PER_IN;
         double d = ext.getVelocity()*TICKS_PER_IN;

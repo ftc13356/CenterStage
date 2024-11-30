@@ -72,7 +72,7 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat rvec = new Mat();
     Mat tvec = new Mat();
     MatOfPoint2f imagePoints = new MatOfPoint2f(), contour2f = new MatOfPoint2f();
-    double[] center = {0, 0, 0};
+    double[] center = {0, 0, 0, 0};
     int color = 0;
 
     /*
@@ -96,7 +96,7 @@ public class ExcludePipline extends OpenCvPipeline {
 
 
     public void resetCenter() {
-        center = new double[]{0, 0, 0};
+        center = new double[]{0, 0, 0, 0};
     }
 
     @Override
@@ -127,9 +127,9 @@ public class ExcludePipline extends OpenCvPipeline {
         contours = new ArrayList<>();
         Imgproc.findContours(colorMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         input.copyTo(boundingImage);  // More memory-efficient
+        ArrayList<Double[]> colorCoords = contoursToCoords();
+        boundingImage.copyTo(firstBoundingImage);
         if(!contours.isEmpty()) {
-            ArrayList<Double[]> colorCoords = contoursToCoords();
-            boundingImage.copyTo(firstBoundingImage);
             input.copyTo(boundingImage);  // More memory-efficient
             contours = new ArrayList<>();
             Imgproc.findContours(allMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -138,21 +138,21 @@ public class ExcludePipline extends OpenCvPipeline {
             if (centerd[0] != 100) center = convertToDoubleArray(centerd);
         }
         if (retVal == 0) {
-            input = firstBoundingImage;
+            firstBoundingImage.copyTo(input);
         } else if (retVal == 1) {
-            input = boundingImage;
+            boundingImage.copyTo(input);
         } else if (retVal == 2) {
-            input = mask;
+            mask.copyTo(input);
         } else if (retVal == 3) {
-            input = mask3;
+            mask3.copyTo(input);
         } else if(retVal == 4){
-            input = mask4;
+            mask4.copyTo(input);
         }
         else if(retVal == 5){
-            input = colorMask;
+            colorMask.copyTo(input);
         }
         else if(retVal == 6){
-            input = allMask;
+            allMask.copyTo(input);
         }
         hsv.release();
         mask.release();
@@ -194,7 +194,7 @@ public class ExcludePipline extends OpenCvPipeline {
             }
         }
         if(matchedCenters.isEmpty())
-            return new Double[] {100.0,100.0,100.0};
+            return new Double[] {100.0,100.0,100.0, 100.0};
         return matchedCenters.get(coord);
     }
 
@@ -236,7 +236,7 @@ public class ExcludePipline extends OpenCvPipeline {
                         }
 
                         // Compute the angle and store it
-                        double angle = -(90 + rotRectAngle - 180);
+                        double angle = (rotRectAngle);
                         drawTagText(minAreaRect, angle + " deg", boundingImage, "Blue");
 
 
@@ -275,8 +275,9 @@ public class ExcludePipline extends OpenCvPipeline {
                             if(multiplia<1){
                                 multiplia = 1/multiplia;
                             }
+
                             double consta = 1.16* Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width)*multiplia;
-                            centers.add(new Double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta});
+                            centers.add(new Double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta, angle});
                             packet.put("CAM X", center[0]);
                             packet.put("CAM y", center[1]);
                             packet.put("CAM Z", center[2]);
@@ -443,6 +444,7 @@ public class ExcludePipline extends OpenCvPipeline {
     public double[] getCenter() {
         return center;
     }
+
 
     static Scalar getColorScalar(String color) {
         switch (color) {
