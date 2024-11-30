@@ -39,7 +39,6 @@ public class ExcludePipline extends OpenCvPipeline {
     List<MatOfPoint> contours = new ArrayList<>();
     public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 120, BS = 150, BV = 30, YH = 18, YUH = 30, YS = 110, YV = 180;
     Mat hsv = new Mat();
-    Mat blurredImage = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat(), mask4 = new Mat();
     Mat colorMask = new Mat(), allMask = new Mat();
     Mat hierarchy = new Mat();
@@ -67,14 +66,12 @@ public class ExcludePipline extends OpenCvPipeline {
             new Point3(objectWidth / 2, objectHeight / 2, -1)
     );
 
+    MatOfPoint3f rlObjectPoints;
+
     Point[] orderedRectPoints;
     Mat rvec = new Mat();
     Mat tvec = new Mat();
     MatOfPoint2f imagePoints = new MatOfPoint2f(), contour2f = new MatOfPoint2f();
-
-
-    static final int CONTOUR_LINE_THICKNESS = 2;
-
     double[] center = {0, 0, 0};
     int color = 0;
 
@@ -113,12 +110,7 @@ public class ExcludePipline extends OpenCvPipeline {
                 buFilt = new Scalar(BUH, 255, 255),
                 ylFilt = new Scalar(YH, YS, YV),
                 yuFilt = new Scalar(YUH, 255, 255);
-        mask = new Mat();
-        mask2 = new Mat();
-        mask3 = new Mat();
-        mask4 = new Mat();
-        colorMask = new Mat();
-        allMask = new Mat();
+
         Core.inRange(hsv, rlFilt, ruFilt, mask);
         Core.inRange(hsv, rllFilt, rulFilt, mask2);
         Core.inRange(hsv, blFilt, buFilt, mask3);
@@ -134,33 +126,46 @@ public class ExcludePipline extends OpenCvPipeline {
         Core.bitwise_or(allMask,mask, allMask);
         contours = new ArrayList<>();
         Imgproc.findContours(colorMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        boundingImage = input.clone();
-        ArrayList<Double[]> colorCoords = contoursToCoords();
-        firstBoundingImage = boundingImage.clone();
-        boundingImage = input.clone();
-        contours = new ArrayList<>();
-        Imgproc.findContours(allMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        ArrayList<Double[]> allCoords = contoursToCoords();
-        Double[] centerd = matchedCoords(colorCoords, allCoords);
-        if(centerd[0] != 100) center = convertToDoubleArray(centerd);
+        input.copyTo(boundingImage);  // More memory-efficient
+        if(!contours.isEmpty()) {
+            ArrayList<Double[]> colorCoords = contoursToCoords();
+            boundingImage.copyTo(firstBoundingImage);
+            input.copyTo(boundingImage);  // More memory-efficient
+            contours = new ArrayList<>();
+            Imgproc.findContours(allMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            ArrayList<Double[]> allCoords = contoursToCoords();
+            Double[] centerd = matchedCoords(colorCoords, allCoords);
+            if (centerd[0] != 100) center = convertToDoubleArray(centerd);
+        }
         if (retVal == 0) {
-            return firstBoundingImage;
+            input = firstBoundingImage;
         } else if (retVal == 1) {
-            return boundingImage;
+            input = boundingImage;
         } else if (retVal == 2) {
-            return mask;
+            input = mask;
         } else if (retVal == 3) {
-            return mask3;
+            input = mask3;
         } else if(retVal == 4){
-            return mask4;
+            input = mask4;
         }
         else if(retVal == 5){
-            return colorMask;
+            input = colorMask;
         }
         else if(retVal == 6){
-            return allMask;
+            input = allMask;
         }
-        return boundingImage;
+        hsv.release();
+        mask.release();
+        mask2.release();
+        mask3.release();
+        mask4.release();
+        colorMask.release();
+        hierarchy.release();
+        allMask.release();
+        hierarchy.release();
+        boundingImage.release();
+        firstBoundingImage.release();
+        return input;
     }
     double[] convertToDoubleArray(Double[] wrapperArray) {
         double[] primitiveArray = new double[wrapperArray.length];
@@ -208,7 +213,6 @@ public class ExcludePipline extends OpenCvPipeline {
 
             // Approximate the contour to a polygon
             contour2f = new MatOfPoint2f(contour.toArray());
-            double epsilon = EPSILON * Imgproc.arcLength(contour2f, true);
             minAreaRect = Imgproc.minAreaRect(contour2f);
 
             if (minAreaRect.size.width != 0 && minAreaRect.size.height != 0 && Imgproc.contourArea(contour) / (minAreaRect.size.height * minAreaRect.size.width) > AREA_THRESH) {
@@ -239,7 +243,6 @@ public class ExcludePipline extends OpenCvPipeline {
                         // Order the image points in the same order as object points
                         orderedRectPoints = orderPoints(box);
 
-                        MatOfPoint3f rlObjectPoints = new MatOfPoint3f();
                         int classify = 0;
                         if (aspectRatio < 3.5 / 1.5 - CLASSDOWN_TOL) {
                             classify = 1;
@@ -281,7 +284,6 @@ public class ExcludePipline extends OpenCvPipeline {
                             packet.put("aspectRatio", aspectRatio);
                             packet.put("area", Imgproc.contourArea(contour));
                             packet.put("color", color);
-
                         }
                     }
                 }
