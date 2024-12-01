@@ -21,12 +21,12 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDContro
 public class TelescopicArm extends DualPIDController {
     public static double INTAKE_EXTEND_POS = 5;
     public static double INTAKE_PITCH_POS = 5;
-    public static double HIGHBUCKET_EXTEND_POS = 28;
+    public static double HIGHBUCKET_EXTEND_POS = 29;
     public static double HIGHBUCKET_PITCH_POS = 95;
     public static double LOWBUCKET_EXTEND_POS = 11;
     public static double LOWBUCKET_PITCH_POS = 100;
-    public static double HIGHSPECIMEN_EXTEND_POS = 15;
-    public static double HIGHSPECIMEN_PITCH_POS = 45;
+    public static double HIGHSPECIMEN_EXTEND_POS = 14.7;
+    public static double HIGHSPECIMEN_PITCH_POS = 47;
     public static double LOWSPECIMEN_EXTEND_POS = 10;
     public static double LOWSPECIMEN_PITCH_POS = 25;
     public static double SPECIMENGRAB_EXTEND_POS = 0;
@@ -132,13 +132,13 @@ public class TelescopicArm extends DualPIDController {
     }
 
     public void manualGoTo(double p_extend, double p_pitch) {
-        if(abs(4.5-(getTargetExt()+8)*sin(getTargetRot()*PI/180))>2) {
+        if(abs(5.5-(getTargetExt()+8)*sin(getTargetRot()*PI/180))>2) {
             super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, super.getTargetRot()+p_pitch*MANUAL_ROT_SPEED);
             for (var i : TelescopicArm.ArmTargetStates.values()) {
                 i.state = false;
             }
         } else{
-            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(4.5, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+8)*180/PI);
+            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(5.5, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+8)*180/PI);
         }
     }
     public void lowerToIntake(){
@@ -205,6 +205,9 @@ public class TelescopicArm extends DualPIDController {
     public void goTo(double p_extend, double p_pitch) {
         super.goTo(p_extend, p_pitch);
     }
+    public double getVel(){
+        return super.getVel();
+    }
 
     public void goToResetManual(double p_extend, double p_pitch){
         lastManualTime = -100;
@@ -223,7 +226,7 @@ public class TelescopicArm extends DualPIDController {
                     TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
                 }
                 else if(i == ArmStates.RETRACTED){
-                    if(abs(super.getExtPosition())<3){
+                    if(abs(super.getExt())<3){
                         i.setStateTrue();
                         TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
                     }

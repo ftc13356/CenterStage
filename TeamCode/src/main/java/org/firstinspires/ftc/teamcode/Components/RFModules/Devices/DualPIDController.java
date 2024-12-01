@@ -22,10 +22,10 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -14, MAX=27.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.02, rP2 =0.02,rD2= 5.55, rD = .65, rF = .1, G = 0.15,rG = 0.3, rG2 = .5,TEST_LEN = 0;
+    public static double  A_OFF = -14, MAX=29.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.02, rP2 =0.02,rD2= 5.55, rD = .65, rF = .1, G = 0.15,rG = 0.3, rG2 = .5,TEST_LEN = 0;
     boolean mid=true;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
-    double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot;
+    double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;
     public DualPIDController() {
         ext = (DcMotorEx) op.hardwareMap.dcMotor.get("extendMotor");
         rot = (DcMotorEx) op.hardwareMap.dcMotor.get("rotateMotor");
@@ -40,6 +40,7 @@ public class DualPIDController {
         middleRot = 0;
         curExt =0;
         curRot = 0;
+        vel =0;
     }
 
     public void goTo(double extension, double rotation){
@@ -47,15 +48,16 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         targetExt = extension;
         targetRot = rotation;
-        curExt = ext.getCurrentPosition() - (rot.getCurrentPosition()*TICKS_PER_DEG)/90/TICKS_PER_IN;
+        curExt = ext.getCurrentPosition() + (rot.getCurrentPosition()*TICKS_PER_DEG)/80/TICKS_PER_IN;
         curRot = rot.getCurrentPosition();
         double err = extension - curExt*TICKS_PER_IN;
         double d = ext.getVelocity()*TICKS_PER_IN;
+        vel = d;
         ext.setPower(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD));
         double rErr = rotation - curRot*TICKS_PER_DEG;
         double rd = -rot.getVelocity()*TICKS_PER_DEG;
         double r = curExt*TICKS_PER_IN/MAX;
-        double power = (rP+rP2*r*r)*rErr+.001*(rD+rD2*r*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+11*r)*PI/180)*(rG+ rG2*r);
+        double power = (rP+rP2*r*r)*rErr+.001*(rD+rD2*r*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+8*r)*PI/180)*(rG+ rG2*r);
         if(abs(rd)<5 && abs(rErr)>2 && targetRot>3){
             power+=rF*signum(rErr);
         }
@@ -119,6 +121,8 @@ public class DualPIDController {
     public double getMiddle(){return middle;}
     public double getMiddleRot(){return  middleRot;}
     public boolean isMid(){return mid;}
+
+    public double getVel(){return vel;}
     public double getExtPosition(){
         return ext.getCurrentPosition();
     }
