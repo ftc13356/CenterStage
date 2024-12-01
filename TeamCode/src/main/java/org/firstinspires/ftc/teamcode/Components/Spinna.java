@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class Spinna {
     DcMotorEx rot;
-    public static double rev_per_meter = 8;
+    public static double rev_per_meter = 551.181102362;
     public Spinna() {
         rot = (DcMotorEx) op.hardwareMap.dcMotor.get("spinna");
         rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
