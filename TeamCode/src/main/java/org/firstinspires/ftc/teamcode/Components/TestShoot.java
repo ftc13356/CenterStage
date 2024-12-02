@@ -3,27 +3,17 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
 import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
-import android.graphics.Color;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.CapCam;
-import org.firstinspires.ftc.teamcode.Colorsens;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-
-import java.util.Arrays;
-
-@Autonomous
 @Config
-public class ProjectileTest extends LinearOpMode {
+@Autonomous
+public class TestShoot extends LinearOpMode {
     public static double G = 9.8, theta = 30, vt = 14.91, TARGET_X = 0.5, TARGET_Y = -0.08;
 
     @Override
@@ -38,6 +28,7 @@ public class ProjectileTest extends LinearOpMode {
         while (opModeIsActive()) {
 //            targ = color.getColor();
             double speeed = rangeToVelo(TARGET_X, TARGET_Y);
+            packet.put("speed", speeed);
             spinna.spin(speeed);
             robot.update();
         }
@@ -47,7 +38,7 @@ public class ProjectileTest extends LinearOpMode {
 public double rangeToVelo(double x, double y) {
     double numrator = x * G / Math.cos(theta * PI / 180);
     double power = -x * tan(theta * PI / 180) * G / (vt * vt) + y * G / (vt * vt) - 1;
-    double denom = vt * (lambertW0(pow(-Math.E, power)) + 1);
+    double denom = vt * (lambertW0(-pow(Math.E, power)) + 1);
     return numrator / denom;
 }
 
@@ -70,6 +61,6 @@ public static double lambertW0(double x) {
         w = wPlus1;
     }
 
-    throw new RuntimeException("Lambert W function did not converge.");
+    throw new RuntimeException("Lambert W function did not converge." + x);
 }
 }
