@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
 import org.firstinspires.ftc.teamcode.Components.Twist;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierPoint;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
@@ -80,6 +81,18 @@ public class IDRobot extends BasicRobot {
         if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
             if (!queuer.isExecuted())
                 follower.followPath(path);
+        }
+    }
+    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean is_Dynamics) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2);
+            }
         }
     }
     public void lowerToGround(boolean p_async){
