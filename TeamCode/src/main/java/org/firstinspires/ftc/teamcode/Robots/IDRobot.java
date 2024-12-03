@@ -208,9 +208,13 @@ public class IDRobot extends BasicRobot {
             isAutoGrab = false;
         }
         if (isA) {
-            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
-            flip.flipTo(Flip.FlipStates.SPECIMEN);
-            isAutoGrab = false;
+            if(TelescopicArm.ArmStates.HIGH_BUCKET.getState()&&!Flip.FlipStates.RESET.getState()){
+                flip.flipTo(Flip.FlipStates.RESET);
+            } else {
+                arm.goTo(TelescopicArm.ArmStates.RETRACTED);
+                flip.flipTo(Flip.FlipStates.RESET);
+                isAutoGrab = false;
+            }
         }
         if(isDD && isX){
             arm.goTo(TelescopicArm.ArmStates.LOW_SPECIMEN);
