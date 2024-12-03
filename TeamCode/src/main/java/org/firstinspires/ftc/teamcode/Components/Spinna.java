@@ -30,7 +30,7 @@ public class Spinna {
 
     public void spin(double speed){
         packet.put("revVelocity", rot.getVelocity());
-        double newey = 5.64-1.41*speed+.517*speed*speed;
+        double newey =/* 5.64-1.41*speed+.517*speed**/1.57*speed+2.54;
         rot.setVelocity(newey*rev_per_meter);
     }
     public double getVel(){
