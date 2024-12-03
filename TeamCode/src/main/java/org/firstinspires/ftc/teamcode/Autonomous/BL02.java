@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
 import org.firstinspires.ftc.teamcode.Components.Twist;
 import org.firstinspires.ftc.teamcode.Robots.IDRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -17,14 +16,13 @@ public class BL02 {
     PathChain yellow1, submersible;
     IDRobot robot;
     Pose starting = new Pose(7.5,103,0);
+    Point score = new Point(14,119,Point.CARTESIAN);
     public BL02(LinearOpMode opmode){
         robot = new IDRobot(opmode,false);
-
-        robot.follower = new Follower(opmode.hardwareMap);
         robot.follower.setStartingPose(starting);
 
         yellow1 = robot.follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(24,120,0)))
+                .addPath(new BezierCurve(score, new Point(24,120,0)))
                 .setLinearHeadingInterpolation(-Math.PI/4,0)
                 .build();
 
@@ -32,17 +30,17 @@ public class BL02 {
                 .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(60,110,Point.CARTESIAN), new Point(60,96,Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(-Math.PI/4, -Math.PI/2)
                 .build();
-
     }
     /**
-    * builds + follows path to go from current point -> (10,124)
+    * builds + follows path to go from current point -> score
      */
     public void placeSample () {
-        Point score = new Point(10, 124, Point.CARTESIAN);
         robot.followPath(score, 0, -Math.PI/4,false,true);
+        robot.queuer.addDelay(0.4);
         robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.BUCKET, true);
+        robot.queuer.addDelay(0.5);
         robot.setClaw(Claw.ClawStates.OPEN, false);
     }
 

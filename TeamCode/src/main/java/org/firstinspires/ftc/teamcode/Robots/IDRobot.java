@@ -100,14 +100,13 @@ public class IDRobot extends BasicRobot {
             arm.lowerToIntake();
     }
 
-    public void placeSample(Point score){
+    public void placeSampleHigh(Point score){
         followPath(score, 0, -Math.PI/4,false,true);
         setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
         setTwist(Twist.TwistStates.PARALLEL, true);
         setFlip(Flip.FlipStates.BUCKET, true);
         setClaw(Claw.ClawStates.OPEN, false);
     }
-
 
     public void autoGrab() {
         if (queuer.queue(false, !isAutoGrab && TelescopicArm.ArmStates.INTAKE.getState())) {

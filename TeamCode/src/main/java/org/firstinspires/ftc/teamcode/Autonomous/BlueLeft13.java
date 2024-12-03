@@ -13,7 +13,7 @@ public class BlueLeft13 extends LinearOpMode {
             robot.placeSpeci();
             robot.placeSamples();
             robot.park();
-            robot.updateFollower();
+            robot.update();
         }
     }
 }

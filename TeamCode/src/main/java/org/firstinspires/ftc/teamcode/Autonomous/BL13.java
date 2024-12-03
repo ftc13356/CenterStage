@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 
 public class BL13 {
-    PathChain scoreSpecy, scoreSampley, getSampley1, getSampley2, getSampley3, submersibley;
+    PathChain scoreSpecy, scoreSampley, getSampley1, getSampley2, getSampley3, submersible;
     IDRobot robot;
 
     public BL13(LinearOpMode opmode){
@@ -47,7 +47,7 @@ public class BL13 {
                 .setLinearHeadingInterpolation(Math.PI*3/4, 0)
                 .build();
 
-        submersibley = robot.follower.pathBuilder()
+        submersible = robot.follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(60,110,Point.CARTESIAN), new Point(60,96,Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(Math.PI*3/4, -Math.PI/2)
                 .build();
@@ -78,7 +78,7 @@ public class BL13 {
      * follows paths + sets claw and arm to pick up and places yellow samples 1,2,3
      */
 
-    public void afterGetSampley(){
+    public void afterYellow(){
         robot.setClaw(Claw.ClawStates.OPEN, true);
         robot.setArm(TelescopicArm.ArmStates.INTAKE, true);
         robot.queuer.addDelay(3.0);
@@ -91,24 +91,19 @@ public class BL13 {
 
     public void placeSamples(){
         robot.followPath(getSampley1, true);
-        afterGetSampley();
+        afterYellow();
         robot.followPath(getSampley2,true);
-        afterGetSampley();
+        afterYellow();
         robot.followPath(getSampley3,true);
-        afterGetSampley();
+        afterYellow();
     }
 
-    /**
-     * parks by submersible
-     */
     public void park() {
-        robot.followPath(submersibley,true);
+        robot.followPath(submersible,true);
     }
 
-    public void updateFollower() {
-        robot.follower.update();
+    public void update() {
         robot.queuer.setFirstLoop(false);
-
         robot.update();
     }
-}
+    }
