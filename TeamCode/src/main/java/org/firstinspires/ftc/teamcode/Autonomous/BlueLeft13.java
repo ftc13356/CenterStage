@@ -4,11 +4,11 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class BlueLeft31 extends LinearOpMode {
-    BL31 robot;
+public class BlueLeft13 extends LinearOpMode {
+    BL13 robot;
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new BL31(this);
+        robot = new BL13(this);
         while(!isStopRequested()&&opModeIsActive()){
             robot.placeSpeci();
             robot.placeSamples();

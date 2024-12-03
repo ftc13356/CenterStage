@@ -5,7 +5,9 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Claw;
+import org.firstinspires.ftc.teamcode.Components.Flip;
 import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
+import org.firstinspires.ftc.teamcode.Components.Twist;
 import org.firstinspires.ftc.teamcode.Robots.IDRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -13,11 +15,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 
-public class BL31 {
+public class BL13 {
     PathChain scoreSpecy, scoreSampley, getSampley1, getSampley2, getSampley3, submersibley;
     IDRobot robot;
 
-    public BL31(LinearOpMode opmode){
+    public BL13(LinearOpMode opmode){
         robot = new IDRobot(opmode,false);
 
         robot.follower = new Follower(opmode.hardwareMap);
@@ -49,20 +51,18 @@ public class BL31 {
                 .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(60,110,Point.CARTESIAN), new Point(60,96,Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(Math.PI*3/4, -Math.PI/2)
                 .build();
-
-        robot.autoReset();
-        robot.setClaw(Claw.ClawStates.CLOSED, false);
     }
     /**
      * builds + follows path to go from current point -> sample-scoring
      */
     public void placeSample () {
-        Pose current = robot.follower.getPose();
-        scoreSampley = robot.follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), new Point(20,124,Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(0, Math.PI*3/4)
-                .build();
-        robot.followPath(scoreSampley, true);
+        Point score = new Point(20, 124, Point.CARTESIAN);
+        robot.followPath(score, 0, Math.PI/4,true,true);
+
+        robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
+        robot.setTwist(Twist.TwistStates.PARALLEL, true);
+        robot.setFlip(Flip.FlipStates.BUCKET, true);
+        robot.setClaw(Claw.ClawStates.OPEN, false);
     }
 
     /**

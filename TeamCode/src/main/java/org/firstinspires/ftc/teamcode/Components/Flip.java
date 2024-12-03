@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Flip.FlipStates.RESET;
-import static org.firstinspires.ftc.teamcode.Components.Twist.TwistStates.PARALLEL;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
@@ -21,7 +20,7 @@ public class Flip {
     public static double SUBMERSIBLE_POS = 0.2;
     public static double SPECIMEN_POS = 0.9;
     public static double SPECIMENGRAB_POS = 0.72;
-    public static double BASKET_POS = 0.9, FLIP_TIME = 0.3;
+    public static double BUCKET_POS = 0.9, FLIP_TIME = 0.3;
 
     private final double FLIP_SERVO_BUFFER = 0.05;
 
@@ -49,7 +48,7 @@ public class Flip {
         SUBMERSIBLE(false, SUBMERSIBLE_POS),
         SPECIMEN(false, SPECIMEN_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
-        BASKET(false, BASKET_POS);
+        BUCKET(false, BUCKET_POS);
         boolean state;
         double position;
         FlipStates(boolean p_state, double p_position){
@@ -73,7 +72,7 @@ public class Flip {
         SUBMERSIBLE(false, SUBMERSIBLE_POS),
         SPECIMEN(false, SPECIMEN_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
-        BASKET(false, BASKET_POS);
+        BUCKET(false, BUCKET_POS);
         boolean state;
         double position;
         FlipTargetStates(boolean p_state, double p_position){

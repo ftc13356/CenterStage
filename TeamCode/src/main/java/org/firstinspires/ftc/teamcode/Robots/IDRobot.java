@@ -83,7 +83,7 @@ public class IDRobot extends BasicRobot {
                 follower.followPath(path);
         }
     }
-    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean is_Dynamics) {
+    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean is_Dynamic) {
         if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
             if (!queuer.isExecuted()) {
                 Pose current = follower.getPose();
@@ -99,6 +99,15 @@ public class IDRobot extends BasicRobot {
         if (queuer.queue(p_async, TelescopicArm.ArmStates.INTAKE.getState()))
             arm.lowerToIntake();
     }
+
+    public void placeSample(Point score){
+        followPath(score, 0, -Math.PI/4,false,true);
+        setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
+        setTwist(Twist.TwistStates.PARALLEL, true);
+        setFlip(Flip.FlipStates.BUCKET, true);
+        setClaw(Claw.ClawStates.OPEN, false);
+    }
+
 
     public void autoGrab() {
         if (queuer.queue(false, !isAutoGrab && TelescopicArm.ArmStates.INTAKE.getState())) {
@@ -172,13 +181,13 @@ public class IDRobot extends BasicRobot {
         }
         if(isDD && isY){
             arm.goTo(TelescopicArm.ArmStates.LOW_BUCKET);
-            flip.flipTo(Flip.FlipStates.BASKET);
+            flip.flipTo(Flip.FlipStates.BUCKET);
             twist.twistTo(Twist.TwistStates.PARALLEL);
             isAutoGrab = false;
         }
         else if (isY) {
             arm.goTo(TelescopicArm.ArmStates.HIGH_BUCKET);
-            flip.flipTo(Flip.FlipStates.BASKET);
+            flip.flipTo(Flip.FlipStates.BUCKET);
             twist.twistTo(Twist.TwistStates.PARALLEL);
             isAutoGrab = false;
         }
