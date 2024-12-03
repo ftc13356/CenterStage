@@ -66,7 +66,7 @@ public class BlueRight20 extends LinearOpMode{
             //intake
             robot.setClaw(Claw.ClawStates.OPEN,false);
             robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB,true);
-            robot.setTwist(Twist.TwistStates.GRAB,true);
+            robot.setTwist(Twist.TwistStates.PARALLEL,true);
             robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB,true);
             robot.followPath(intake);
             robot.setClaw(Claw.ClawStates.CLOSED,true);

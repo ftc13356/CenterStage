@@ -20,7 +20,7 @@ public class Flip {
     public static double SUBMERSIBLE_POS = 0.2;
     public static double SPECIMEN_POS = 0.9;
     public static double SPECIMENGRAB_POS = 0.72;
-    public static double BUCKET_POS = 0.8, FLIP_TIME = 0.3;
+    public static double BUCKET_POS = 0.9, FLIP_TIME = 0.3;
 
     private final double FLIP_SERVO_BUFFER = 0.05;
 
@@ -38,6 +38,7 @@ public class Flip {
             flip.setPosition(RESET_POS);
             RESET.setStateTrue();
         }
+        flip.setLastTime(-100);
     }
 
     /**

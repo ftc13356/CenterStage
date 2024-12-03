@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDContro
 public class TelescopicArm extends DualPIDController {
     public static double INTAKE_EXTEND_POS = 5;
     public static double INTAKE_PITCH_POS = 5;
-    public static double HIGHBUCKET_EXTEND_POS = 29;
+    public static double HIGHBUCKET_EXTEND_POS = 30;
     public static double HIGHBUCKET_PITCH_POS = 95;
     public static double LOWBUCKET_EXTEND_POS = 11;
     public static double LOWBUCKET_PITCH_POS = 100;
