@@ -7,9 +7,9 @@ public class BlueLeft20 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new BL20(this);
         while(!isStopRequested()&&opModeIsActive()){
-            robot.placeSamples();
+            robot.placeSamples(); //move to constructor
             robot.park();
-            robot.updateFollower();
+            robot.update();
         }
     }
 }

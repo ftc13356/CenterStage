@@ -33,8 +33,7 @@ public class BL20 {
                 .setLinearHeadingInterpolation(Math.PI*3/4, -Math.PI/2)
                 .build();
 
-        robot.autoReset();
-        robot.setClaw(Claw.ClawStates.CLOSED, false);
+        placeSamples();
     }
     /**
     * builds + follows path to go from current point -> (20,124)
@@ -48,8 +47,8 @@ public class BL20 {
         robot.followPath(scoreSample, true);
 
         robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
-        robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
-        robot.setFlip(Flip.FlipStates.SPECIMEN, true);
+        robot.setTwist(Twist.TwistStates.PARALLEL, true);
+        robot.setFlip(Flip.FlipStates.BASKET, true);
         robot.setClaw(Claw.ClawStates.OPEN, false);
     }
 
@@ -72,7 +71,7 @@ public class BL20 {
         robot.followPath(submersible,true);
     }
 
-    public void updateFollower() {
+    public void update() {
         robot.queuer.setFirstLoop(false);
         robot.update();
     }
