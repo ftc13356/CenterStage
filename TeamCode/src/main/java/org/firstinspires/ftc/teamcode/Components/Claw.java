@@ -101,9 +101,7 @@ public class Claw {
                 i.setStateTrue();
                 Claw.ClawTargetStates.values()[i.ordinal()].state = false;
             }
-            packet.put("condom1" + i.ordinal(), abs(claw.getPosition() - i.position) < CLAW_SERVO_BUFFER);
-            packet.put("condom2" + i.ordinal(), time - claw.getLastTime() > FLIP_TIME);
-            packet.put("clawpos", claw.getPosition());
+
         }
         for (var i : Claw.ClawTargetStates.values()) {
             if (i.state && abs(claw.getPosition() - i.position) > CLAW_SERVO_BUFFER) {
