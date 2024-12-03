@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 @Autonomous
 @Config
 public class TeleArmTest extends LinearOpMode {
-    public static double TARGET_ROT = 0, TARGET_EXT = 0;
+    public static double TARGET_ROT = 0, TARGET_EXT = 0, MID = 0, MID_ROT = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,false);

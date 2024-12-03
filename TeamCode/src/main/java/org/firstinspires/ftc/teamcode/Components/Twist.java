@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.Twist.TwistStates.PARALLEL;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -14,15 +19,23 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Twist {
     RFServo twist;
     public static double PARALLEL_POS = 0;
-    public static double PERPENDICULAR_POS = 0;
-    public static double GRAB_POS = 0;
-    private final double TWIST_SERVO_BUFFER = 0;
+    public static double SPECIMEN_POS = 1;
+    public static double GRAB_POS = 0, FLIP_TIME = 0.2;
+    private final double TWIST_SERVO_BUFFER = 0.05;
 
     /**
      * init
      */
     public Twist(){
         twist = new RFServo("twistServo",1);
+        twist.setLastTime(-100);
+        for(int i=0;i<TwistTargetStates.values().length;i++){
+            TwistTargetStates.values()[i].state=false;
+        }
+        if(!isTeleop) {
+            twist.setPosition(PARALLEL_POS);
+            PARALLEL.setStateTrue();
+        }
     }
 
     /**
@@ -30,7 +43,7 @@ public class Twist {
      */
     public enum TwistStates{
         PARALLEL(true, PARALLEL_POS),
-        PERPENDICULAR(false, PERPENDICULAR_POS),
+        PERPENDICULAR(false, SPECIMEN_POS),
         GRAB(false, GRAB_POS);
         boolean state;
         double position;
@@ -51,8 +64,8 @@ public class Twist {
     }
 
     public enum TwistTargetStates{
-        PARALLEL(true, PARALLEL_POS),
-        PERPENDICULAR(false, PERPENDICULAR_POS),
+        PARALLEL(false, PARALLEL_POS),
+        PERPENDICULAR(false, SPECIMEN_POS),
         GRAB(false, GRAB_POS);
         boolean state;
         double position;
@@ -80,14 +93,27 @@ public class Twist {
         twist.setPosition(p_pos);
     }
 
+    public void twistToAng(double p_ang){
+        if(p_ang<0){
+            if(p_ang>-5){
+                p_ang=-180;
+            }
+            p_ang+=180;
+        }
+        p_ang = min(1,p_ang/150);
+        twist.setPosition(p_ang);
+    }
+
     /**
      * updates the state machine
      */
     public void update() {
         for (var i : Twist.TwistStates.values()) {
-            if (abs(twist.getPosition()-i.position) < TWIST_SERVO_BUFFER) {
-                i.setStateTrue();
-                Twist.TwistStates.values()[i.ordinal()].state = false;
+            if (abs(twist.getPosition()-i.position) < TWIST_SERVO_BUFFER && time - twist.getLastTime() > FLIP_TIME) {
+                i.state = true;
+            }
+            else{
+                i.state = false;
             }
         }
         for (var i : Twist.TwistTargetStates.values()) {

@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,23 +18,17 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
-
+@Config
 public class CVMaster {
+    public static boolean shouldStream = false;
     OpenCvWebcam webcam;
-    SampleDetectionPipelinePNP pnp;
-
-    BluePipeline blue;
-    RedPipeline red;
-    YellowPipeline yellow;
 
     ExcludePipline exclude;
     public CVMaster(){
         webcam = OpenCvCameraFactory.getInstance()
                 .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
-            yellow = new YellowPipeline();
-            red = new RedPipeline();
-            blue = new BluePipeline();
             exclude = new ExcludePipline();
+        startStreamin();
     }
     public double[] getCenter(){
         return exclude.getCenter();
@@ -74,7 +69,10 @@ public class CVMaster {
                         webcam.startStreaming(
                                     1280, 720, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
-                        dashboard.startCameraStream(webcam, 10);
+                        webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.SOFTWARE);
+
+                        if(shouldStream)
+                            dashboard.startCameraStream(webcam, 4);
                         LOGGER.log("Camera Streaming now!");
                     }
 
