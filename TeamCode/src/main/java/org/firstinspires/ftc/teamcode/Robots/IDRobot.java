@@ -88,7 +88,7 @@ public class IDRobot extends BasicRobot {
                 follower.followPath(path);
         }
     }
-    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean is_Dynamic) {
+    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
             if (!queuer.isExecuted()) {
                 Pose current = follower.getPose();
@@ -100,16 +100,30 @@ public class IDRobot extends BasicRobot {
             }
         }
     }
+    public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2);
+            }
+        }
+    }
     public void lowerToGround(boolean p_async){
         if (queuer.queue(p_async, TelescopicArm.ArmStates.INTAKE.getState()))
             arm.lowerToIntake();
     }
 
-    public void placeSampleHigh(Point score){
-        followPath(score, 0, -Math.PI/4,false,true);
+    public void sampleHigh(Point end ){
+        followPath(end, 0, -PI/4,false);
+        queuer.addDelay(1);
         setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
-        setTwist(Twist.TwistStates.PARALLEL, true);
+        setTwist(Twist.TwistStates.PERPENDICULAR, true);
         setFlip(Flip.FlipStates.BUCKET, true);
+        queuer.addDelay(0.5);
         setClaw(Claw.ClawStates.OPEN, false);
     }
 
