@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 @Config
 @Autonomous
 public class TestShoot extends LinearOpMode {
-    public static double G = 9.8, theta = 30, vt = 14.91, TARGET_X = 0.5, TARGET_Y = -0.08;
+    public static double G = 9.8, theta = 30, vt = 14.91, TARGET_X = 0.5, TARGET_Y = -0.08, TARGET_VEL = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,8 +26,8 @@ public class TestShoot extends LinearOpMode {
         int targ = 0;
         waitForStart();
         while (opModeIsActive()) {
-//            targ = color.getColor();
-            double speeed = rangeToVelo(TARGET_X, TARGET_Y);
+//            targ = color.getColor();//
+            double speeed = TARGET_VEL;
             packet.put("speed", speeed);
             spinna.spin(speeed);
             robot.update();
