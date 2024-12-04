@@ -8,6 +8,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
@@ -80,7 +82,7 @@ public class RFServo implements Servo {
      */
 
     public void setPosition(double p_position) {
-        if (time - plastTime > FLIP_TIME || p_position == 0.06 || p_position==0.02) {
+        if (time - plastTime > FLIP_TIME && abs(p_position-position)>0.02) {
                 logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
                         + df.format(p_position), true);
             LOGGER.log("moving to:"+p_position);

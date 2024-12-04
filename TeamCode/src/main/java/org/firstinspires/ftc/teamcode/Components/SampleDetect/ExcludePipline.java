@@ -279,13 +279,13 @@ public class ExcludePipline extends OpenCvPipeline {
                             double consta = 1.16* Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width)*multiplia;
                             centers.add(new Double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta, angle});
                             if (center!=null) {
-                                packet.put("CAM X", center[0]);
-                                packet.put("CAM y", center[1]);
-                                packet.put("CAM Z", center[2]);
-                                packet.put("classif", classify);
-                                packet.put("aspectRatio", aspectRatio);
-                                packet.put("area", Imgproc.contourArea(contour));
-                                packet.put("color", color);
+//                                packet.put("CAM X", center[0]);
+//                                packet.put("CAM y", center[1]);
+//                                packet.put("CAM Z", center[2]);
+//                                packet.put("classif", classify);
+//                                packet.put("aspectRatio", aspectRatio);
+//                                packet.put("area", Imgproc.contourArea(contour));
+//                                packet.put("color", color);
                             }
 
                         }
