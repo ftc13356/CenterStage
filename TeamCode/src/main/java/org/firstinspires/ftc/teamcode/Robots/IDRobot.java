@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 import java.util.Arrays;
 
+@Config
 public class IDRobot extends BasicRobot {
     Claw claw;
     CVMaster cv;
@@ -46,13 +48,12 @@ public class IDRobot extends BasicRobot {
 
     public void autoReset(boolean p_async){
         if(queuer.queue(p_async, TelescopicArm.ArmStates.RETRACTED.getState())) {
-            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
             claw.goTo(Claw.ClawStates.OPEN);
             twist.twistTo(Twist.TwistStates.PARALLEL);
             flip.flipTo(Flip.FlipStates.RESET);
+            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
         }
     }
-
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {
         if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(targ);
@@ -115,16 +116,6 @@ public class IDRobot extends BasicRobot {
     public void lowerToGround(boolean p_async){
         if (queuer.queue(p_async, TelescopicArm.ArmStates.INTAKE.getState()))
             arm.lowerToIntake();
-    }
-
-    public void sampleHigh(Point end ){
-        followPath(end, 0, -PI/4,false);
-        queuer.addDelay(1);
-        setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
-        setTwist(Twist.TwistStates.PERPENDICULAR, true);
-        setFlip(Flip.FlipStates.BUCKET, true);
-        queuer.addDelay(0.5);
-        setClaw(Claw.ClawStates.OPEN, false);
     }
 
     public void autoGrab() {
