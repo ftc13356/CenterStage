@@ -65,8 +65,8 @@ public class CapCam {
                         }
                         webcam.startStreaming(
                                 640, 480, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
-
-                        dashboard.startCameraStream(webcam, 10);
+                        webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.SOFTWARE);
+                        dashboard.startCameraStream(webcam, 5);
                         LOGGER.log("Camera Streaming now!");
                     }
 
@@ -94,9 +94,6 @@ public class CapCam {
     }
     public void swapBlue(){
         pipe.setColor(1);
-    }
-    public void swapYellow(){
-        pipe.setColor(2);
     }
     public void resetCenter(){
         pipe.resetCenter();

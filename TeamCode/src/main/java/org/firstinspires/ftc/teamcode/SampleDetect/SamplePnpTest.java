@@ -48,15 +48,13 @@ public class SamplePnpTest extends LinearOpMode {
 //            }
 
 
-
+            cam.swapBlue();
             if(!Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
                 BasicRobot.time = getRuntime();
                 buhs++;
                 packet.put("BUHPERSEC(BPS)", buhs/BasicRobot.time);
                 packet.put("color", cam.getCurrent());
-                if(!Objects.equals(cam.getCenter(), new double[]{0, 0, 0})) {
-                    cam.resetCenter();
-                }
+                cam.resetCenter();
                 dashboard.sendTelemetryPacket(packet);
                 packet.clearLines();
             }

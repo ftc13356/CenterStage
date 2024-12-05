@@ -32,7 +32,7 @@ import java.util.List;
 public class CapCamPipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 120, BS = 150, BV = 30;
+    public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 140, BS = 100, BV = 30;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat();
     Mat hierarchy = new Mat();
@@ -198,6 +198,7 @@ public class CapCamPipline extends OpenCvPipeline {
 
                         // Order the image points in the same order as object points
                         orderedRectPoints = orderPoints(box);
+                        orderedRectPoints = orderCorner(orderedRectPoints);
                         imagePoints = new MatOfPoint2f(orderedRectPoints);
 
                         boolean success = Calib3d.solvePnP(
