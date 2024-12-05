@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -34,13 +35,19 @@ public class CapCamPipline extends OpenCvPipeline {
     public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 120, BS = 150, BV = 30;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat();
-    Mat colorMask = new Mat();
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat();
 
     public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 2, DOWN_TOLERANCE = 1.15, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
-    double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
-    double objectHeight = 1.5;  // Replace with your object's height in real-world units
+    double objectWidth = 6;  // Replace with your object's width in real-world units (e.g., centimeters)
+    double objectHeight = 3;  // Replace with your object's height in real-world units
+
+    Scalar rlFilt = new Scalar(RLH, RS, RV),
+            ruFilt = new Scalar(180, 255, 255),
+            rllFilt = new Scalar(0, RS, RV),
+            rulFilt = new Scalar(RUH, 255, 255),
+            blFilt = new Scalar(BH, BS, BV),
+            buFilt = new Scalar(BUH, 255, 255);
 
     // Define the 3D coordinates of the object corners in the object coordinate space
     MatOfPoint2f imagePoints = new MatOfPoint2f(), contour2f = new MatOfPoint2f(), approx = new MatOfPoint2f();
@@ -89,42 +96,35 @@ public class CapCamPipline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-        Scalar rlFilt = new Scalar(RLH, RS, RV),
-                ruFilt = new Scalar(180, 255, 255),
-                rllFilt = new Scalar(0, RS, RV),
-                rulFilt = new Scalar(RUH, 255, 255),
-                blFilt = new Scalar(BH, BS, BV),
-                buFilt = new Scalar(BUH, 255, 255);
         mask = new Mat();
         mask2 = new Mat();
         mask3 = new Mat();
-        colorMask = new Mat();
         Core.inRange(hsv, rlFilt, ruFilt, mask);
         Core.inRange(hsv, rllFilt, rulFilt, mask2);
         Core.inRange(hsv, blFilt, buFilt, mask3);
         Core.bitwise_or(mask, mask2, mask);
-        if (color == 0)
-            mask.copyTo(colorMask);
-        else
-            mask3.copyTo(colorMask);
         contours = new ArrayList<>();
-        Imgproc.findContours(colorMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        if (color == 0)
+            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        else
+            Imgproc.findContours(mask3, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);;
         input.copyTo(boundingImage);
-        center = convertToDoubleArray(matchedCoords(contoursToCoords()));
+        contoursToCoords();
+        input.release();
         if (retVal == 0) {
             boundingImage.copyTo(input);
         } else if (retVal == 1) {
             mask.copyTo(input);
-        } else if (retVal == 2) {
+        } else {
             mask3.copyTo(input);
-        } else if (retVal == 3) {
-            colorMask.copyTo(input);
         }
         boundingImage.release();
+        hsv.release();
         mask.release();
         mask2.release();
         mask3.release();
-        colorMask.release();
+        hierarchy.release();
+        contours.clear();
         return input;
     }
 
@@ -150,17 +150,16 @@ public class CapCamPipline extends OpenCvPipeline {
             }
         }
         if (matchedCenters.isEmpty())
-            return new Double[]{100.0, 100.0, 100.0};
+            return new Double[]{0.0, 0.0, 0.0};
         return matchedCenters.get(coord);
     }
 
-    public ArrayList<Double[]> contoursToCoords() {
+    public void contoursToCoords() {
         ArrayList<Double[]> centers = new ArrayList<>();
         // Set acceptable aspect ratio range
         double minAspectRatio = 2 - DOWN_TOLERANCE;
         double maxAspectRatio = 2 + UP_TOLERANCE;
-        double minAreaThreshold = 10000;  // Minimum area threshold
-
+        double minAreaThreshold = 1000;  // Minimum area threshold
         // Iterate over contours
         for (MatOfPoint contour : contours) {
             // Filter out small contours based on area
@@ -168,18 +167,13 @@ public class CapCamPipline extends OpenCvPipeline {
                 continue;
             }
 
-            // Approximate the contour to a polygonum
+            // Approximate the contour to a polygon
             contour2f = new MatOfPoint2f(contour.toArray());
-
-            double epsilon = EPSILON * Imgproc.arcLength(contour2f, true);
-            approx = new MatOfPoint2f();
-            Imgproc.approxPolyDP(contour2f, approx, epsilon, true);
-            approxMat = new MatOfPoint(approx.toArray());
             minAreaRect = Imgproc.minAreaRect(contour2f);
 
             if (minAreaRect.size.width != 0 && minAreaRect.size.height != 0 && Imgproc.contourArea(contour) / (minAreaRect.size.height * minAreaRect.size.width) > AREA_THRESH) {
                 Point[] box = new Point[4];
-                box = approxMat.toArray();
+                minAreaRect.points(box);
                 Point[] orded = orderPoints(box);
                 double[] distances = {distance(orded[0], orded[1]), distance(orded[1], orded[2]), distance(orded[0], orded[2])};
                 Arrays.sort(distances);
@@ -198,20 +192,16 @@ public class CapCamPipline extends OpenCvPipeline {
                         }
 
                         // Compute the angle and store it
-                        double angle = -(90 + rotRectAngle - 180);
+                        double angle = (rotRectAngle);
                         drawTagText(minAreaRect, angle + " deg", boundingImage, "Blue");
 
 
                         // Order the image points in the same order as object points
                         orderedRectPoints = orderPoints(box);
-
-                        MatOfPoint3f rlObjectPoints = new MatOfPoint3f();
-                        rlObjectPoints = objectPoints;
-                        orderedRectPoints = orderCorner(orderedRectPoints);
                         imagePoints = new MatOfPoint2f(orderedRectPoints);
 
                         boolean success = Calib3d.solvePnP(
-                                rlObjectPoints, // Object points in 3D
+                                objectPoints, // Object points in 3D
                                 imagePoints,  // Corresponding image points
                                 cameraMatrix,
                                 distCoeffs,
@@ -222,21 +212,24 @@ public class CapCamPipline extends OpenCvPipeline {
                             double[] coords = new double[3];
                             tvec.get(0, 0, coords);
                             tvec.get(0, 0, coords);
-                            double consta = 1;
-                            centers.add(new Double[]{coords[0] * consta, coords[1] * consta, coords[2] * consta});
-                            packet.put("CAM X", center[0]);
-                            packet.put("CAM y", center[1]);
-                            packet.put("CAM Z", center[2]);
-                            packet.put("aspectRatio", aspectRatio);
-                            packet.put("area", Imgproc.contourArea(contour));
-                            packet.put("color", color);
 
+
+                            double consta = 1;
+                            center = new double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta};
+                            if (center!=null) {
+                                packet.put("CAM X", center[0]);
+                                packet.put("CAM y", center[1]);
+                                packet.put("CAM Z", center[2]);
+                                packet.put("aspectRatio", aspectRatio);
+                                packet.put("area", Imgproc.contourArea(contour));
+                                packet.put("color", color);
+                            }
+                            return;
                         }
                     }
                 }
             }
         }
-        return centers;
     }
 
 

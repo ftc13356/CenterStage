@@ -51,11 +51,12 @@ public class SamplePnpTest extends LinearOpMode {
 
             if(!Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
                 BasicRobot.time = getRuntime();
-                packet.put("TARGET", currentPose.vec().plus(new Vector2d(cam.getCenter()[0], -cam.getCenter()[1])));
                 buhs++;
                 packet.put("BUHPERSEC(BPS)", buhs/BasicRobot.time);
                 packet.put("color", cam.getCurrent());
-                cam.resetCenter();
+                if(!Objects.equals(cam.getCenter(), new double[]{0, 0, 0})) {
+                    cam.resetCenter();
+                }
                 dashboard.sendTelemetryPacket(packet);
                 packet.clearLines();
             }
