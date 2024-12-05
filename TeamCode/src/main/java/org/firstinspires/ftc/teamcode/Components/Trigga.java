@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class Trigga {
     Servo trigga;
-    public static double LOAD=0, SHOOT=1;
+    public static double LOAD=0.4, SHOOT=0;
     boolean loaded = true;
     double lastShootTIme = -100;
     public Trigga(){

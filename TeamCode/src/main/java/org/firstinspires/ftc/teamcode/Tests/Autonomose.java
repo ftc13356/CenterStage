@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Colorsens;
 import org.firstinspires.ftc.teamcode.Components.Spinna;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 @Config
@@ -20,17 +21,17 @@ public class Autonomose extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, true);
-        Spinna spinna = new Spinna();
+//        Spinna spinna = new Spinna();
 //        Turret turret = new Turret();
-//        Colorsens color = new Colorsens();
+        Colorsens color = new Colorsens();
 //        Trigga trigger = new Trigga();
         int targ = 0;
         waitForStart();
         while (opModeIsActive()) {
-//            targ = color.getColor();
-            double speeed = rangeToVelo(TARGET_X, TARGET_Y);
-            packet.put("speed", speeed);
-//            spinna.spin(speeed);
+            targ = color.getColor();
+//            double speeed = rangeToVelo(TARGET_X, TARGET_Y);
+//            packet.put("speed", speeed);
+////            spinna.spin(speeed);
             robot.update();
         }
     }
