@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -13, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.019, rP2 =0.02,rD2= 4, rD = .6, rF = .3, G = 0.15,rG = 0.3, rG2 = .6,TEST_LEN = 0;
+    public static double  A_OFF = -13, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.019, rP2 =0.02,rD2= 4, rD = .6, rF = .3, G = 0.15,rG = 0.3, rG2 = .5,TEST_LEN = 0;
     boolean mid=true;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;

@@ -19,7 +19,7 @@ public class Claw {
     RFServo claw;
 
     public static double OPEN_POS = 0.8;
-    public static double CLOSED_POS = 0.32;
+    public static double CLOSED_POS = 0.28;
 
     public static double FLIP_TIME = 0.5;
     private final double CLAW_SERVO_BUFFER = 0.05;
@@ -37,6 +37,7 @@ public class Claw {
             ClawStates.CLOSED.setStateTrue();
         }
         claw.setLastTime(-100);
+        ClawStates.OPEN.position=OPEN_POS;
     }
 
     /**
@@ -60,6 +61,7 @@ public class Claw {
             }
             this.state = true;
         }
+
         public boolean getState(){return this.state;}
     }
 
