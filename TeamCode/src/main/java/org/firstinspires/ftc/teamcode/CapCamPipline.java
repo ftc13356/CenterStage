@@ -31,15 +31,14 @@ import java.util.List;
 public class CapCamPipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 120, BS = 150, BV = 30, YH = 18, YUH = 30, YS = 110, YV = 180;
+    public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 120, BS = 150, BV = 30;
     Mat hsv = new Mat();
-    Mat blurredImage = new Mat();
-    Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat(), mask4 = new Mat();
-    Mat colorMask = new Mat(), allMask = new Mat();
+    Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat();
+    Mat colorMask = new Mat();
     Mat hierarchy = new Mat();
-    Mat boundingImage = new Mat(), firstBoundingImage = new Mat();
+    Mat boundingImage = new Mat();
 
-    public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 2, DOWN_TOLERANCE =1.15, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
+    public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 2, DOWN_TOLERANCE = 1.15, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
     double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
     double objectHeight = 1.5;  // Replace with your object's height in real-world units
 
@@ -68,7 +67,7 @@ public class CapCamPipline extends OpenCvPipeline {
     MatOfDouble distCoeffs = new MatOfDouble();
     RotatedRect minAreaRect;
 
-    int color =0;
+    int color = 0;
 
     public CapCamPipline() {
         double fx = 822.317f; // Replace with your camera's focal length in pixels
@@ -92,61 +91,43 @@ public class CapCamPipline extends OpenCvPipeline {
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
         Scalar rlFilt = new Scalar(RLH, RS, RV),
                 ruFilt = new Scalar(180, 255, 255),
-                rllFilt = new Scalar(0,RS,RV),
-                rulFilt = new Scalar(RUH, 255,255),
+                rllFilt = new Scalar(0, RS, RV),
+                rulFilt = new Scalar(RUH, 255, 255),
                 blFilt = new Scalar(BH, BS, BV),
-                buFilt = new Scalar(BUH, 255, 255),
-                ylFilt = new Scalar(YH, YS, YV),
-                yuFilt = new Scalar(YUH, 255, 255);
+                buFilt = new Scalar(BUH, 255, 255);
         mask = new Mat();
         mask2 = new Mat();
         mask3 = new Mat();
-        mask4 = new Mat();
         colorMask = new Mat();
-        allMask = new Mat();
         Core.inRange(hsv, rlFilt, ruFilt, mask);
         Core.inRange(hsv, rllFilt, rulFilt, mask2);
         Core.inRange(hsv, blFilt, buFilt, mask3);
-        Core.inRange(hsv, ylFilt, yuFilt, mask4);
-        Core.bitwise_or(mask,mask2,mask);
-        if(color ==0)
-            colorMask = mask;
-        else if(color == 1)
-            colorMask = mask3;
+        Core.bitwise_or(mask, mask2, mask);
+        if (color == 0)
+            mask.copyTo(colorMask);
         else
-            colorMask = mask4;
-        Core.bitwise_or(mask3,mask4,allMask);
-        Core.bitwise_or(allMask,mask, allMask);
+            mask3.copyTo(colorMask);
         contours = new ArrayList<>();
         Imgproc.findContours(colorMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        boundingImage = input.clone();
-        ArrayList<Double[]> colorCoords = contoursToCoords();
-        firstBoundingImage = boundingImage.clone();
-        boundingImage = input.clone();
-        contours = new ArrayList<>();
-        Imgproc.findContours(allMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        ArrayList<Double[]> allCoords = contoursToCoords();
-        Double[] centerd = matchedCoords(colorCoords, allCoords);
-        if(centerd[0] != 100) center = convertToDoubleArray(centerd);
+        input.copyTo(boundingImage);
+        center = convertToDoubleArray(matchedCoords(contoursToCoords()));
         if (retVal == 0) {
-            return firstBoundingImage;
+            boundingImage.copyTo(input);
         } else if (retVal == 1) {
-            return boundingImage;
+            mask.copyTo(input);
         } else if (retVal == 2) {
-            return mask;
+            mask3.copyTo(input);
         } else if (retVal == 3) {
-            return mask3;
-        } else if(retVal == 4){
-            return mask4;
+            colorMask.copyTo(input);
         }
-        else if(retVal == 5){
-            return colorMask;
-        }
-        else if(retVal == 6){
-            return allMask;
-        }
-        return boundingImage;
+        boundingImage.release();
+        mask.release();
+        mask2.release();
+        mask3.release();
+        colorMask.release();
+        return input;
     }
+
     double[] convertToDoubleArray(Double[] wrapperArray) {
         double[] primitiveArray = new double[wrapperArray.length];
 
@@ -156,33 +137,28 @@ public class CapCamPipline extends OpenCvPipeline {
 
         return primitiveArray;
     }
-    public Double[] matchedCoords(ArrayList<Double[]> colorCoords, ArrayList<Double[]> allCoords){
+
+    public Double[] matchedCoords(ArrayList<Double[]> colorCoords) {
         ArrayList<Double[]> matchedCenters = new ArrayList<>();
         double minDist = 1000;
         int coord = 0;
-        for(int i = 0 ; i < colorCoords.size(); i++){
-            for(int j=0;j<allCoords.size();j++){
-                double x = colorCoords.get(i)[0] - allCoords.get(j)[0];
-                double y = colorCoords.get(i)[1] - allCoords.get(j)[1];
-                if(x*x+y*y<9){
-                    matchedCenters.add(colorCoords.get(i));
-                    if(colorCoords.get(i)[0]*colorCoords.get(i)[0]+colorCoords.get(i)[1]*colorCoords.get(i)[1]<minDist){
-                        coord = matchedCenters.size()-1;
-                        minDist = colorCoords.get(i)[0]*colorCoords.get(i)[0]+colorCoords.get(i)[1]*colorCoords.get(i)[1];
-                    }
-                }
+        for (int i = 0; i < colorCoords.size(); i++) {
+            matchedCenters.add(colorCoords.get(i));
+            if (colorCoords.get(i)[0] * colorCoords.get(i)[0] + colorCoords.get(i)[1] * colorCoords.get(i)[1] < minDist) {
+                coord = matchedCenters.size() - 1;
+                minDist = colorCoords.get(i)[0] * colorCoords.get(i)[0] + colorCoords.get(i)[1] * colorCoords.get(i)[1];
             }
         }
-        if(matchedCenters.isEmpty())
-            return new Double[] {100.0,100.0,100.0};
+        if (matchedCenters.isEmpty())
+            return new Double[]{100.0, 100.0, 100.0};
         return matchedCenters.get(coord);
     }
 
-    public ArrayList<Double[]> contoursToCoords(){
+    public ArrayList<Double[]> contoursToCoords() {
         ArrayList<Double[]> centers = new ArrayList<>();
         // Set acceptable aspect ratio range
-        double minAspectRatio = 1.5 - DOWN_TOLERANCE;
-        double maxAspectRatio = 1.5 + UP_TOLERANCE;
+        double minAspectRatio = 2 - DOWN_TOLERANCE;
+        double maxAspectRatio = 2 + UP_TOLERANCE;
         double minAreaThreshold = 10000;  // Minimum area threshold
 
         // Iterate over contours
@@ -247,7 +223,7 @@ public class CapCamPipline extends OpenCvPipeline {
                             tvec.get(0, 0, coords);
                             tvec.get(0, 0, coords);
                             double consta = 1;
-                            centers.add(new Double[]{coords[0] * consta,coords[1] * consta,coords[2] * consta});
+                            centers.add(new Double[]{coords[0] * consta, coords[1] * consta, coords[2] * consta});
                             packet.put("CAM X", center[0]);
                             packet.put("CAM y", center[1]);
                             packet.put("CAM Z", center[2]);
@@ -338,6 +314,7 @@ public class CapCamPipline extends OpenCvPipeline {
         double cosTheta = dotProd / (magP1 * magP2);
         return Math.acos(cosTheta) * (180.0 / Math.PI); // Return the angle in degrees
     }
+
     public static Point[] orderPoints(Point[] pts) {
         if (pts.length != 4) {
             throw new IllegalArgumentException("Exactly four points are required.");
@@ -418,18 +395,19 @@ public class CapCamPipline extends OpenCvPipeline {
     static Scalar getColorScalar(String color) {
         switch (color) {
             case "Blue":
-                return new Scalar(0,0,255);
+                return new Scalar(0, 0, 255);
             case "Yellow":
-                return new Scalar(255,255,0);
+                return new Scalar(255, 255, 0);
             default:
-                return new Scalar(255,0,0);
+                return new Scalar(255, 0, 0);
         }
     }
 
-    public void setColor(int color){
+    public void setColor(int color) {
         this.color = color;
     }
-    public int getColor(){
+
+    public int getColor() {
         return color;
     }
 }

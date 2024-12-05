@@ -47,8 +47,7 @@ public class SamplePnpTest extends LinearOpMode {
 //                }
 //            }
 
-            if(gampad.readGamepad(op.gamepad1.a,"gamepad1_a", "swapCam"))
-                cam.swapNext();
+
 
             if(!Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
                 BasicRobot.time = getRuntime();
