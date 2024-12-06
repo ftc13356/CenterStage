@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 import java.util.Arrays;
 
+@Config
 public class IDRobot extends BasicRobot {
     Claw claw;
     CVMaster cv;
@@ -46,13 +48,12 @@ public class IDRobot extends BasicRobot {
 
     public void autoReset(boolean p_async){
         if(queuer.queue(p_async, TelescopicArm.ArmStates.RETRACTED.getState())) {
-            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
             claw.goTo(Claw.ClawStates.OPEN);
             twist.twistTo(Twist.TwistStates.PARALLEL);
             flip.flipTo(Flip.FlipStates.RESET);
+            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
         }
     }
-
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {
         if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(targ);
@@ -88,7 +89,7 @@ public class IDRobot extends BasicRobot {
                 follower.followPath(path);
         }
     }
-    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean is_Dynamic) {
+    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
             if (!queuer.isExecuted()) {
                 Pose current = follower.getPose();
@@ -100,17 +101,21 @@ public class IDRobot extends BasicRobot {
             }
         }
     }
+    public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2);
+            }
+        }
+    }
     public void lowerToGround(boolean p_async){
         if (queuer.queue(p_async, TelescopicArm.ArmStates.INTAKE.getState()))
             arm.lowerToIntake();
-    }
-
-    public void placeSampleHigh(Point score){
-        followPath(score, 0, -Math.PI/4,false,true);
-        setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
-        setTwist(Twist.TwistStates.PARALLEL, true);
-        setFlip(Flip.FlipStates.BUCKET, true);
-        setClaw(Claw.ClawStates.OPEN, false);
     }
 
     public void autoGrab() {

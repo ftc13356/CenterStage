@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -17,37 +18,25 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 
 @Config
 public class BL02 {
-    PathChain yellow1, submersible;
     IDRobot robot;
-    Pose starting = new Pose(7.5,103,0);
-    public static double x=24;
-    public static double y=120;
-    Point score = new Point(13.5,122,Point.CARTESIAN);
+    public static double x=15;
+    public static double y=124;
+    Pose current;
     public BL02(LinearOpMode opmode){
         robot = new IDRobot(opmode,false);
-        robot.follower.setStartingPose(starting);
-
-        yellow1 = robot.follower.pathBuilder()
-                .addPath(new BezierCurve(score, new Point(x,y,Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(-PI/4,0)
-                .build();
-
-        submersible = robot.follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(20,124,Point.CARTESIAN), new Point(60,110,Point.CARTESIAN), new Point(60,96,Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(-PI/4, -PI/2)
-                .build();
+        robot.follower.setStartingPose(new Pose(7.5,103,0));
     }
-    /**
-    * builds + follows path to go from current point -> score
-     */
-    public void placeSample () {
-        robot.followPath(score, 0, -PI/4,false,true);
-        robot.queuer.addDelay(1);
-        robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
-        robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
-        robot.setFlip(Flip.FlipStates.BUCKET, true);
-        robot.queuer.addDelay(0.5);
-        robot.setClaw(Claw.ClawStates.OPEN, false);
+
+    public void getSample(){
+        robot.followPath(new Point(x,y,Point.CARTESIAN), -PI/4, 0, false);
+        double height=4, length=15;
+        double ext = length-7, rot = 180/PI *Math.atan2(height, length);
+        robot.queuer.addDelay(1.0);
+        robot.setArm(ext, rot, true);
+        robot.queuer.addDelay(1.0);
+        robot.setTwist(Twist.TwistStates.PARALLEL, true);
+        robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
+        robot.setClaw(Claw.ClawStates.CLOSED, false);
     }
 
     public void afterYellow(){
@@ -63,17 +52,37 @@ public class BL02 {
     }
 
     public void placeSamples(){
-        placeSample();
-        robot.followPath(yellow1, false);
-        afterYellow();
+        robot.followPath(new Point(x,y,Point.CARTESIAN), 0, -PI/4,false);
+        robot.queuer.addDelay(1.0);
+        //robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, false); //not turning forward enough
+        robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
+        robot.setFlip(Flip.FlipStates.BUCKET, true);
+        robot.queuer.addDelay(0.5);
+        robot.setClaw(Claw.ClawStates.OPEN, false);
+        robot.queuer.addDelay(1.0);
+        robot.setFlip(Flip.FlipStates.RESET, false);
+
+        current = robot.follower.getPose();
+        robot.queuer.addDelay(1.0);
+        robot.autoReset(false);
+        robot.followPath(new Point(current.getX()+5, current.getY()-5, Point.CARTESIAN), -PI/4, -PI/4, true);
+
+        robot.followPath(new Point(24,140,Point.CARTESIAN), -PI/4, 0, false);
+        robot.queuer.addDelay(0.3);
+
+//        afterYellow();
     }
 
+    /**
+    parks by submersible
+     */
     public void park() {
-        robot.followPath(submersible,true);
+        robot.followPath(new Point(60,110,Point.CARTESIAN), new Point(60,96, Point.CARTESIAN),Math.PI*3/4, -Math.PI/2, false);
     }
 
     public void update() {
         robot.queuer.setFirstLoop(false);
+
         robot.update();
     }
 }

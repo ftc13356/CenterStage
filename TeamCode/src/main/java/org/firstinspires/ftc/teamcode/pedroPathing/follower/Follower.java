@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.follower;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFFeedForward;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFSwitch;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.forwardZeroPowerAcceleration;
@@ -182,9 +183,7 @@ public class Follower {
         }
 
         for (DcMotorEx motor : motors) {
-            if(!isTeleop)
-                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            else
+
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
@@ -410,7 +409,7 @@ public class Follower {
      * @param path the Path to follow.
      */
     public void followPath(Path path) {
-        followPath(path, false);
+        followPath(path, true);
     }
 
     /**
@@ -438,7 +437,7 @@ public class Follower {
      * @param pathChain the PathChain to follow.
      */
     public void followPath(PathChain pathChain) {
-        followPath(pathChain, false);
+        followPath(pathChain, true);
     }
 
     /**
@@ -469,6 +468,13 @@ public class Follower {
 
         if (!teleopDrive) {
             if (currentPath != null) {
+                Pose current = getPose();
+                packet.put("x",current.getX());
+                packet.put("y",current.getY());
+                packet.put("heading",current.getHeading());
+                Point target = getCurrentPath().getPoint(1);
+                packet.put("targ x", target.getX());
+                packet.put("targ y", target.getY());
                 if (holdingPosition) {
                     closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), 1);
 
