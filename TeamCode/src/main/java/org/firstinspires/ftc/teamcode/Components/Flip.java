@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Flip.FlipStates.RESET;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
 
@@ -17,9 +18,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Flip {
     RFServo flip;
     public static double RESET_POS = 0.64;
-    public static double SUBMERSIBLE_POS = 0.28;
+    public static double SUBMERSIBLE_POS = 0.2;
     public static double SPECIMEN_POS = 0.9;
-    public static double SPECIMENGRAB_POS = 0.72;
+    public static double SPECIMENGRAB_POS = 0.62;
     public static double BUCKET_POS = 0.9, FLIP_TIME = 0.3;
 
     private final double FLIP_SERVO_BUFFER = 0.05;
@@ -106,8 +107,11 @@ public class Flip {
     public void update() {
         for (var i : Flip.FlipStates.values()) {
             if (abs(flip.getPosition() - i.position) < FLIP_SERVO_BUFFER && time - flip.getLastTime() > FLIP_TIME) {
-                i.setStateTrue();
+                i.state = true;
                 Flip.FlipTargetStates.values()[i.ordinal()].state = false;
+            }
+            else{
+                i.state = false;
             }
         }
         for (var i : Flip.FlipTargetStates.values()) {
@@ -115,5 +119,6 @@ public class Flip {
                 flipTo(Flip.FlipStates.values()[i.ordinal()]);
             }
         }
+        packet.put("FLIPRESET", RESET.getState());
     }
 }

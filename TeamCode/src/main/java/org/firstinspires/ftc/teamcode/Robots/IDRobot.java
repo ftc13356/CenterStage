@@ -177,7 +177,7 @@ public class IDRobot extends BasicRobot {
 
         boolean isDD = op.gamepad1.dpad_down;
         double driveConst = 0.7;
-        if(TelescopicArm.ArmStates.HIGH_BUCKET.getState() || TelescopicArm.ArmStates.HOVER.getState()){
+        if(TelescopicArm.ArmStates.HIGH_BUCKET.getState() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()){
             driveConst = 0.3;
         }
 
@@ -220,8 +220,9 @@ public class IDRobot extends BasicRobot {
             isAutoGrab = false;
         }
         if (isA) {
-            if(TelescopicArm.ArmStates.HIGH_BUCKET.getState()&&!Flip.FlipStates.RESET.getState()){
+            if((TelescopicArm.ArmStates.HIGH_BUCKET.getState()||TelescopicArm.ArmStates.INTAKE.getState())&&!Flip.FlipStates.RESET.getState()){
                 flip.flipTo(Flip.FlipStates.RESET);
+                twist.twistTo(Twist.TwistStates.PERPENDICULAR);
             } else {
                 arm.goTo(TelescopicArm.ArmStates.RETRACTED);
                 flip.flipTo(Flip.FlipStates.RESET);
@@ -289,12 +290,14 @@ public class IDRobot extends BasicRobot {
                             head = follower.getClosestPose().getHeading();
                         Point curTarg = follower.getPointFromPath(1);
                         Point newTarg = new Point(pos);
-
-                        if(curTarg!= null && curTarg.distanceFrom(newTarg)>0.5) {
+                        if(curTarg == null){
+                            follower.holdPoint(new BezierPoint(new Point(pos)), head);
+                        }
+                        else if(curTarg.distanceFrom(newTarg)>0.5) {
                             follower.holdPoint(new BezierPoint(new Point(pos)), head);
                         }
                         double newExt = arm.getExt() + relCent[0] - arm.getVel()*.1;
-                        arm.goToResetManual(newExt, Math.atan2(6, newExt+7)*180/PI+3);
+                        arm.goToResetManual(newExt, Math.atan2(6, newExt+7)*180/PI);
                         twist.twistToAng(relCent[3]);
                         packet.put("newExt", newExt);
                         packet.put("relVect", relVect);

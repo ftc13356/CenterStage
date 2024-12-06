@@ -26,8 +26,8 @@ public class TelescopicArm extends DualPIDController {
     public static double HIGHBUCKET_PITCH_POS = 97;
     public static double LOWBUCKET_EXTEND_POS = 11;
     public static double LOWBUCKET_PITCH_POS = 100;
-    public static double HIGHSPECIMEN_EXTEND_POS = 14.7;
-    public static double HIGHSPECIMEN_PITCH_POS = 49;
+    public static double HIGHSPECIMEN_EXTEND_POS = 17;
+    public static double HIGHSPECIMEN_PITCH_POS = 41;
     public static double LOWSPECIMEN_EXTEND_POS = 10;
     public static double LOWSPECIMEN_PITCH_POS = 25;
     public static double SPECIMENGRAB_EXTEND_POS = 0;
@@ -54,6 +54,10 @@ public class TelescopicArm extends DualPIDController {
         if(!isTeleop){
             ArmStates.RETRACTED.setStateTrue();
         }
+        ArmStates.HIGH_SPECIMEN.pitchPos = HIGHSPECIMEN_PITCH_POS;
+        ArmStates.HIGH_SPECIMEN.extendPos = HIGHSPECIMEN_EXTEND_POS;
+        ArmTargetStates.HIGH_SPECIMEN.pitchPos = HIGHSPECIMEN_PITCH_POS;
+        ArmTargetStates.HIGH_SPECIMEN.extendPos = HIGHSPECIMEN_EXTEND_POS;
     }
 
     /**
@@ -139,11 +143,11 @@ public class TelescopicArm extends DualPIDController {
                 i.state = false;
             }
         } else{
-            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(6, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+8)*180/PI+3);
+            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(6, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+8)*180/PI);
         }
     }
     public void lowerToIntake(){
-        super.goTo((super.getExt()+7)*cos((super.getRot()-3)*PI/180)-7,0);
+        super.goTo((super.getExt()+7)*cos((super.getRot())*PI/180)-7,0);
         ArmStates.INTAKE.setStateTrue();
     }
 
@@ -235,21 +239,24 @@ public class TelescopicArm extends DualPIDController {
                 }
                 else if(i == ArmStates.RETRACTED){
                     if(abs(super.getExt())<3){
-                        i.setStateTrue();
+                        i.state = true;
                         TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
                     }
                 }
                 else if(i == ArmStates.INTAKE || i == ArmStates.HOVER){
                     if(abs(super.getRot()-i.pitchPos)<PITCH_MOTOR_BUFFER+3  ){
-                        i.setStateTrue();
+                        i.state  = true;
                         TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
                     }
 
                 }
             }
-            if(abs(6 - (getExt()+8)*sin((getRot()-3)*PI/180))<2){
-                ArmStates.HOVER.setStateTrue();
+            if(abs(6 - (getExt()+8)*sin((getRot())*PI/180))<2 && getRot()<90){
+                ArmStates.HOVER.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HOVER.ordinal()].state = false;
+            }
+            else{
+                ArmStates.HOVER.state = false;
             }
             for (var i : TelescopicArm.ArmTargetStates.values()) {
                 if (i.state && abs(super.getExt() - i.extendPos) > EXTEND_MOTOR_BUFFER && abs(super.getRot() - i.pitchPos) > PITCH_MOTOR_BUFFER && (isMid() && abs(getExt()-getTargetExt())<3)&&abs(getRot()-getTargetRot())<10) {
@@ -271,7 +278,7 @@ public class TelescopicArm extends DualPIDController {
         packet.put("curRot", super.getRot());
         packet.put("horiExt", super.getExt()*cos(getRot()*PI/180));
         packet.put("targVertExt",(getTargetExt()+8)*sin(getTargetRot()*PI/180));
-        packet.put("curVertExt",(getExt()+8)*sin((getRot()-3)*PI/180));
+        packet.put("curVertExt",(getExt()+8)*sin((getRot())*PI/180));
         packet.put("diff",abs(6-(getTargetExt()+10)*sin(getRot()*PI/180)));
         packet.put("boolean", abs(6-(getTargetExt()+10)*sin(getRot()*PI/180))>4);
         packet.put("targeted", targeted);
