@@ -60,8 +60,8 @@ public class BasicRobot{
         dashboard.setTelemetryTransmissionInterval(25);
         packet=new TelemetryPacket();
         gampad = new RFGamepad();
-//        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
-//            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         BasicRobot.isFlipped = isFlipped;
 //        voltage = voltageSensor.getVoltage();
     }
@@ -78,15 +78,15 @@ public class BasicRobot{
         loops++;
         double newTime = op.getRuntime();
         if(newTime!=time){
-//            packet.put("loopTime", 1/(newTime-time));
+            packet.put("loopTime", 1/(newTime-time));
         }
         time = newTime;
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
         packet.clearLines();
         op.telemetry.update();
-//        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
-//            module.clearBulkCache();
+        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
+            module.clearBulkCache();
     }
 
     /**

@@ -6,6 +6,11 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
@@ -18,9 +23,10 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 
 import java.util.Arrays;
 import java.util.Objects;
-
+@Config
 @Autonomous
 public class SamplePnpTest extends LinearOpMode {
+    public static double downAng = -18;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,10 +54,26 @@ public class SamplePnpTest extends LinearOpMode {
 //            }
 
 
-            cam.swapBlue();
+//            cam.swapBlue();
             if(!Arrays.equals(cam.getCenter(), new double[]{0, 0, 0})) {
                 BasicRobot.time = getRuntime();
                 buhs++;
+                double[] relCent = cam.getCenter().clone();
+                if (!Arrays.equals(relCent, new double[]{0, 0, 0})) {
+                    while(relCent[0]==0 || relCent[1]==0 || relCent[2]<20){
+                        relCent = cam.getCenter().clone();
+                    }
+                    cam.resetCenter();
+                    double rel = relCent[0];
+                    relCent[0] = relCent[2] * Math.sin(downAng * PI / 180) + relCent[0] * Math.cos(downAng * PI / 180);
+                    relCent[2] = sqrt(relCent[2] * relCent[2] + rel * rel - relCent[0] * relCent[0]);
+                    double angle = Math.atan2(relCent[1], relCent[2])*180/PI;
+
+                    packet.put("relCent0", relCent[0]);
+                    packet.put("relCent1", relCent[1]);
+                    packet.put("relCent2", relCent[2]);
+                    packet.put("TARGANGDel", angle);
+                }
                 packet.put("BUHPERSEC(BPS)", buhs/BasicRobot.time);
                 packet.put("color", cam.getCurrent());
                 cam.resetCenter();

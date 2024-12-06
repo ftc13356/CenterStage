@@ -12,7 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Config
 public class Colorsens {
     RevColorSensorV3 color;
-    public static double R_THRESH=.055, G_THRESH=.078, B_THRESH=.04, D_THRESH = .35;
+    public static double R_THRESH=.04, G_THRESH=.06, B_THRESH=.04, D_THRESH = .4;
+    int lastColor = 1;
 
     public Colorsens(){
         color = op.hardwareMap.get(RevColorSensorV3.class, "color");
@@ -27,13 +28,15 @@ public class Colorsens {
         if(dist<D_THRESH){
             if(colo.red>R_THRESH && colo.green > G_THRESH && colo.blue > B_THRESH){
                 packet.put("color", "white");
-                return 2;
+                lastColor=1;
+                return 1;
             }
             else {
                 packet.put("color", "yellow");
-                return 1;
+                lastColor=0;
+                return 0;
             }
         }
-        return 0;
+        return 2;
     }
 }

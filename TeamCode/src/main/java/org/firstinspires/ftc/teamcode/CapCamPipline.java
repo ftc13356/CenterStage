@@ -38,9 +38,9 @@ public class CapCamPipline extends OpenCvPipeline {
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat();
 
-    public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 2, DOWN_TOLERANCE = 1.15, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
-    double objectWidth = 6;  // Replace with your object's width in real-world units (e.g., centimeters)
-    double objectHeight = 3;  // Replace with your object's height in real-world units
+    public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 0.25, DOWN_TOLERANCE = 0.25, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
+    double objectWidth = 15.24;  // Replace with your object's width in real-world units (e.g., centimeters)
+    double objectHeight = 7.62;  // Replace with your object's height in real-world units
 
     Scalar rlFilt = new Scalar(RLH, RS, RV),
             ruFilt = new Scalar(180, 255, 255),
@@ -159,7 +159,7 @@ public class CapCamPipline extends OpenCvPipeline {
         // Set acceptable aspect ratio range
         double minAspectRatio = 2 - DOWN_TOLERANCE;
         double maxAspectRatio = 2 + UP_TOLERANCE;
-        double minAreaThreshold = 1000;  // Minimum area threshold
+        double minAreaThreshold = 3000;  // Minimum area threshold
         // Iterate over contours
         for (MatOfPoint contour : contours) {
             // Filter out small contours based on area
@@ -215,7 +215,7 @@ public class CapCamPipline extends OpenCvPipeline {
                             tvec.get(0, 0, coords);
 
 
-                            double consta = 1;
+                            double consta = 55/47.0;
                             center = new double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta};
                             if (center!=null) {
                                 packet.put("CAM X", center[0]);

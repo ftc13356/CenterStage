@@ -8,6 +8,7 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.outoftheboxrobotics.photoncore.Photon;
@@ -20,7 +21,8 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class Spinna {
     DcMotorEx rot;
-    public static double rev_per_meter = 154;
+    public static double rev_per_meter = 156;
+    double targSpeed = 0;
     public Spinna() {
         rot = (DcMotorEx) op.hardwareMap.dcMotor.get("spinna");
         rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -31,9 +33,16 @@ public class Spinna {
     public void spin(double speed){
         packet.put("revVelocity", rot.getVelocity());
         double newey = 2.4*speed-.0205*speed*speed;
+        targSpeed = newey * rev_per_meter;
         rot.setVelocity(newey*rev_per_meter);
     }
     public double getVel(){
         return rot.getVelocity();
+    }
+    public boolean spinnaAtTarget(){
+        if(abs(rot.getVelocity()-targSpeed)<15){
+            return true;
+        }
+        return false;
     }
 }
