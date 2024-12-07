@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger.df;
@@ -10,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import static java.lang.Math.abs;
 
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
@@ -33,18 +35,21 @@ public class RFServo implements Servo {
 
     boolean flipped = false;
 
-    public double position =0;
+    public double position = 0;
 
     private final String rfServoName;
 
+    boolean disabled = false;
+
     /**
      * Constructor with name, direction, and limit
+     *
      * @param p_deviceName name of the device
-     * @param p_direction direction of servo spinning
-     * @param p_limit physical limit of servo
+     * @param p_direction  direction of servo spinning
+     * @param p_limit      physical limit of servo
      */
 
-    public RFServo (String p_deviceName, Servo.Direction p_direction, double p_limit) {
+    public RFServo(String p_deviceName, Servo.Direction p_direction, double p_limit) {
         rfServo = op.hardwareMap.get(Servo.class, p_deviceName);
         rfServoName = p_deviceName;
         rfServo.setDirection(p_direction);
@@ -54,48 +59,53 @@ public class RFServo implements Servo {
 
         SERVO_LIMIT = p_limit;
         plastTime = -100;
+        disabled = false;
     }
 
     /**
      * Constructor with name and limit
+     *
      * @param p_deviceName name of the device
-     * @param p_limit physical limit of servo
+     * @param p_limit      physical limit of servo
      */
-    public RFServo (String p_deviceName, double p_limit) {
-       this(p_deviceName, Direction.FORWARD, p_limit);
+    public RFServo(String p_deviceName, double p_limit) {
+        this(p_deviceName, Direction.FORWARD, p_limit);
     }
 
     /* Updating the last time the servo flipped */
 
     /**
-     *
      * @param p_flipTime time it takes to flip from one position to the other
      */
 
-    public void setFlipTime(double p_flipTime){
-        FLIP_TIME=p_flipTime;
+    public void setFlipTime(double p_flipTime) {
+        FLIP_TIME = p_flipTime;
     }
 
     /**
      * Setting position of the servo
+     *
      * @param p_position target position
      */
 
     public void setPosition(double p_position) {
-        if (time - plastTime > FLIP_TIME && abs(p_position-position)>0.02) {
-                logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
-                        + df.format(p_position), true);
-            LOGGER.log("moving to:"+p_position);
+
+        if (time - plastTime > FLIP_TIME && abs(p_position - position) > 0.02) {
+            logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
+                    + df.format(p_position), true);
+            LOGGER.log("moving to:" + p_position);
             rfServo.setPosition(p_position);
             plastTime = time;
             LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
             target = p_position;
             position = p_position;
         }
+
     }
-    public void superSetPosition(double p_position){
+
+    public void superSetPosition(double p_position) {
         rfServo.setPosition(p_position);
-        plastTime= time;
+        plastTime = time;
         LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
         target = p_position;
         position = p_position;
@@ -107,13 +117,14 @@ public class RFServo implements Servo {
 
     /**
      * Flipping the servo between two positions inside the max range
+     *
      * @param p_lowerPos lower target position for flipping
      * @param p_upperPos upper target position for flipping
      * @return if there was enough time since the last flip for the servo to flip
      */
 
     public boolean flipServoInterval(double p_lowerPos, double p_upperPos) {
-        if(time - plastTime > FLIP_TIME) {
+        if (time - plastTime > FLIP_TIME) {
             if (flipped) {
                 rfServo.setPosition(p_lowerPos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
@@ -152,6 +163,7 @@ public class RFServo implements Servo {
 
     /**
      * Returns current position of the servo
+     *
      * @return current position of servo
      */
 
@@ -161,6 +173,7 @@ public class RFServo implements Servo {
 
     /**
      * Returns last time the servo was flipped
+     *
      * @return last time the servo was flipped
      */
 
@@ -170,10 +183,11 @@ public class RFServo implements Servo {
 
     /**
      * Manual update of last time servo was flipped
+     *
      * @param p_lastTime target last time servo was flipped
      */
 
-    public void setLastTime(double p_lastTime){
+    public void setLastTime(double p_lastTime) {
         plastTime = p_lastTime;
     }
 
@@ -193,7 +207,7 @@ public class RFServo implements Servo {
         return 0;
     }
 
-    public void setDirection (Servo.Direction p_direction) {
+    public void setDirection(Servo.Direction p_direction) {
         rfServo.setDirection(p_direction);
     }
 
@@ -226,6 +240,22 @@ public class RFServo implements Servo {
     public void resetDeviceConfigurationForOpMode() {
 
     }
+
+    public void disable() {
+//        if(!disabled) {
+//            rfServo.getController().pwmDisable();
+//            disabled = true;
+//        }
+
+    }
+
+    public void enable() {
+//        if(disabled) {
+//            rfServo.getController().pwmEnable();
+//            disabled = false;
+//        }
+    }
+
 
     @Override
     public void close() {

@@ -86,6 +86,7 @@ public class BasicRobot{
         packet = new TelemetryPacket();
         packet.clearLines();
         op.telemetry.update();
+        packet.put("time", time);
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.clearBulkCache();
     }

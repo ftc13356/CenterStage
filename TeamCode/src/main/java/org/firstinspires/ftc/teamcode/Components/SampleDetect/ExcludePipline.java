@@ -72,7 +72,8 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat rvec = new Mat();
     Mat tvec = new Mat();
     MatOfPoint2f imagePoints = new MatOfPoint2f(), contour2f = new MatOfPoint2f();
-    double[] center = {0, 0, 0, 0};
+    private volatile double[] center = {0,0,0,0};
+
     int color = 0;
 
     /*
@@ -174,6 +175,13 @@ public class ExcludePipline extends OpenCvPipeline {
         }
 
         return primitiveArray;
+    }
+    public synchronized void setCenter(double[] newCenter) {
+        center = newCenter;
+    }
+
+    public synchronized double[] getCenter() {
+        return center;
     }
     public Double[] matchedCoords(ArrayList<Double[]> colorCoords, ArrayList<Double[]> allCoords){
         ArrayList<Double[]> matchedCenters = new ArrayList<>();
@@ -443,9 +451,6 @@ public class ExcludePipline extends OpenCvPipeline {
                 1); // Font thickness
     }
 
-    public double[] getCenter() {
-        return center;
-    }
 
 
     static Scalar getColorScalar(String color) {

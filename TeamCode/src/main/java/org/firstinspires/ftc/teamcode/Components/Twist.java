@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Twist.TwistStates.PARALLEL;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
@@ -165,5 +166,10 @@ public class Twist {
                 twistTo(Twist.TwistStates.values()[i.ordinal()]);
             }
         }
+        if(time - twist.getLastTime()>FLIP_TIME) {
+            twist.disable();
+            packet.put("disabled", true);
+        }
+        packet.put("twisTim", twist.getLastTime());
     }
 }
