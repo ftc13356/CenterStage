@@ -10,7 +10,7 @@ public class BlueLeft02 extends LinearOpMode {
         robot = new BL02(this);
         waitForStart();
         while(!isStopRequested()&&opModeIsActive()){
-            robot.placeSamples();
+            robot.placeSample();
             robot.update();
         }
     }

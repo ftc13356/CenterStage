@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
@@ -11,19 +10,18 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 
 @Config
-public class BLSS extends BasicRobot {
+public class BLSSTest extends BasicRobot {
     DashboardPoseTracker dashboardPoseTracker;
     PoseUpdater poseUpdater;
     Follower follower;
     PathChain specimeny, sampley;
     Pose speciPose, samplePose, yellowSampleOne, yellowSampleTwo, yellowSampleThree;
 
-    public BLSS(LinearOpMode opmode){
+    public BLSSTest(LinearOpMode opmode){
         super(opmode,false);
         follower = new Follower(opmode.hardwareMap);
         poseUpdater = new PoseUpdater(opmode.hardwareMap);

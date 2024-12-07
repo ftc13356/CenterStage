@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class straightBackAndForth extends LinearOpMode {
-    private SBAF robot;
+public class straightBackAndForthTest extends LinearOpMode {
+    private SBAFTest robot;
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new SBAF(this);
+        robot = new SBAFTest(this);
         waitForStart();
         robot.setBackdropGoalPose();
         robot.buildPaths();

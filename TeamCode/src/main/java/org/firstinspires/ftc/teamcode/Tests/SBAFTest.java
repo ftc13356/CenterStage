@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
 
 @Config
-public class SBAF extends BasicRobot {
+public class SBAFTest extends BasicRobot {
     public static double distance = 12;
     private String navigation = "forward";
 
@@ -30,7 +30,7 @@ public class SBAF extends BasicRobot {
     private Pose forwardEndPose, backwardEndPose;
     public LinearOpMode op;
 
-    public SBAF(LinearOpMode opmode){
+    public SBAFTest(LinearOpMode opmode){
         super(opmode,false);
         op = opmode;
         follower = new Follower(op.hardwareMap);

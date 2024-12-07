@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class BlueLeftSpeciSample extends LinearOpMode {
-    private BLSS robot;
+public class BlueLeftSpeciSampleTest extends LinearOpMode {
+    private BLSSTest robot;
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new BLSS(this);
+        robot = new BLSSTest(this);
         waitForStart();
         while(!isStopRequested()&&opModeIsActive()){
             robot.placeSpeci();
