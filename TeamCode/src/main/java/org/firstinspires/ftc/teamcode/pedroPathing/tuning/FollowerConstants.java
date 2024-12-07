@@ -30,8 +30,8 @@ public class FollowerConstants {
 
     // This section is for setting the actual drive vector for the front left wheel, if the robot
     // is facing a heading of 0 radians with the wheel centered at (0,0)
-    private static double xMovement = 56.17813708093522;
-    private static double yMovement = 22.440366272663205;
+    private static double xMovement = 71.33823123439309;
+    private static double yMovement = 53.49790886883019;
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0],convertToPolar[1]));
 
