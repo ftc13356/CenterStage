@@ -110,7 +110,6 @@ public class ExcludePipline extends OpenCvPipeline {
                 buFilt = new Scalar(BUH, 255, 255),
                 ylFilt = new Scalar(YH, YS, YV),
                 yuFilt = new Scalar(YUH, 255, 255);
-
         Core.inRange(hsv, rlFilt, ruFilt, mask);
         Core.inRange(hsv, rllFilt, rulFilt, mask2);
         Core.inRange(hsv, blFilt, buFilt, mask3);
@@ -154,17 +153,17 @@ public class ExcludePipline extends OpenCvPipeline {
         else if(retVal == 6){
             allMask.copyTo(input);
         }
-        hsv.release();
-        mask.release();
-        mask2.release();
-        mask3.release();
-        mask4.release();
-        colorMask.release();
-        hierarchy.release();
-        allMask.release();
-        hierarchy.release();
-        boundingImage.release();
-        firstBoundingImage.release();
+//        hsv.release();
+//        mask.release();
+//        mask2.release();
+//        mask3.release();
+//        mask4.release();
+//        colorMask.release();
+//        hierarchy.release();
+//        allMask.release();
+//        hierarchy.release();
+//        boundingImage.release();
+//        firstBoundingImage.release();
         return input;
     }
     double[] convertToDoubleArray(Double[] wrapperArray) {

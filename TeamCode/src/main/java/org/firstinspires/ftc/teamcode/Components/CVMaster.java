@@ -70,6 +70,7 @@ public class CVMaster {
                                     1280, 720, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
                         webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.SOFTWARE);
+                        dashboard.startCameraStream(webcam,5);
 
                         if(shouldStream)
                             dashboard.startCameraStream(webcam, 4);

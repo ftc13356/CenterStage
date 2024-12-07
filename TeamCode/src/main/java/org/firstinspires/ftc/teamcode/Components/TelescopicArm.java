@@ -26,7 +26,7 @@ public class TelescopicArm extends DualPIDController {
     public static double HIGHBUCKET_PITCH_POS = 97;
     public static double LOWBUCKET_EXTEND_POS = 11;
     public static double LOWBUCKET_PITCH_POS = 100;
-    public static double HIGHSPECIMEN_EXTEND_POS = 17;
+    public static double HIGHSPECIMEN_EXTEND_POS = 17.5;
     public static double HIGHSPECIMEN_PITCH_POS = 41;
     public static double LOWSPECIMEN_EXTEND_POS = 10;
     public static double LOWSPECIMEN_PITCH_POS = 25;
@@ -143,7 +143,7 @@ public class TelescopicArm extends DualPIDController {
                 i.state = false;
             }
         } else{
-            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(6, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+8)*180/PI);
+            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(5, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+8)*180/PI);
         }
     }
     public void lowerToIntake(){
@@ -251,7 +251,7 @@ public class TelescopicArm extends DualPIDController {
 
                 }
             }
-            if(abs(6 - (getExt()+8)*sin((getRot())*PI/180))<2 && getRot()<90){
+            if(abs(5 - (getExt()+8)*sin((getRot())*PI/180))<2 && getRot()<90){
                 ArmStates.HOVER.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HOVER.ordinal()].state = false;
             }
@@ -279,8 +279,8 @@ public class TelescopicArm extends DualPIDController {
         packet.put("horiExt", super.getExt()*cos(getRot()*PI/180));
         packet.put("targVertExt",(getTargetExt()+8)*sin(getTargetRot()*PI/180));
         packet.put("curVertExt",(getExt()+8)*sin((getRot())*PI/180));
-        packet.put("diff",abs(6-(getTargetExt()+10)*sin(getRot()*PI/180)));
-        packet.put("boolean", abs(6-(getTargetExt()+10)*sin(getRot()*PI/180))>4);
+        packet.put("diff",abs(5-(getTargetExt()+10)*sin(getRot()*PI/180)));
+        packet.put("boolean", abs(5-(getTargetExt()+10)*sin(getRot()*PI/180))>4);
         packet.put("targeted", targeted);
         packet.put("isMid", isMid());
         packet.put("HOVER", ArmStates.HOVER.getState());

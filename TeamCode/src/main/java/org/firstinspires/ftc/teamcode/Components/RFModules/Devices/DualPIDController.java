@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -13, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.023, rP2 =0.02,rD2= 2, rD = .4, rF = .3, G = 0.15,rG = 0.23, rG2 = .7,TEST_LEN = 0;
+    public static double  A_OFF = -13, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.023, rP2 =0.02,rD2= 2, rD = .8, rF = .3, G = 0.15,rG = 0.23, rG2 = .55,TEST_LEN = 0, MAX_SPEED = 223*751.8/60;
     boolean mid=true;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;
@@ -57,7 +57,13 @@ public class DualPIDController {
         double rErr = rotation - curRot*TICKS_PER_DEG;
         double rd = -rot.getVelocity()*TICKS_PER_DEG;
         double r = curExt*TICKS_PER_IN/MAX;
+        double gScale  = 1;
+
         double power = (rP+rP2*r*r)*rErr+.001*(rD+rD2*r*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r);
+        if(signum(rd) != signum(power)){
+            gScale = 1/(1-abs(rd/MAX_SPEED/TICKS_PER_DEG));
+        }
+        power*=gScale;
         if(abs(rd)<5 && abs(rErr)>1.5 && targetRot>3 && curRot<90){
             power+=rF*signum(rErr);
         }

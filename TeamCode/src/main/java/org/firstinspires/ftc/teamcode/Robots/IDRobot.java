@@ -293,11 +293,11 @@ public class IDRobot extends BasicRobot {
                         if(curTarg == null){
                             follower.holdPoint(new BezierPoint(new Point(pos)), head);
                         }
-                        else if(curTarg.distanceFrom(newTarg)>0.5) {
+                        else if(curTarg.distanceFrom(newTarg)>0.2) {
                             follower.holdPoint(new BezierPoint(new Point(pos)), head);
                         }
                         double newExt = arm.getExt() + relCent[0] - arm.getVel()*.1;
-                        arm.goToResetManual(newExt, Math.atan2(6, newExt+7)*180/PI);
+                        arm.goToResetManual(newExt, Math.atan2(5, newExt+8)*180/PI);
                         twist.twistToAng(relCent[3]);
                         packet.put("newExt", newExt);
                         packet.put("relVect", relVect);
