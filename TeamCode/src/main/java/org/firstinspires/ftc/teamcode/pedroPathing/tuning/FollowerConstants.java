@@ -73,7 +73,7 @@ public class FollowerConstants {
             0.0);
 
     // Feed forward constant added on to the drive PIDF
-    public static double drivePIDFFeedForward = 0.1;
+    public static double drivePIDFFeedForward = 0.25;
 
     // Kalman filter parameters for the drive error Kalman filter
     public static KalmanFilterParameters driveKalmanFilterParameters = new KalmanFilterParameters(

@@ -251,6 +251,11 @@ public class TelescopicArm extends DualPIDController {
 
                 }
             }
+            if(abs(getRot()-HIGHSPECIMEN_PITCH_POS)<5){
+                ArmStates.HIGH_SPECIMEN.state = true;
+                TelescopicArm.ArmTargetStates.values()[ArmStates.HIGH_SPECIMEN.ordinal()].state = false;
+
+            }
             if(abs(5 - (getExt()+8)*sin((getRot())*PI/180))<2 && getRot()<90){
                 ArmStates.HOVER.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HOVER.ordinal()].state = false;

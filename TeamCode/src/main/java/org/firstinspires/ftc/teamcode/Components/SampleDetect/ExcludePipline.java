@@ -115,6 +115,14 @@ public class ExcludePipline extends OpenCvPipeline {
         Core.inRange(hsv, rllFilt, rulFilt, mask2);
         Core.inRange(hsv, blFilt, buFilt, mask3);
         Core.inRange(hsv, ylFilt, yuFilt, mask4);
+        input.copyTo(boundingImage);  // More memory-efficient
+        if (retVal == 2) {
+            mask.copyTo(input);
+        } else if (retVal == 3) {
+            mask3.copyTo(input);
+        } else if(retVal == 4){
+            mask4.copyTo(input);
+        }
         Core.bitwise_or(mask,mask2,mask);
         if(color ==0)
             colorMask = mask;
@@ -124,9 +132,14 @@ public class ExcludePipline extends OpenCvPipeline {
             colorMask = mask4;
         Core.bitwise_or(mask3,mask4,allMask);
         Core.bitwise_or(allMask,mask, allMask);
+        if(retVal == 5){
+            colorMask.copyTo(input);
+        }
+        else if(retVal == 6){
+            allMask.copyTo(input);
+        }
         contours = new ArrayList<>();
         Imgproc.findContours(colorMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        input.copyTo(boundingImage);  // More memory-efficient
         ArrayList<Double[]> colorCoords = contoursToCoords();
         boundingImage.copyTo(firstBoundingImage);
         if(!contours.isEmpty()) {
@@ -141,30 +154,19 @@ public class ExcludePipline extends OpenCvPipeline {
             firstBoundingImage.copyTo(input);
         } else if (retVal == 1) {
             boundingImage.copyTo(input);
-        } else if (retVal == 2) {
-            mask.copyTo(input);
-        } else if (retVal == 3) {
-            mask3.copyTo(input);
-        } else if(retVal == 4){
-            mask4.copyTo(input);
         }
-        else if(retVal == 5){
-            colorMask.copyTo(input);
-        }
-        else if(retVal == 6){
-            allMask.copyTo(input);
-        }
-//        hsv.release();
-//        mask.release();
-//        mask2.release();
-//        mask3.release();
-//        mask4.release();
-//        colorMask.release();
-//        hierarchy.release();
-//        allMask.release();
-//        hierarchy.release();
-//        boundingImage.release();
-//        firstBoundingImage.release();
+
+        hsv.release();
+        mask.release();
+        mask2.release();
+        mask3.release();
+        mask4.release();
+        colorMask.release();
+        hierarchy.release();
+        allMask.release();
+        hierarchy.release();
+        boundingImage.release();
+        firstBoundingImage.release();
         return input;
     }
     double[] convertToDoubleArray(Double[] wrapperArray) {
