@@ -32,13 +32,13 @@ import java.util.List;
 public class CapCamPipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 140, BS = 100, BV = 30;
+    public static double RUH = 10, RLH = 160, RS = 100, RV = 30, BH = 100, BUH = 140, BS = 100, BV = 30;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat();
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat();
 
-    public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 0.25, DOWN_TOLERANCE = 0.25, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
+    public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 0.4, DOWN_TOLERANCE = 0.4, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
     double objectWidth = 15.24;  // Replace with your object's width in real-world units (e.g., centimeters)
     double objectHeight = 7.62;  // Replace with your object's height in real-world units
 
@@ -159,7 +159,7 @@ public class CapCamPipline extends OpenCvPipeline {
         // Set acceptable aspect ratio range
         double minAspectRatio = 2 - DOWN_TOLERANCE;
         double maxAspectRatio = 2 + UP_TOLERANCE;
-        double minAreaThreshold = 3000;  // Minimum area threshold
+        double minAreaThreshold = 1000;  // Minimum area threshold
         // Iterate over contours
         for (MatOfPoint contour : contours) {
             // Filter out small contours based on area

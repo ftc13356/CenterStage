@@ -26,7 +26,7 @@ import java.util.Arrays;
 @Autonomous
 @Config
 public class Capstone extends LinearOpMode {
-    public static double G = 9.8, theta = 25, vt = 9, downAng = -24, WHITE_CONST = 1.1;
+    public static double G = 9.8, theta = 25, vt = 12.9, downAng = -24, WHITE_CONST = 0.2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -95,10 +95,10 @@ public class Capstone extends LinearOpMode {
                         relCent[2] = sqrt(relCent[2] * relCent[2] + rel * rel - relCent[0] * relCent[0]);
                         double angle = Math.atan2(relCent[1], relCent[2])*180/PI;
                         if(abs(angle)<10) {
-                            targetAngle[i] = turret.getRot() + angle;
+                            targetAngle[i] = turret.getRot() + angle+3;
                         }
-                        relCent[2]+=8;
-                        relCent[0]+=8;
+                        relCent[2]+=13;
+                        relCent[0]+=13;
                         targetPos.set(i, new double[]{relCent[2], relCent[0]});
                         packet.put("relCent0", relCent[0]);
                         packet.put("relCent1", relCent[1]);
@@ -115,7 +115,7 @@ public class Capstone extends LinearOpMode {
                 turret.goTo(targetAngle[targ]);
                 double speed = rangeToVelo(targetPos.get(targ)[0] * .01, targetPos.get(targ)[1] * .01);
                 if(targ==1){
-                    speed*=WHITE_CONST;
+                    speed+=WHITE_CONST;
                 }
                 spinna.spin(speed);
                 if (trigger.loaded) {
