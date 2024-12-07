@@ -14,22 +14,34 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 @Config
 @Autonomous
 public class TestShoot extends LinearOpMode {
-    public static double G = 9.8, theta = 25, vt = 14.91, TARGET_X = 0.5, TARGET_Y = -0.19, TARGET_VEL = 1;
+    public static double G = 9.8, theta = 25, vt = 14.91, TARGET_X = 0.5, TARGET_Y = -0.19, TARGET_VEL = 1, WHITE_CONST=0.2;
 
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, true);
         Spinna spinna = new Spinna();
-//        Turret turret = new Turret();
-//        Colorsens color = new Colorsens();
-//        Trigga trigger = new Trigga();
+        Turret turt = new Turret();
+        Trigga trigger = new Trigga();
         int targ = 0;
         waitForStart();
+        turt.goTo(0);
+        sleep(5000);
         while (opModeIsActive()) {
-//            targ = color.getColor();//
-            double speeed = rangeToVelo(TARGET_X, TARGET_Y);
-            packet.put("speed", speeed);
-            spinna.spin(speeed);
+            targ = 0;
+            if( trigger.shot()) {
+                double speed = rangeToVelo(TARGET_X, TARGET_Y);
+//                if(targ==1){
+//                    speed+=WHITE_CONST;
+//                }
+                spinna.spin(speed);
+                if (trigger.loaded) {
+                    if (spinna.spinnaAtTarget()) {
+                        trigger.shoot();
+                    }
+                }
+            }
+            turt.update();
+            trigger.update();
             robot.update();
         }
     }
