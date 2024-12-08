@@ -182,7 +182,7 @@ public class IDRobot extends BasicRobot {
         boolean isDD = op.gamepad1.dpad_down;
         double driveConst = 0.7;
         if (TelescopicArm.ArmStates.HIGH_BUCKET.getState() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
-            driveConst = 0.3;
+            driveConst = 0.2;
         }
 
         if (follower.isTeleDrive() || (abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_x) > 0.001 || abs(op.gamepad1.right_stick_x) > 0.001)) {
