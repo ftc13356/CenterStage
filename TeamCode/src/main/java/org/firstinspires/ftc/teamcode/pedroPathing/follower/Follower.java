@@ -637,7 +637,6 @@ public class Follower {
      * This resets the PIDFs and stops following the current Path.
      */
     public void breakFollowing() {
-        teleopDrive = false;
         holdingPosition = false;
         isBusy = false;
         reachedParametricPathEnd = false;
@@ -647,6 +646,7 @@ public class Follower {
         headingPIDF.reset();
         secondaryTranslationalPIDF.reset();
         secondaryTranslationalIntegral.reset();
+        currentPath = null;
         secondaryTranslationalIntegralVector = new Vector();
         previousSecondaryTranslationalIntegral = 0;
         translationalPIDF.reset();
