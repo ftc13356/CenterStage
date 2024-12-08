@@ -28,7 +28,7 @@ public class BL13 {
 
     public BL13(LinearOpMode opmode){
         robot = new IDRobot(opmode,false);
-        robot.follower.setStartingPose(new Pose(7.5,103,0));
+        robot.follower.setStartingPose(new Pose(10,87,0));
     }
 
     public void placeSample(){
@@ -85,9 +85,9 @@ public class BL13 {
         robot.queuer.queue(false, true);
         robot.queuer.addDelay(3.0);
         robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN, false);
-        robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
+        robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN,true);
-        robot.followPath(new Point(36,72,Point.CARTESIAN), 0,0,false);
+        robot.followPath(new Point(35,78,Point.CARTESIAN), 0,0,false);
         robot.autoReset(false);
     }
 
