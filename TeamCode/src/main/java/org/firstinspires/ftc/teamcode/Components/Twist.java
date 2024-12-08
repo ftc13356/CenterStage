@@ -48,7 +48,7 @@ public class Twist {
      * possible states of twist
      */
     public enum TwistStates {
-        PARALLEL(true, PARALLEL_POS),
+        PARALLEL(false, PARALLEL_POS),
         PARPLUSHALF(false, PARPLUSHALF_POS),
         PERPENDICULAR(false, PERPENDICULAR_POS),
         PERPLUSHALF(false, PERPLUSHALF_POS),

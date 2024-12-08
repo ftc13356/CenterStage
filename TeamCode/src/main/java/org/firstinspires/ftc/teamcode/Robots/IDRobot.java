@@ -190,7 +190,7 @@ public class IDRobot extends BasicRobot {
                 follower.startTeleopDrive();
                 follower.breakFollowing();
             }
-            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y * driveConst, -op.gamepad1.left_stick_x * .5 * driveConst, -op.gamepad1.right_stick_x * driveConst);
+            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y * driveConst, -op.gamepad1.left_stick_x * .5 * driveConst, -op.gamepad1.right_stick_x * driveConst * .5);
             isAutoGrab = false;
         }
         double extend = op.gamepad1.right_trigger - op.gamepad1.left_trigger;
@@ -209,7 +209,7 @@ public class IDRobot extends BasicRobot {
         } else if (isY) {
             if (TelescopicArm.ArmStates.HIGH_BUCKET.getState()) {
                 flip.flipTo(Flip.FlipStates.BUCKET);
-                twist.twistTo(Twist.TwistStates.PARALLEL);
+                twist.twistTo(Twist.TwistStates.PERPENDICULAR);
             } else {
                 flip.flipTo(Flip.FlipStates.RESET);
             }
@@ -233,10 +233,17 @@ public class IDRobot extends BasicRobot {
                     Pose pos = follower.getPose();
                     pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
                     follower.holdPoint(new BezierPoint(new Point(pos)), follower.getPose().getHeading());
-
+                }
+                if(TelescopicArm.ArmStates.HIGH_BUCKET.getState()){
+                    follower.stopTeleopDrive();
+                    Vector2d relVect = new Vector2d(5, 0).rotated(follower.getPose().getHeading());
+                    Pose pos = follower.getPose();
+                    pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
+                    follower.holdPoint(new BezierPoint(new Point(pos)), follower.getPose().getHeading());
                 }
             }else if (TelescopicArm.ArmStates.HIGH_SPECIMEN.getState() && !Claw.ClawStates.OPEN.getState()) {
                 claw.goTo(Claw.ClawStates.OPEN);
+                flip.flipTo(Flip.FlipStates.RESET);
             } else {
                 arm.goTo(TelescopicArm.ArmStates.RETRACTED);
                 flip.flipTo(Flip.FlipStates.RESET);
@@ -346,12 +353,6 @@ public class IDRobot extends BasicRobot {
                 claw.goTo(Claw.ClawStates.OPEN);
             } else if (TelescopicArm.ArmStates.HIGH_BUCKET.getState() && Claw.ClawStates.CLOSED.getState()) {
                 claw.goTo(Claw.ClawStates.OPEN);
-                flip.flipTo(Flip.FlipStates.RESET);
-                follower.stopTeleopDrive();
-                Vector2d relVect = new Vector2d(5, 0).rotated(follower.getPose().getHeading());
-                Pose pos = follower.getPose();
-                pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
-                follower.holdPoint(new BezierPoint(new Point(pos)), follower.getPose().getHeading());
             } else if (Claw.ClawStates.OPEN.getState()) {
                 claw.goTo(Claw.ClawStates.CLOSED);
             } else {
