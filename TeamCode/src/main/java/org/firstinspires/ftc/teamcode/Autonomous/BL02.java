@@ -28,7 +28,7 @@ public class BL02 {
     }
 
     public void placeSample(){
-        robot.followPath(new Point(16.8+x,12+y,Point.CARTESIAN), 0, -PI/4,false);
+        robot.followPath(new Point(16.8,127,Point.CARTESIAN), 0, -PI/4,false);
         robot.queuer.addDelay(0.5);
         robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, false);
         robot.setFlip(Flip.FlipStates.RESET, true);
