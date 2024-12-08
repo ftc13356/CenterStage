@@ -13,6 +13,7 @@ public class BlueLeft13 extends LinearOpMode {
         waitForStart();
         while(!isStopRequested()&&opModeIsActive()){
             robot.placeSpeci();
+            robot.grabYellow();
             robot.update();
         }
     }

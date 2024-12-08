@@ -173,13 +173,18 @@ public class IDRobot extends BasicRobot {
         boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "retract slide(flat if from drop, vert if from grab)");
         boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "specimen drop");
         boolean isRB = gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "down to grab /close claw/open claw");
+        boolean isSuperRB = gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "down to grab /close claw/open claw");
         boolean isLB = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "ground_hover");
+        boolean isSuperY = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "down to grab /close claw/open claw");
         boolean isRD = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "auto grab red");
         boolean isLD = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "auto grab yellow");
         boolean isUD = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "auto grab blue");
 
 
+
         boolean isDD = op.gamepad1.dpad_down;
+        boolean isDD2 = op.gamepad2.dpad_down;
+
         double driveConst = 0.7;
         if (TelescopicArm.ArmStates.HIGH_BUCKET.getState() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
             driveConst = 0.2;
@@ -358,6 +363,18 @@ public class IDRobot extends BasicRobot {
             } else {
                 claw.goTo(Claw.ClawStates.OPEN);
             }
+            isAutoGrab = false;
+        }
+        if(isDD2&&isSuperRB){
+            arm.lowerToIntake();
+            flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
+            claw.goTo(Claw.ClawStates.OPEN);
+            isAutoGrab = false;
+        }
+        if(isDD2 && isSuperY){
+            arm.goTo(TelescopicArm.ArmStates.HIGH_BUCKET);
+            flip.flipTo(Flip.FlipStates.BUCKET);
+            twist.twistTo(Twist.TwistStates.PERPENDICULAR);
             isAutoGrab = false;
         }
         update();
