@@ -28,11 +28,11 @@ public class BL02 {
     }
 
     public void placeSample(){
-        robot.followPath(new Point(16.8+x,126.75+y,Point.CARTESIAN), 0, -PI/4,false);
+        robot.followPath(new Point(17.1,126.75,Point.CARTESIAN), 0, -PI/4,false);
         robot.queuer.addDelay(0.5);
         robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, false);
         robot.setFlip(Flip.FlipStates.RESET, true);
-        //robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
+        robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.queuer.addDelay(0.3);
         robot.setFlip(Flip.FlipStates.BUCKET, false);
         robot.queuer.addDelay(0.5);
@@ -54,11 +54,11 @@ public class BL02 {
     }
 
     public void grabYellow(){
-        robot.followPath(new Point(28+x,122,Point.CARTESIAN), -PI/4, 0, false);
+        robot.followPath(new Point(27.5+x,122+y,Point.CARTESIAN), -PI/4, 0, false);
         double height=4, length=17.5+extra;
         double ext = length-7, rot = 180/PI *Math.atan2(height, length);
         robot.queuer.addDelay(1.0);
-        robot.setArm(ext, 0, false);
+        robot.setArm(ext, 0, true);
         //robot.setArm(ext, rot, true);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
@@ -71,7 +71,7 @@ public class BL02 {
         placeSample();
     }
     /**
-    parks by submersible
+     parks by submersible
      */
     public void park() {
         robot.followPath(new Point(65,110,Point.CARTESIAN), new Point(60,101, Point.CARTESIAN),-Math.PI/4, -Math.PI/2, false);
