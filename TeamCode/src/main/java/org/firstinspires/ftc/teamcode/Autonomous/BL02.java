@@ -44,7 +44,7 @@ public class BL02 {
         robot.queuer.addDelay(1.0);
         robot.autoReset(false);
         robot.setClaw(Claw.ClawStates.OPEN, true);
-        robot.followPath(new Point(current.getX()+1, current.getY()-1, Point.CARTESIAN), -PI/4, -PI/4, true);
+//        robot.followPath(new Point(current.getX()+1, current.getY()-1, Point.CARTESIAN), -PI/4, -PI/4, true);
 
         if(!shouldPark){
             grabYellow();
