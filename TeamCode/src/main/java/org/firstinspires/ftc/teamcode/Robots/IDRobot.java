@@ -85,14 +85,14 @@ public class IDRobot extends BasicRobot {
     }
 
     public void followPath(PathChain path, boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
             if (!queuer.isExecuted())
                 follower.followPath(path);
         }
     }
 
     public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
             if (!queuer.isExecuted()) {
                 Pose current = follower.getPose();
                 PathChain path2 = follower.pathBuilder()
@@ -105,7 +105,7 @@ public class IDRobot extends BasicRobot {
     }
 
     public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, !follower.isBusy() && !queuer.isNextExecuted())) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
             if (!queuer.isExecuted()) {
                 Pose current = follower.getPose();
                 PathChain path2 = follower.pathBuilder()

@@ -26,58 +26,63 @@ public class BlueRight20 extends LinearOpMode{
 
     public void runOpMode() throws InterruptedException{
         IDRobot robot = new IDRobot(this,false);
-//        robot.autoReset();
-        robot.setClaw(Claw.ClawStates.CLOSED, false);
-        robot.follower.setStartingPose(new Pose(10,63,0));
+        robot.follower.setStartingPose(new Pose(10,57,0));
+        robot.follower.setMaxPower(0.7);
         preload = robot.follower.pathBuilder().addPath(
-                new BezierLine(
-                        new Point(10,63,Point.CARTESIAN),
-                        new Point(35,63,Point.CARTESIAN)
-                ))
+                        new BezierLine(
+                                new Point(10,57,Point.CARTESIAN),
+                                new Point(35,65,Point.CARTESIAN)
+                        ))
                 .setConstantHeadingInterpolation(toRadians(0))
                 .build();
         intake = robot.follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Point(35,63,Point.CARTESIAN),
-                                new Point(25,35,Point.CARTESIAN)
+                                new Point(35.000, 65.000, Point.CARTESIAN),
+//                                new Point(23.000, 65.000, Point.CARTESIAN),
+                                new Point(23, 44.000, Point.CARTESIAN)
                         ))
                 .setConstantHeadingInterpolation(toRadians(0))
                 .build();
         deposit = robot.follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Point(25,35,Point.CARTESIAN),
-                                new Point(35,63,Point.CARTESIAN)
+                        new BezierCurve(
+                                new Point(23.00, 44.000, Point.CARTESIAN),
+                                new Point(23.00, 67.000, Point.CARTESIAN),
+                                new Point(34.000, 67.000, Point.CARTESIAN)
                         ))
                 .setConstantHeadingInterpolation(toRadians(0))
                 .build();
         park = robot.follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Point(35,63,Point.CARTESIAN),
-                                new Point(10,10,Point.CARTESIAN)
+                                new Point(34,67,Point.CARTESIAN),
+                                new Point(20,20,Point.CARTESIAN)
                         ))
                 .setLinearHeadingInterpolation(toRadians(0), toRadians(90))
                 .build();
+        waitForStart();
         while(!isStopRequested() && opModeIsActive()){
             //preload
             robot.followPath(preload);
             robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN,true);
-            robot.setTwist(Twist.TwistStates.PERPENDICULAR,true);
-            robot.setFlip(Flip.FlipStates.SPECIMEN,true);
-            //intake
-            robot.setClaw(Claw.ClawStates.OPEN,false);
-            robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB,true);
             robot.setTwist(Twist.TwistStates.PARALLEL,true);
-            robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB,true);
-            robot.followPath(intake);
-            robot.setClaw(Claw.ClawStates.CLOSED,true);
-            //deposit
-            robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN,false);
-            robot.setTwist(Twist.TwistStates.PERPENDICULAR,true);
             robot.setFlip(Flip.FlipStates.SPECIMEN,true);
+            robot.setClaw(Claw.ClawStates.OPEN,false);
+            //intake
+            robot.followPath(intake);
+            robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB,true);
+            robot.setTwist(Twist.TwistStates.SPECIMEN,true);
+            robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB,true);
+            robot.setClaw(Claw.ClawStates.CLOSED, false);
+            //deposit
             robot.followPath(deposit);
-            robot.autoReset(false);
+            robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN,true);
+            robot.setTwist(Twist.TwistStates.PARALLEL,true);
+            robot.setFlip(Flip.FlipStates.SPECIMEN,true);
+            robot.setClaw(Claw.ClawStates.OPEN,false);
             //park
             robot.followPath(park);
+            robot.autoReset(true);
+            robot.update();
+            robot.queuer.setFirstLoop(false);
         }
     }
 }
