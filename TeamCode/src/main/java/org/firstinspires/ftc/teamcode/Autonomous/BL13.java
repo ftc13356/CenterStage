@@ -32,7 +32,7 @@ public class BL13 {
     }
 
     public void placeSample(){
-        robot.followPath(new Point(17.5,130,Point.CARTESIAN), 0, -PI/4,false);
+        robot.followPath(new Point(18,130,Point.CARTESIAN), 0, -PI/4,false);
         robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);
         robot.queuer.addDelay(0.7);
         robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
@@ -52,7 +52,7 @@ public class BL13 {
     public void grabYellow(){
         switch(yellowNum){
             case 1:
-                robot.followPath(new Point(34,121.5, Point.CARTESIAN), 0,0, false);
+                robot.followPath(new Point(35,122.5, Point.CARTESIAN), 0,0, false);
                 yellowNum=2;
                 shouldPark = true;
                 break;
