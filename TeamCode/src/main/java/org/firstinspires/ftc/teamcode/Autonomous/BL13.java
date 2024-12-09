@@ -54,6 +54,7 @@ public class BL13 {
             case 1:
                 robot.followPath(new Point(24,117, Point.CARTESIAN), new Point(24,120,Point.CARTESIAN), 0,0, false);
                 yellowNum=2;
+                shouldPark=true;
                 break;
             case 2:
                 robot.followPath(new Point(24,130,Point.CARTESIAN), Math.PI*3/4, 0,false);
@@ -61,13 +62,11 @@ public class BL13 {
                 break;
             case 3:
                 robot.followPath(new Point(24,140, Point.CARTESIAN),Math.PI*3/4, -Math.PI/2, false);
-                shouldPark=true;
         }
         double height=4, length=15;
         double ext = length-7, rot = 180/PI *Math.atan2(height, length);
         robot.queuer.addDelay(1.0);
         robot.setArm(ext, 0, true);
-        //robot.setArm(ext, rot, true);
         robot.queuer.addDelay(1.0);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
