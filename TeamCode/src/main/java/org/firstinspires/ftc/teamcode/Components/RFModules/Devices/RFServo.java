@@ -59,6 +59,7 @@ public class RFServo implements Servo {
 
         SERVO_LIMIT = p_limit;
         plastTime = -100;
+        position = -1;
         disabled = false;
     }
 

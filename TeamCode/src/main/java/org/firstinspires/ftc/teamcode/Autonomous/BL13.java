@@ -28,28 +28,20 @@ public class BL13 {
 
     public BL13(LinearOpMode opmode){
         robot = new IDRobot(opmode,false);
-        robot.follower.setStartingPose(new Pose(7.5,103,0));
+        robot.follower.setStartingPose(new Pose(7.5,87,0));
     }
 
     public void placeSample(){
-        robot.followPath(new Point(17.1,126.75,Point.CARTESIAN), 0, -PI/4,false);
-        robot.queuer.addDelay(0.5);
-        robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, false);
-        robot.setFlip(Flip.FlipStates.RESET, true);
+        robot.followPath(new Point(17.5,130,Point.CARTESIAN), 0, -PI/4,false);
+        robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);
+        robot.queuer.addDelay(0.7);
+        robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
-        robot.queuer.addDelay(0.3);
+        robot.queuer.waitForFinish();
         robot.setFlip(Flip.FlipStates.BUCKET, false);
-        robot.queuer.addDelay(0.5);
         robot.setClaw(Claw.ClawStates.OPEN, false);
-        robot.queuer.addDelay(1.0);
+        robot.queuer.addDelay(0.5);
         robot.setFlip(Flip.FlipStates.RESET, false);
-
-        Pose current = robot.follower.getPose();
-        robot.queuer.addDelay(1.0);
-        robot.autoReset(false);
-        robot.setClaw(Claw.ClawStates.OPEN, true);
-        robot.followPath(new Point(current.getX()+1, current.getY()-1, Point.CARTESIAN), -PI/4, -PI/4, true);
-
         if(!shouldPark){
             grabYellow();
         } else {
@@ -71,30 +63,24 @@ public class BL13 {
                 robot.followPath(new Point(24,140, Point.CARTESIAN),Math.PI*3/4, -Math.PI/2, false);
                 shouldPark=true;
         }
-        robot.followPath(new Point(27.5+x,122+y,Point.CARTESIAN), -PI/4, 0, false);
-        double height=4, length=17.5;
+        double height=4, length=15;
         double ext = length-7, rot = 180/PI *Math.atan2(height, length);
         robot.queuer.addDelay(1.0);
         robot.setArm(ext, 0, true);
         //robot.setArm(ext, rot, true);
+        robot.queuer.addDelay(1.0);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
+        robot.queuer.waitForFinish();
         robot.setClaw(Claw.ClawStates.CLOSED, false);
-        robot.queuer.waitForFinish();
-        shouldPark = true;
-        robot.setFlip(Flip.FlipStates.RESET, true);
-        robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);
-        robot.queuer.waitForFinish();
         placeSample();
     }
 
     public void placeSpeci(){
-        robot.queuer.queue(false, true);
-        robot.queuer.addDelay(3.0);
         robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN, false);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN,true);
-        robot.followPath(new Point(35,72,Point.CARTESIAN), 0,0,false);
+        robot.followPath(new Point(37.5,78,Point.CARTESIAN), 0,0,false);
         robot.autoReset(false);
     }
 
@@ -102,13 +88,14 @@ public class BL13 {
     parks by submersible
      */
     public void park() {
-        robot.followPath(new Point(60,110,Point.CARTESIAN), new Point(60,96, Point.CARTESIAN),Math.PI*3/4, -Math.PI/2, false);
+        robot.followPath(new Point(74,125,Point.CARTESIAN), new Point(72,100, Point.CARTESIAN),-Math.PI*1/4, -Math.PI/2, false);
+        robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);
     }
 
     public void update() {
         robot.queuer.setFirstLoop(false);
-        yellowNum=1;
-        shouldPark=false;
+        yellowNum = 1;
+        shouldPark = false;
         robot.update();
     }
     }

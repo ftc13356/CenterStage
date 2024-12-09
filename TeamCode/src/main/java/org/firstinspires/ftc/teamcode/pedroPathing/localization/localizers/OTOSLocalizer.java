@@ -79,7 +79,7 @@ public class OTOSLocalizer extends Localizer {
         // rotation is negative rotation.
         otos.setOffset(new SparkFunOTOS.Pose2D(7.25,3,-Math.PI/2));
 
-        otos.setLinearScalar(1.19350755675743);
+        otos.setLinearScalar(1);
         otos.setAngularScalar(0.9921963333333333);
 
         otos.calibrateImu();
@@ -102,7 +102,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getPose() {
-        return MathFunctions.addPoses(startPose, new Pose(otosPose.x, otosPose.y, otosPose.h));
+        return MathFunctions.addPoses(startPose, new Pose(otosPose.x*1.15, otosPose.y*1.15, otosPose.h));
     }
 
     /**
