@@ -26,7 +26,7 @@ import java.util.Arrays;
 @Autonomous
 @Config
 public class Capstone extends LinearOpMode {
-    public static double G = 9.8, theta = 25, vt = 12.9, downAng = -24, WHITE_CONST = 0.2;
+    public static double G = 9.8055, theta = 25, vt = 12.9, downAng = -24, WHITE_CONST = 0.11, X_OFF =14, Y_OFF = 6, A_OFF = 2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -95,10 +95,10 @@ public class Capstone extends LinearOpMode {
                         relCent[2] = sqrt(relCent[2] * relCent[2] + rel * rel - relCent[0] * relCent[0]);
                         double angle = Math.atan2(relCent[1], relCent[2])*180/PI;
                         if(abs(angle)<10) {
-                            targetAngle[i] = turret.getRot() + angle+3;
+                            targetAngle[i] = turret.getRot() + angle+A_OFF;
                         }
-                        relCent[2]+=13;
-                        relCent[0]+=13;
+                        relCent[2]+=X_OFF;
+                        relCent[0]+=Y_OFF;
                         targetPos.set(i, new double[]{relCent[2], relCent[0]});
                         packet.put("relCent0", relCent[0]);
                         packet.put("relCent1", relCent[1]);
