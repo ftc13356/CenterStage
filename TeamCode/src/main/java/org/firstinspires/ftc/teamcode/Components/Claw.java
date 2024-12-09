@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Claw {
     RFServo claw;
 
-    public static double OPEN_POS = 0.8;
-    public static double CLOSED_POS = 0.28;
+    public static double OPEN_POS = .6;
+    public static double CLOSED_POS = 0.18;
 
     public static double FLIP_TIME = 0.5;
     private final double CLAW_SERVO_BUFFER = 0.05;
@@ -91,6 +91,7 @@ public class Claw {
     }
 
     public void goTo(Claw.ClawStates p_state){
+        Claw.ClawTargetStates.values()[p_state.ordinal()].state = true;
         claw.setPosition(p_state.position);
     }
 

@@ -174,6 +174,7 @@ public class IDRobot extends BasicRobot {
         boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "specimen drop");
         boolean isRB = gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "down to grab /close claw/open claw");
         boolean isSuperRB = gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "down to grab /close claw/open claw");
+        boolean isSuperLB = gampad.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "down to grab /close claw/open claw");
         boolean isLB = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "ground_hover");
         boolean isSuperY = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "down to grab /close claw/open claw");
         boolean isRD = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "auto grab red");
@@ -248,7 +249,7 @@ public class IDRobot extends BasicRobot {
                 }
             }else if (TelescopicArm.ArmStates.HIGH_SPECIMEN.getState() && !Claw.ClawStates.OPEN.getState()) {
                 claw.goTo(Claw.ClawStates.OPEN);
-                flip.flipTo(Flip.FlipStates.RESET);
+                flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
             } else {
                 arm.goTo(TelescopicArm.ArmStates.RETRACTED);
                 flip.flipTo(Flip.FlipStates.RESET);
@@ -371,6 +372,10 @@ public class IDRobot extends BasicRobot {
             claw.goTo(Claw.ClawStates.OPEN);
             isAutoGrab = false;
         }
+        if(isDD2 && isSuperLB){
+            claw.goTo(Claw.ClawStates.CLOSED);
+        }
+
         if(isDD2 && isSuperY){
             arm.goTo(TelescopicArm.ArmStates.HIGH_BUCKET);
             flip.flipTo(Flip.FlipStates.BUCKET);
