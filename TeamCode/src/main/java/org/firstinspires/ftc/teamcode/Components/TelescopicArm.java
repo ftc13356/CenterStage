@@ -153,7 +153,7 @@ public class TelescopicArm extends DualPIDController {
 
     public void goTo(TelescopicArm.ArmStates p_state) {
         if(p_state == ArmStates.RETRACTED){
-            if(Claw.ClawStates.OPEN.getState()&&!Claw.ClawTargetStates.CLOSED.getState()){
+            if(Claw.ClawStates.OPEN.getState()&&!Claw.ClawTargetStates.CLOSED.getState()&&!ArmStates.HIGH_SPECIMEN.state){
                 super.goTo(p_state.extendPos, 0,0, getRot());
             }
             else{

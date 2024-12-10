@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -9, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.024 , rP2 =0.02,rD2= 4, rD = 1, rF = .4, G = 0.15,rG = 0.23, rG2 = .5,TEST_LEN = 0, MAX_SPEED = 223*751.8/60;
+    public static double  A_OFF = -9, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.2,D=0, rP = 0.018 , rP2 =0.01,rD2= 6, rD = 1 , rF = .4, G = 0.15,rG = 0.3, rG2 = .64,TEST_LEN = 0, MAX_SPEED = 223*751.8/60;
     boolean mid=true;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;
@@ -64,7 +64,7 @@ public class DualPIDController {
             gScale = 1/(1-abs(rd/MAX_SPEED/TICKS_PER_DEG));
         }
         power*=gScale;
-        if(abs(rd)<5 && abs(rErr)>1.5 && targetRot>3 && curRot<90){
+        if(abs(rd)<5 && abs(rErr)>1.5 && (targetRot>3|| abs(rErr)>8) && curRot<90){
             power+=rF*signum(rErr);
         }
         if(abs(rErr)<10&&rd>-1&&targetRot<3 || (targetRot<3 && lastPower==0))
