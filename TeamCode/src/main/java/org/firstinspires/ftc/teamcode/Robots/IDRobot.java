@@ -103,6 +103,30 @@ public class IDRobot extends BasicRobot {
             }
         }
     }
+    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean hodlPoint) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2, hodlPoint);
+            }
+        }
+    }
+    public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean holdEnd) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2,holdEnd);
+            }
+        }
+    }
 
     public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, !follower.isBusy())) {
@@ -188,7 +212,7 @@ public class IDRobot extends BasicRobot {
 
         double driveConst = 0.7;
         if (TelescopicArm.ArmStates.HIGH_BUCKET.getState() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
-            driveConst = 0.2;
+            driveConst = 0.3;
         }
 
         if (follower.isTeleDrive() || (abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_x) > 0.001 || abs(op.gamepad1.right_stick_x) > 0.001)) {
@@ -249,7 +273,7 @@ public class IDRobot extends BasicRobot {
                 }
             }else if (TelescopicArm.ArmStates.HIGH_SPECIMEN.getState() && !Claw.ClawStates.OPEN.getState()) {
                 claw.goTo(Claw.ClawStates.OPEN);
-                flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
+                flip.flipTo(Flip.FlipStates.RESET);
             } else {
                 arm.goTo(TelescopicArm.ArmStates.RETRACTED);
                 flip.flipTo(Flip.FlipStates.RESET);

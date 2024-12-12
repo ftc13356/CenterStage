@@ -18,10 +18,10 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Claw {
     RFServo claw;
 
-    public static double OPEN_POS = .6;
-    public static double CLOSED_POS = 0.18;
+    public static double OPEN_POS = .58;
+    public static double CLOSED_POS = 0.16;
 
-    public static double FLIP_TIME = 0.5;
+    public static double FLIP_TIME = 0.6;
     private final double CLAW_SERVO_BUFFER = 0.05;
     /**
      * init
@@ -106,11 +106,11 @@ public class Claw {
             }
 
         }
-        for (var i : Claw.ClawTargetStates.values()) {
-            if (i.state && abs(claw.getPosition() - i.position) > CLAW_SERVO_BUFFER) {
-                goTo(Claw.ClawStates.values()[i.ordinal()]);
-            }
-        }
+//        for (var i : Claw.ClawTargetStates.values()) {
+//            if (i.state && abs(claw.getPosition() - i.position) > CLAW_SERVO_BUFFER) {
+//                goTo(Claw.ClawStates.values()[i.ordinal()]);
+//            }
+//        }
         packet.put("claw open", ClawStates.OPEN.getState());
     }
 }

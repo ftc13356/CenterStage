@@ -23,7 +23,7 @@ public class RPark extends LinearOpMode{
 
     public void runOpMode() throws InterruptedException{
         IDRobot robot = new IDRobot(this,false);
-        robot.follower.setStartingPose(new Pose(7.5,55,0));
+        robot.follower.setStartingPose(new Pose(7.5,64,0));
         park = robot.follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Point(7.5,55,Point.CARTESIAN),
@@ -36,6 +36,7 @@ public class RPark extends LinearOpMode{
         while(!isStopRequested() && opModeIsActive()){
             robot.followPath(park);
             robot.update();
+            robot.queuer.setFirstLoop(false);
         }
     }
 }

@@ -12,9 +12,9 @@ public class BlueRight40 extends LinearOpMode {
         while(!isStopRequested()&&opModeIsActive()){
             aut.placeSpeci();
             aut.grabBlues();
-            aut.placeSpeciSafe();
+            aut.placeSpeci2(4);
             aut.cycleBlueGrab();
-            aut.placeSpeciSafe();
+            aut.placeSpeci2(7);
             aut.update();
         }
     }
