@@ -17,11 +17,11 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Flip {
     RFServo flip;
-    public static double RESET_POS = 0.6;
-    public static double SUBMERSIBLE_POS = 0.17;
-    public static double SPECIMEN_POS = 0.9;
-    public static double SPECIMENGRAB_POS = 0.73;
-    public static double BUCKET_POS = 0.9, FLIP_TIME = 0.3;
+    public static double RESET_POS = 0.7;
+    public static double SUBMERSIBLE_POS = 0.27;
+    public static double SPECIMEN_POS = 0.95;
+    public static double SPECIMENGRAB_POS = 0.8;
+    public static double BUCKET_POS = 0.95, FLIP_TIME = 0.3;
 
     private final double FLIP_SERVO_BUFFER = 0.05;
 
@@ -116,7 +116,7 @@ public class Flip {
         }
         for (var i : Flip.FlipTargetStates.values()) {
             if (i.state && abs(flip.getPosition()-i.position) > FLIP_SERVO_BUFFER) {
-                flipTo(Flip.FlipStates.values()[i.ordinal()]);
+//                flipTo(Flip.FlipStates.values()[i.ordinal()]);
             }
         }
         packet.put("FLIPRESET", RESET.getState());

@@ -26,12 +26,12 @@ public class TelescopicArm extends DualPIDController {
     public static double HIGHBUCKET_PITCH_POS = 96;
     public static double LOWBUCKET_EXTEND_POS = 11;
     public static double LOWBUCKET_PITCH_POS = 100;
-    public static double HIGHSPECIMEN_EXTEND_POS = 17;
-    public static double HIGHSPECIMEN_PITCH_POS = 42;
+    public static double HIGHSPECIMEN_EXTEND_POS = 15.3;
+    public static double HIGHSPECIMEN_PITCH_POS = 45;
     public static double LOWSPECIMEN_EXTEND_POS = 10;
     public static double LOWSPECIMEN_PITCH_POS = 25;
     public static double SPECIMENGRAB_EXTEND_POS = 0;
-    public static double SPECIMENGRAB_PITCH_POS = 153;
+    public static double SPECIMENGRAB_PITCH_POS = 154;
     public static double HOVER_EXTEND_POS = 5;
     public static double HOVER_PITCH_POS = 23;
     public static double HANG_EXTEND_POS = 5;
@@ -234,14 +234,8 @@ public class TelescopicArm extends DualPIDController {
         if (time - lastManualTime > .5) {
             for (var i : TelescopicArm.ArmStates.values()) {
                 if (abs(super.getExt() - i.extendPos) < EXTEND_MOTOR_BUFFER && abs(super.getRot() - i.pitchPos) < PITCH_MOTOR_BUFFER) {
-                    i.setStateTrue();
+                    i.state= true;
                     TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
-                }
-                else if(i == ArmStates.RETRACTED){
-                    if(abs(super.getExt())<3){
-                        i.state = true;
-                        TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
-                    }
                 }
                 else if(i == ArmStates.INTAKE || i == ArmStates.HOVER){
                     if(abs(super.getRot()-i.pitchPos)<PITCH_MOTOR_BUFFER+3  ){
@@ -254,6 +248,10 @@ public class TelescopicArm extends DualPIDController {
                     i.state = false;
                 }
             }
+                if(abs(super.getExt())<3){
+                    ArmStates.RETRACTED.state = true;
+                    ArmTargetStates.RETRACTED.state = false;
+                }
             if(abs(getRot()-HIGHSPECIMEN_PITCH_POS)<10){
                 ArmStates.HIGH_SPECIMEN.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HIGH_SPECIMEN.ordinal()].state = false;

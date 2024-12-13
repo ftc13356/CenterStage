@@ -49,9 +49,9 @@ public class DualPIDController {
         curExt =0;
         curRot = 0;
         vel =0;
-        rP = 0.015; rP2 =0.02;rD2= 3;
-        rD = .6; rG = 0.18;
-        rG2 = 1.02;
+        rP = 0.013; rP2 =0.02;rD2= 3;
+        rD = .9; rG = 0.16;
+        rG2 = 0.75;
         if(!voltScaled) {
             rP*= 13 / voltage;
             rP2*= 13 / voltage;
@@ -70,8 +70,8 @@ public class DualPIDController {
         targetRot = rotation;
         curExt = ext.getCurrentPosition() + (rot.getCurrentPosition()*TICKS_PER_DEG)/80/TICKS_PER_IN;
         curRot = rot.getCurrentPosition();
-        if(targetExt*cos(curRot*TICKS_PER_RAD)>16){
-            extension = 16/cos(curRot*TICKS_PER_RAD);
+        if((targetExt+10)*cos(curRot*TICKS_PER_RAD)>27){
+            extension = 27/cos(curRot*TICKS_PER_RAD)-10;
         }
         double err = extension - curExt*TICKS_PER_IN;
         double d = ext.getVelocity()*TICKS_PER_IN;
