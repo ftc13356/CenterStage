@@ -7,15 +7,17 @@ import static java.lang.Math.toRadians;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-
+@Disabled
 @Autonomous
 public class IDAutoTest extends LinearOpMode {
     Queuer queuer;

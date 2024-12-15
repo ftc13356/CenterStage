@@ -7,6 +7,7 @@ import static java.lang.Math.toRadians;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * 8/22
  * TeleOp + RR odometry test
  */
-
+@Disabled
 @Config
 @TeleOp(name = "OdometryLocalizerTest")
 public class RFLocalizerTest extends LinearOpMode {

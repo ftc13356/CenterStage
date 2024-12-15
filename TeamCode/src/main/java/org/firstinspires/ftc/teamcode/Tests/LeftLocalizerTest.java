@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * 9/6/23
  */
 //@Disabled
-
+@Disabled
 @Config
 @Autonomous(name = "LeftIMULocalizerTest")
 public class LeftLocalizerTest extends LinearOpMode {

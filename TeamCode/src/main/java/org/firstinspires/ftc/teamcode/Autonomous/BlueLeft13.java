@@ -3,7 +3,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+@Disabled
 @Autonomous
 public class BlueLeft13 extends LinearOpMode {
     BL13 robot;

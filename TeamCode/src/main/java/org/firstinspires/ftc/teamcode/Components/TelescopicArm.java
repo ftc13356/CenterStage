@@ -31,7 +31,7 @@ public class TelescopicArm extends DualPIDController {
     public static double LOWSPECIMEN_EXTEND_POS = 10;
     public static double LOWSPECIMEN_PITCH_POS = 25;
     public static double SPECIMENGRAB_EXTEND_POS = 0;
-    public static double SPECIMENGRAB_PITCH_POS = 154;
+    public static double SPECIMENGRAB_PITCH_POS = 155;
     public static double HOVER_EXTEND_POS = 5;
     public static double HOVER_PITCH_POS = 23;
     public static double HANG_EXTEND_POS = 5;
@@ -53,11 +53,17 @@ public class TelescopicArm extends DualPIDController {
         }
         if(!isTeleop){
             ArmStates.RETRACTED.setStateTrue();
+            ArmStates.HIGH_SPECIMEN.pitchPos = HIGHSPECIMEN_PITCH_POS;
+            ArmStates.HIGH_SPECIMEN.extendPos = HIGHSPECIMEN_EXTEND_POS;
+            ArmTargetStates.HIGH_SPECIMEN.pitchPos = HIGHSPECIMEN_PITCH_POS;
+            ArmTargetStates.HIGH_SPECIMEN.extendPos = HIGHSPECIMEN_EXTEND_POS;
+        } else{
+            ArmStates.HIGH_SPECIMEN.pitchPos = 41;
+            ArmStates.HIGH_SPECIMEN.extendPos = 17.2;
+            ArmTargetStates.HIGH_SPECIMEN.pitchPos = 41;
+            ArmTargetStates.HIGH_SPECIMEN.extendPos = 17.2;
         }
-        ArmStates.HIGH_SPECIMEN.pitchPos = HIGHSPECIMEN_PITCH_POS;
-        ArmStates.HIGH_SPECIMEN.extendPos = HIGHSPECIMEN_EXTEND_POS;
-        ArmTargetStates.HIGH_SPECIMEN.pitchPos = HIGHSPECIMEN_PITCH_POS;
-        ArmTargetStates.HIGH_SPECIMEN.extendPos = HIGHSPECIMEN_EXTEND_POS;
+
     }
 
     /**
@@ -237,13 +243,6 @@ public class TelescopicArm extends DualPIDController {
                     i.state= true;
                     TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
                 }
-                else if(i == ArmStates.INTAKE || i == ArmStates.HOVER){
-                    if(abs(super.getRot()-i.pitchPos)<PITCH_MOTOR_BUFFER+3  ){
-                        i.state  = true;
-                        TelescopicArm.ArmTargetStates.values()[i.ordinal()].state = false;
-                    }
-
-                }
                 else{
                     i.state = false;
                 }
@@ -255,6 +254,10 @@ public class TelescopicArm extends DualPIDController {
             if(abs(getRot()-HIGHSPECIMEN_PITCH_POS)<10){
                 ArmStates.HIGH_SPECIMEN.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HIGH_SPECIMEN.ordinal()].state = false;
+
+            }
+            if(getRot()<5){
+                ArmStates.INTAKE.state = true;
 
             }
             if(abs(5 - (getExt()+7)*sin((getRot())*PI/180))<2 && getRot()<90){

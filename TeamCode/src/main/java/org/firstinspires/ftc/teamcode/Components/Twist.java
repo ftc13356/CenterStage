@@ -131,6 +131,9 @@ public class Twist {
         if(ord>3){
             ord-=4;
         }
+        if(ord<0){
+            ord = 3;
+        }
         twistTo(TwistStates.values()[ord]);
 
     }

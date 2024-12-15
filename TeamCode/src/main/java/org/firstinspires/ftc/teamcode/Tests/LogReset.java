@@ -16,7 +16,6 @@ import java.io.IOException;
  * reset log file that stores log index, maybe deprecatd
  */
 @Disabled
-
 @Autonomous(name= "LogReset")
 public class LogReset extends LinearOpMode {
     File myObj = new File("/storage/emulated/0/tmp/LogIndex.csv");

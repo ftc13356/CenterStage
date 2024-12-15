@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.SampleDetect;
 
+import static org.firstinspires.ftc.teamcode.Components.CVMaster.isHsvTest;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -12,12 +14,14 @@ public class SampleDetectTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
+        isHsvTest = true;
         CVMaster cam = new CVMaster();
         cam.startStreamin();
         waitForStart();
         while(opModeIsActive()&&!isStopRequested()){
 
         }
+        isHsvTest = false;
         stop();
     }
 }

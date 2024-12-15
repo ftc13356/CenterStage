@@ -17,7 +17,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Flip {
     RFServo flip;
-    public static double RESET_POS = 0.7;
+    public static double RESET_POS = 0.8;
+
+    public static double RETRACT_POS = 0.6;
     public static double SUBMERSIBLE_POS = 0.27;
     public static double SPECIMEN_POS = 0.95;
     public static double SPECIMENGRAB_POS = 0.8;
@@ -50,6 +52,7 @@ public class Flip {
         SUBMERSIBLE(false, SUBMERSIBLE_POS),
         SPECIMEN(false, SPECIMEN_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
+        RETRACT(false, Flip.RETRACT_POS),
         BUCKET(false, BUCKET_POS);
         boolean state;
         double position;
@@ -74,6 +77,7 @@ public class Flip {
         SUBMERSIBLE(false, SUBMERSIBLE_POS),
         SPECIMEN(false, SPECIMEN_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
+        RETRACT(false, RETRACT_POS),
         BUCKET(false, BUCKET_POS);
         boolean state;
         double position;

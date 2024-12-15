@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Claw {
     RFServo claw;
 
-    public static double OPEN_POS = .58;
+    public static double OPEN_POS = .7;
     public static double CLOSED_POS = 0.16;
 
     public static double FLIP_TIME = 0.6;

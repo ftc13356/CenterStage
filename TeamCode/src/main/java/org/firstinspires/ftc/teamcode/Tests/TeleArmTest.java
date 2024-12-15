@@ -4,11 +4,12 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDController;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-
+@Disabled
 @Autonomous
 @Config
 public class TeleArmTest extends LinearOpMode {

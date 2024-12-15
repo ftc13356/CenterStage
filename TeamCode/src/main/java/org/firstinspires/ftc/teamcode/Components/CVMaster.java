@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Components.SampleDetect.BluePipeline;
 import org.firstinspires.ftc.teamcode.Components.SampleDetect.ExcludePipline;
 import org.firstinspires.ftc.teamcode.Components.SampleDetect.RedPipeline;
+import org.firstinspires.ftc.teamcode.Components.SampleDetect.SampleDetectTest;
 import org.firstinspires.ftc.teamcode.Components.SampleDetect.SampleDetectionPipeline;
 import org.firstinspires.ftc.teamcode.Components.SampleDetect.SampleDetectionPipelinePNP;
 import org.firstinspires.ftc.teamcode.Components.SampleDetect.YellowPipeline;
@@ -21,14 +23,19 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Config
 public class CVMaster {
     public static boolean shouldStream = false;
+    public static boolean isHsvTest = false;
     OpenCvWebcam webcam;
 
     ExcludePipline exclude;
+    SampleDetectionPipelinePNP hsvTest;
     public CVMaster(){
         webcam = OpenCvCameraFactory.getInstance()
                 .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
             exclude = new ExcludePipline();
-        startStreamin();
+            hsvTest = new SampleDetectionPipelinePNP();
+            if(isTeleop) {
+                startStreamin();
+            }
     }
     public double[] getCenter(){
         return exclude.getCenter();
@@ -64,16 +71,18 @@ public class CVMaster {
                         //            else {
                         //              webcam.setPipeline(openSleeve);
                         //            }
-
-                        webcam.setPipeline(exclude);
+                        if(!isHsvTest)
+                            webcam.setPipeline(exclude);
+                        else
+                            webcam.setPipeline(hsvTest);
                         webcam.startStreaming(
                                     1280, 720, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
                         webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.SOFTWARE);
-                        dashboard.startCameraStream(webcam,5);
+//                        dashboard.startCameraStream(webcam,5);
 
-                        if(shouldStream)
-                            dashboard.startCameraStream(webcam, 4);
+//                        if(shouldStream)
+//                            dashboard.startCameraStream(webcam, 4);
                         LOGGER.log("Camera Streaming now!");
                     }
 

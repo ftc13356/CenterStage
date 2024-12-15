@@ -11,6 +11,7 @@ import static java.lang.Math.atan2;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
@@ -23,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierPoint;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 import java.util.Arrays;
-
+@Disabled
 @Autonomous
 public class SamplePnpTest extends LinearOpMode {
 

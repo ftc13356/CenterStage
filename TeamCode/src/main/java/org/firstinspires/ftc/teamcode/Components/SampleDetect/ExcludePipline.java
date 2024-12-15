@@ -37,7 +37,7 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 100, RV = 100, BH = 100, BUH = 120, BS = 150, BV = 30, YH = 18, YUH = 30, YS = 110, YV = 180;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 90, BV = 90, YH = 13, YUH = 30, YS = 190, YV = 50;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat(), mask4 = new Mat();
     Mat colorMask = new Mat(), allMask = new Mat();
@@ -134,6 +134,7 @@ public class ExcludePipline extends OpenCvPipeline {
         Core.bitwise_or(allMask,mask, allMask);
         if(retVal == 5){
             colorMask.copyTo(input);
+            return colorMask;
         }
         else if(retVal == 6){
             allMask.copyTo(input);

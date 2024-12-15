@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/13/2024
  */
 @Config
+@Disabled
 @Autonomous (name = "Curved Back And Forth", group = "Autonomous Pathing Tuning")
 public class CurvedBackAndForth extends OpMode {
     private Telemetry telemetryA;

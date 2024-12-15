@@ -84,7 +84,7 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline {
     static final Scalar YELLOW = new Scalar(255, 255, 0);
 
     // Define the color range for filtering
-    public static double H = 100, S = 90, V = 50;
+    public static double H = 100, S = 90, V = 50, UH=150, US = 255, UV = 255;
     Scalar upperBlue = new Scalar(150, 255, 255);
     Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2));
     Mat hsv = new Mat();
@@ -213,6 +213,8 @@ public class SampleDetectionPipelinePNP extends OpenCvPipeline {
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
         Scalar lowerBlue = new Scalar(H, S, V);
+
+        Scalar upperBlue = new Scalar(UH,US,UV);
 
         // Create a mask based on the color range
         Core.inRange(hsv, lowerBlue, upperBlue, mask);
