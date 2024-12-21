@@ -102,7 +102,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getPose() {
-        return MathFunctions.addPoses(startPose, new Pose(otosPose.x*1.15, otosPose.y*1.15, otosPose.h));
+        return MathFunctions.addPoses(startPose, new Pose(otosPose.x*1.017, otosPose.y*1.017, otosPose.h));
     }
 
     /**
@@ -112,7 +112,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getVelocity() {
-        return new Pose(otosVel.x, otosVel.y, otosVel.h);
+        return new Pose(otosVel.x*1.017, otosVel.y*1.017, otosVel.h);
     }
 
     /**

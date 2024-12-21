@@ -82,7 +82,7 @@ public class CVMaster {
 //                        dashboard.startCameraStream(webcam,5);
 
 //                        if(shouldStream)
-//                            dashboard.startCameraStream(webcam, 4);
+                            dashboard.startCameraStream(webcam, 4);
                         LOGGER.log("Camera Streaming now!");
                     }
 
