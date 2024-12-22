@@ -19,7 +19,7 @@ public class Claw {
     RFServo claw;
 
     public static double OPEN_POS = .7;
-    public static double CLOSED_POS = 0.16;
+    public static double CLOSED_POS = 0.12;
 
     public static double FLIP_TIME = 0.6;
     private final double CLAW_SERVO_BUFFER = 0.05;

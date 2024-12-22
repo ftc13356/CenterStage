@@ -13,7 +13,7 @@ public class BlueRight40 extends LinearOpMode {
         waitForStart();
         resetRuntime();
         BasicRobot.time=0;
-        while(!isStopRequested()&&opModeIsActive()&&BasicRobot.time<29.9){
+        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()){
             aut.placeSpeci();
             aut.grabBlues();
             aut.placeSpeci2(3);

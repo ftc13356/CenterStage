@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -9, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 20./1526, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.23,D=0, rP = 0.01 , rP2 =0.02,rD2= 3
+    public static double  A_OFF = -9, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 0.0017521464277011343, TICKS_PER_DEG = 90/256.*90/135/2.1*90/65*90/88,P=0.43,D=0, rP = 0.01 , rP2 =0.02,rD2= 1
             , rD = .15 , rF = .3, G = 0.15,rG = 0.19, rG2 = 1,TEST_LEN = 0, MAX_SPEED = 223*751.8/60;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
@@ -49,8 +49,8 @@ public class DualPIDController {
         curExt =0;
         curRot = 0;
         vel =0;
-        rP = 0.013; rP2 =0.02;rD2= 3;
-        rD = .9; rG = 0.16;
+        rP = 0.013; rP2 =0.02;rD2= 2;
+        rD = .7; rG = 0.16;
         rG2 = 0.7;
         if(!voltScaled) {
             rP*= 13 / voltage;
@@ -68,7 +68,7 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         targetExt = extension;
         targetRot = rotation;
-        curExt = ext.getCurrentPosition() + (rot.getCurrentPosition()*TICKS_PER_DEG)/80/TICKS_PER_IN;
+        curExt = ext.getCurrentPosition() + (rot.getCurrentPosition()*TICKS_PER_DEG)/80*360/(2*PI*4.5/2.54);
         curRot = rot.getCurrentPosition();
         if((targetExt+10)*cos(curRot*TICKS_PER_RAD)>27){
             extension = 27/cos(curRot*TICKS_PER_RAD)-10;
@@ -119,7 +119,7 @@ public class DualPIDController {
     public void goTo(double extension, double rotation, double middle, double middleRot){
         if(mid&& (middle != this.middle || middleRot != this.middleRot || targetExt != min(max(extension,MIN),MAX) || targetRot != min(max(rotation,ROTMIN),ROTMAX)))
             mid=false;
-        if(!mid && abs(getExt() - middle) < 3 && abs(getRot()-middleRot)<10)
+        if(!mid && abs(getExt() - middle) < 5 && abs(getRot()-middleRot)<10)
             mid=true;
         trueTargExt = extension;
         trueTargRot = rotation;

@@ -47,16 +47,18 @@ public class IDRobot extends BasicRobot {
     }
 
     public void autoReset(boolean p_async) {
-        if (queuer.queue(p_async, TelescopicArm.ArmStates.RETRACTED.getState())) {
-            claw.goTo(Claw.ClawStates.OPEN);
-            twist.twistTo(Twist.TwistStates.PARALLEL);
-            flip.flipTo(Flip.FlipStates.RESET);
-            arm.goTo(TelescopicArm.ArmStates.RETRACTED);
+        if (queuer.queue(p_async, TelescopicArm.ArmStates.RETRACTED.getState()&&abs(arm.getExt())<2)) {
+            if(!queuer.isExecuted()) {
+                claw.goTo(Claw.ClawStates.OPEN);
+                twist.twistTo(Twist.TwistStates.PARALLEL);
+                flip.flipTo(Flip.FlipStates.RESET);
+                arm.goTo(TelescopicArm.ArmStates.RETRACTED);
+            }
         }
     }
 
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {
-        if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
+        if (queuer.queue(p_async, targ.getState()&&abs(targ.getExtendPos()-arm.getExt())<1) && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(targ);
     }
 
@@ -303,7 +305,7 @@ public class IDRobot extends BasicRobot {
             double[] relCen = cv.getCenter().clone();
             if (!Arrays.equals(relCen, new double[]{0, 0, 0})) {
                 targeted = true;
-                relCen[0] = relCen[2] * Math.sin(arm.getRot() * PI / 180) + relCen[0] * Math.cos(arm.getRot() * PI / 180) - 2.5;
+                relCen[0] = relCen[2] * Math.sin(arm.getRot() * PI / 180) + relCen[0] * Math.cos(arm.getRot() * PI / 180) - 1.5;
                 packet.put("relCent0", relCen[0]);
                 packet.put("relCent1", relCen[1]);
             }
@@ -348,8 +350,8 @@ public class IDRobot extends BasicRobot {
                                 targeted = false;
                             }
                         } else {
-                            flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
-                            claw.goTo(Claw.ClawStates.OPEN);
+//                            flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
+//                            claw.goTo(Claw.ClawStates.OPEN);
                             Vector2d relVect = new Vector2d(0, -relCent[1] + Math.signum(-relCent[1])*1.5).rotated(follower.getPose().getHeading());
                             Pose pos = follower.getPose();
                             pos.add(new Pose(relVect.getX(), relVect.getY(), 0));

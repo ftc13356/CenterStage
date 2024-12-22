@@ -104,6 +104,10 @@ public class TelescopicArm extends DualPIDController {
         public boolean getState() {
             return this.state;
         }
+        public double getExtendPos(){
+            return this.extendPos;
+        }
+
     }
 
     public enum ArmTargetStates {
@@ -251,7 +255,7 @@ public class TelescopicArm extends DualPIDController {
                     ArmStates.RETRACTED.state = true;
                     ArmTargetStates.RETRACTED.state = false;
                 }
-            if(abs(getRot()-HIGHSPECIMEN_PITCH_POS)<10){
+            if(abs(getRot()-HIGHSPECIMEN_PITCH_POS)<10&&abs(getExt()-HIGHSPECIMEN_EXTEND_POS)<3){
                 ArmStates.HIGH_SPECIMEN.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HIGH_SPECIMEN.ordinal()].state = false;
 

@@ -37,14 +37,16 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 90, BV = 90, YH = 20, YUH = 35, YS = 120, YV = 130;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 160, BV = 90, YH = 15, YUH = 35, YS = 160, YV = 150;
+    public static int UPPER_THRESH = 150, LOWER_THRESH = 90, KERNEL_SIZE = 3;
     Mat hsv = new Mat();
-    Mat mask = new Mat(), mask2 = new Mat(), mask3 = new Mat(), mask4 = new Mat();
-    Mat colorMask = new Mat(), allMask = new Mat();
+    Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
+    Mat kernel = new Mat();
+    Mat colorMask = new Mat();
     Mat hierarchy = new Mat();
-    Mat boundingImage = new Mat(), firstBoundingImage = new Mat();
+    Mat boundingImage = new Mat(), maskedImage = new Mat();
 
-    public static double AREA_THRESH = .85, FCL = 1, EPSILON = 0.04, UP_TOLERANCE = 2, DOWN_TOLERANCE =1.15, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
+    public static double AREA_THRESH = .5, FCL = 1, UP_TOLERANCE = 2, DOWN_TOLERANCE =1.15, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
     double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
     double objectHeight = 1.5;  // Replace with your object's height in real-world units
 
@@ -111,64 +113,55 @@ public class ExcludePipline extends OpenCvPipeline {
                 buFilt = new Scalar(BUH, 255, 255),
                 ylFilt = new Scalar(YH, YS, YV),
                 yuFilt = new Scalar(YUH, 255, 255);
-        Core.inRange(hsv, rlFilt, ruFilt, mask);
-        Core.inRange(hsv, rllFilt, rulFilt, mask2);
-        Core.inRange(hsv, blFilt, buFilt, mask3);
-        Core.inRange(hsv, ylFilt, yuFilt, mask4);
+
         input.copyTo(boundingImage);  // More memory-efficient
-        if (retVal == 2) {
-            mask.copyTo(input);
-        } else if (retVal == 3) {
-            mask3.copyTo(input);
-        } else if(retVal == 4){
-            mask4.copyTo(input);
+        if(color ==0) {
+            Core.inRange(hsv, rlFilt, ruFilt, mask);
+            Core.inRange(hsv, rllFilt, rulFilt, mask2);
+            Core.bitwise_or(mask,mask2,colorMask);
         }
-        Core.bitwise_or(mask,mask2,mask);
-        if(color ==0)
-            colorMask = mask;
         else if(color == 1)
-            colorMask = mask3;
+            Core.inRange(hsv, blFilt, buFilt, colorMask);
         else
-            mask4.copyTo(colorMask);
-        Core.bitwise_or(mask3,mask4,allMask);
-        Core.bitwise_or(allMask,mask, allMask);
-        if(retVal == 5){
-            colorMask.copyTo(input);
-            return colorMask;
-        }
-        else if(retVal == 6){
-            allMask.copyTo(input);
-        }
+            Core.inRange(hsv, ylFilt, yuFilt, colorMask);
+
+        maskedImage = new Mat();
+        Core.bitwise_and(input, input, maskedImage, colorMask);
+
+        edges = new Mat();
+        // Apply Canny edge detection
+        Imgproc.Canny(maskedImage, edges, LOWER_THRESH, UPPER_THRESH);
+        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(KERNEL_SIZE, KERNEL_SIZE));
+        closedEdges = new Mat();
+        Imgproc.dilate(edges, closedEdges, kernel);
+        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNEL_SIZE, KERNEL_SIZE));
+        Imgproc.morphologyEx(closedEdges, edges,Imgproc.MORPH_CLOSE, kernel);
         contours = new ArrayList<>();
-        Imgproc.findContours(colorMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(closedEdges, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         ArrayList<Double[]> colorCoords = contoursToCoords();
-        boundingImage.copyTo(firstBoundingImage);
         if(!contours.isEmpty()) {
-            input.copyTo(boundingImage);  // More memory-efficient
-            contours = new ArrayList<>();
-            Imgproc.findContours(allMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-            ArrayList<Double[]> allCoords = contoursToCoords();
-            Double[] centerd = matchedCoords(colorCoords, allCoords);
+            Double[] centerd = matchedCoords(colorCoords, colorCoords);
             if (centerd[0] != 100) center = convertToDoubleArray(centerd);
         }
-        if (retVal == 0) {
-            firstBoundingImage.copyTo(input);
-        } else if (retVal == 1) {
+        if(retVal ==0)
             boundingImage.copyTo(input);
-        }
-
+        else if(retVal == 1)
+            maskedImage.copyTo(input);
+        else if(retVal ==2)
+            return edges;
+        else
+            return closedEdges;
+        closedEdges.release();
+        colorMask.release();
+//        edges.release();
         hsv.release();
         mask.release();
         mask2.release();
-        mask3.release();
-//        mask4.release();
-        colorMask.release();
+        maskedImage.release();
         hierarchy.release();
-        allMask.release();
         hierarchy.release();
         boundingImage.release();
-        firstBoundingImage.release();
-        return mask4;
+        return input;
     }
     double[] convertToDoubleArray(Double[] wrapperArray) {
         double[] primitiveArray = new double[wrapperArray.length];
@@ -275,7 +268,9 @@ public class ExcludePipline extends OpenCvPipeline {
                                 cameraMatrix,
                                 distCoeffs,
                                 rvec,
-                                tvec
+                                tvec,
+                                false,
+                                Calib3d.SOLVEPNP_SQPNP
                         );
                         if (success) {
                             double[] coords = new double[3];
