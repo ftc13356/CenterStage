@@ -23,6 +23,10 @@ public class BL13 {
     IDRobot robot;
     public static double x=0;
     public static double y=0;
+    public static double extraX=0;
+    public static double extraY=0;
+    public static double extraExtraX=0;
+    public static double extraExtraY=0;
     boolean shouldPark = false;
     int yellowNum =1;
 
@@ -32,7 +36,7 @@ public class BL13 {
     }
 
     public void placeSample(){
-        robot.followPath(new Point(18,130,Point.CARTESIAN), 0, -PI/4,false);
+        robot.followPath(new Point(17.5+extraExtraX,130+extraExtraY,Point.CARTESIAN), 0, -PI/4,false);
         robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);
         robot.queuer.addDelay(0.7);
         robot.setArm(TelescopicArm.ArmStates.HIGH_BUCKET, true);
@@ -52,7 +56,7 @@ public class BL13 {
     public void grabYellow(){
         switch(yellowNum){
             case 1:
-                robot.followPath(new Point(35,122.5, Point.CARTESIAN), 0,0, false);
+                robot.followPath(new Point(35+extraX,122.5+extraY, Point.CARTESIAN), 0,0, false);
                 yellowNum=2;
                 shouldPark = true;
                 break;
@@ -63,8 +67,9 @@ public class BL13 {
             case 3:
                 robot.followPath(new Point(24,140, Point.CARTESIAN),Math.PI*3/4, -Math.PI/2, false);
                 shouldPark=true;
+                //needs to be vertical
         }
-        double height=4, length=15;
+        double height=4, length=17;
         double ext = length-7, rot = 180/PI *Math.atan2(height, length);
         robot.queuer.addDelay(1.5);
         robot.setArm(ext, 0, true);
@@ -84,9 +89,6 @@ public class BL13 {
         robot.autoReset(false);
     }
 
-    /**
-    parks by submersible
-     */
     public void park() {
         robot.followPath(new Point(74,125,Point.CARTESIAN), new Point(72,100, Point.CARTESIAN),-Math.PI*1/4, -Math.PI/2, false);
         robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);

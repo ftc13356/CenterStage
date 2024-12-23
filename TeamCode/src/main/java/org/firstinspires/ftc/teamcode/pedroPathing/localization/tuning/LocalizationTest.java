@@ -34,7 +34,7 @@ import java.util.List;
  * @version 1.0, 5/6/2024
  */
 @Config
-@Disabled
+
 @TeleOp(group = "Pedro Pathing Tuning", name = "Localization Test")
 public class LocalizationTest extends OpMode {
     private PoseUpdater poseUpdater;
