@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -37,7 +38,7 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 160, BV = 90, YH = 15, YUH = 35, YS = 160, YV = 150;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 160, BV = 90, YH = 22, YUH = 35, YS = 70, YV = 140;
     public static int UPPER_THRESH = 150, LOWER_THRESH = 90, KERNEL_SIZE = 3;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
@@ -281,7 +282,7 @@ public class ExcludePipline extends OpenCvPipeline {
                                 multiplia = 1/multiplia;
                             }
 
-                            double consta = 1.16* Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width)*multiplia;
+                            double consta = 1.16* pow(Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width), 0.5)*multiplia;
                             centers.add(new Double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta, angle});
                             if (center!=null) {
 //                                packet.put("CAM X", center[0]);
@@ -303,7 +304,7 @@ public class ExcludePipline extends OpenCvPipeline {
 
 
     private static double distance(Point p1, Point p2) {
-        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+        return Math.sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
     }
 
     public static Point[] orderCorner(Point[] pts) {

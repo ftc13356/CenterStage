@@ -32,6 +32,7 @@ public class IDRobot extends BasicRobot {
     Twist twist;
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
+    public static double FOR_CONST = 1.8, FOR_MULT = 1.2, SIDE_CONST = 2, SIDE_MULT = 1.2;
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
@@ -333,7 +334,7 @@ public class IDRobot extends BasicRobot {
                 if (!Arrays.equals(relCent, new double[]{0, 0, 0, 0})) {
                     targeted = true;
                     cv.resetCenter();
-                    relCent[0] = relCent[2] * Math.sin(arm.getRot() * PI / 180) + relCent[0] * Math.cos(arm.getRot() * PI / 180) - 1.7;
+                    relCent[0] = (relCent[2] * Math.sin(arm.getRot() * PI / 180) + relCent[0] * Math.cos(arm.getRot() * PI / 180) - FOR_CONST)*FOR_MULT;
                     packet.put("relCent0", relCent[0]);
                     packet.put("relCent1", relCent[1]);
                     if (follower.isTeleDrive())
@@ -352,7 +353,7 @@ public class IDRobot extends BasicRobot {
                         } else {
 //                            flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
 //                            claw.goTo(Claw.ClawStates.OPEN);
-                            Vector2d relVect = new Vector2d(0, -relCent[1] + Math.signum(-relCent[1])*1.5).rotated(follower.getPose().getHeading());
+                            Vector2d relVect = new Vector2d(0, (-relCent[1] + Math.signum(-relCent[1])*SIDE_CONST)*SIDE_MULT).rotated(follower.getPose().getHeading());
                             Pose pos = follower.getPose();
                             pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
                             double head = follower.getPose().getHeading();
@@ -372,7 +373,7 @@ public class IDRobot extends BasicRobot {
                             packet.put("newExt", newExt);
                             packet.put("relVect", relVect);
                             packet.put("relAng", relCent[3]);
-//                        isAutoGrab = false;
+                        isAutoGrab = false;
                         }
                     }
                 } else if (!targeted) {
