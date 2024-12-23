@@ -32,7 +32,7 @@ public class IDRobot extends BasicRobot {
     Twist twist;
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
-    public static double FOR_CONST = 1.8, FOR_MULT = 1.2, SIDE_CONST = 2, SIDE_MULT = 1.2;
+    public static double FOR_CONST = 2.8, FOR_MULT = 1.0, SIDE_CONST = 1.5, SIDE_MULT = 1.2;
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
@@ -340,7 +340,7 @@ public class IDRobot extends BasicRobot {
                     if (follower.isTeleDrive())
                         follower.stopTeleopDrive();
                     if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 200) {
-                        if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 1 && abs(arm.getVel()) + follower.getVelocityMagnitude() < 0.5) {
+                        if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 1 && abs(arm.getVel()) + follower.getVelocityMagnitude() < 0.9) {
                             if(!Flip.FlipStates.SUBMERSIBLE.getState()) {
                                 flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
                                 claw.goTo(Claw.ClawStates.OPEN);
@@ -364,7 +364,7 @@ public class IDRobot extends BasicRobot {
                             Point newTarg = new Point(pos);
                             if (curTarg == null) {
                                 follower.holdPoint(new BezierPoint(new Point(pos)), head);
-                            } else if (curTarg.distanceFrom(newTarg) > 0.3) {
+                            } else if (curTarg.distanceFrom(newTarg) > 0.8) {
                                 follower.holdPoint(new BezierPoint(new Point(pos)), head);
                             }
                             double newExt = arm.getExt() + relCent[0] - arm.getVel() * .1;
@@ -373,7 +373,7 @@ public class IDRobot extends BasicRobot {
                             packet.put("newExt", newExt);
                             packet.put("relVect", relVect);
                             packet.put("relAng", relCent[3]);
-                        isAutoGrab = false;
+//                        isAutoGrab = false;
                         }
                     }
                 } else if (!targeted) {

@@ -38,7 +38,7 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 160, BV = 90, YH = 22, YUH = 35, YS = 70, YV = 140;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 160, BV = 90, YH = 19, YUH = 35, YS = 90, YV = 140, AREA_RATIO_WEIGHT = -0.4;
     public static int UPPER_THRESH = 150, LOWER_THRESH = 90, KERNEL_SIZE = 3;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
@@ -47,7 +47,7 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat(), maskedImage = new Mat();
 
-    public static double AREA_THRESH = .5, FCL = 1, UP_TOLERANCE = 2, DOWN_TOLERANCE =1.15, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
+    public static double AREA_THRESH = .5, FCL = 1, UP_TOLERANCE = 1, DOWN_TOLERANCE =1, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
     double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
     double objectHeight = 1.5;  // Replace with your object's height in real-world units
 
@@ -282,7 +282,7 @@ public class ExcludePipline extends OpenCvPipeline {
                                 multiplia = 1/multiplia;
                             }
 
-                            double consta = 1.16* pow(Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width), 0.5)*multiplia;
+                            double consta = 1.16* pow(Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT)*multiplia;
                             centers.add(new Double[]{-coords[0] * consta,-coords[1] * consta,coords[2] * consta, angle});
                             if (center!=null) {
 //                                packet.put("CAM X", center[0]);
