@@ -14,7 +14,7 @@ public class SampleDetectTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
-        isHsvTest = true;
+        isHsvTest = false;
         CVMaster cam = new CVMaster();
         cam.startStreamin();
         waitForStart();

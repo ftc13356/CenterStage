@@ -42,6 +42,8 @@ public class TelescopicArm extends DualPIDController {
 
     double lastManualTime = -100;
 
+    public static volatile double expectedHeight = 2;
+
     /**
      * init
      */
@@ -235,6 +237,7 @@ public class TelescopicArm extends DualPIDController {
         lastManualTime = -100;
         goTo(p_extend,p_pitch);
     }
+
     /**
      * updates the state machine
      * TODO: ZEROING SYSTEM
@@ -283,6 +286,7 @@ public class TelescopicArm extends DualPIDController {
             goTo(getTargetExt(), getTargetRot());
         else if(!isMid())
             goTo(getTrueTargExt(), getTrueTargRot(), getMiddle(), getMiddleRot());
+        expectedHeight = sin(getRot()*PI/180)*(8+getExt())+1.8;
         packet.put("targExt", super.getTargetExt());
         packet.put("targRot", super.getTargetRot());
         packet.put("targMid", super.getMiddle());

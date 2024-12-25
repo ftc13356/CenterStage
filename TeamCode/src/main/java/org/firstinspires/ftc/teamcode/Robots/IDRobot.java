@@ -32,7 +32,8 @@ public class IDRobot extends BasicRobot {
     Twist twist;
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
-    public static double FOR_CONST = 2.8, FOR_MULT = 1.0, SIDE_CONST = 1.5, SIDE_MULT = 1.2;
+    Point lastTarg = new Point(0,0,1);
+    public static double FOR_CONST =3, FOR_MULT = 1.0, SIDE_CONST = 1.5, SIDE_MULT = 1.2;
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
@@ -353,15 +354,19 @@ public class IDRobot extends BasicRobot {
                         } else {
 //                            flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
 //                            claw.goTo(Claw.ClawStates.OPEN);
-                            Vector2d relVect = new Vector2d(0, (-relCent[1] + Math.signum(-relCent[1])*SIDE_CONST)*SIDE_MULT).rotated(follower.getPose().getHeading());
+                            Vector2d relVect = new Vector2d(0, ((-relCent[1] + Math.signum(-relCent[1])*SIDE_CONST))*SIDE_MULT).rotated(follower.getPose().getHeading());
+                            Vector2d relVect2 = new Vector2d(0, (-relCent[1]*SIDE_MULT)).rotated(follower.getPose().getHeading());
                             Pose pos = follower.getPose();
                             pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
+                            Pose pos2 = follower.getPose();
+                            pos2.add(new Pose(relVect2.getX(), relVect2.getY(), 0));
+
                             double head = follower.getPose().getHeading();
                             if (follower.getCurrentPath() != null) {
                                 head = follower.getCurrentPath().getHeadingGoal(1);
                             }
-                            Point curTarg = follower.getPointFromPath(1);
-                            Point newTarg = new Point(pos);
+                            Point curTarg = lastTarg;
+                            Point newTarg = new Point(pos2);
                             if (curTarg == null) {
                                 follower.holdPoint(new BezierPoint(new Point(pos)), head);
                             } else if (curTarg.distanceFrom(newTarg) > 0.8) {
@@ -373,6 +378,7 @@ public class IDRobot extends BasicRobot {
                             packet.put("newExt", newExt);
                             packet.put("relVect", relVect);
                             packet.put("relAng", relCent[3]);
+                            lastTarg = new Point(pos2);
 //                        isAutoGrab = false;
                         }
                     }

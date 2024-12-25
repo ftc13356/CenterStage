@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Flip;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-@Disabled
+//@Disabled
 @Config
 @Autonomous(name = "FlipTest")
 public class FlipTest extends LinearOpMode{
