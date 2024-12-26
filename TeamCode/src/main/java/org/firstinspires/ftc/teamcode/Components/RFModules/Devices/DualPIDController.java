@@ -33,8 +33,8 @@ public class DualPIDController {
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;
     public DualPIDController() {
 
-        ext = (DcMotorEx) op.hardwareMap.dcMotor.get("extendMotor");
-        rot = (DcMotorEx) op.hardwareMap.dcMotor.get("rotateMotor");
+        ext = op.hardwareMap.get(DcMotorEx.class, "extendMotor");
+        rot = op.hardwareMap.get(DcMotorEx.class, "rotateMotor");
         if(!isTeleop) {
             ext.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             ext.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -49,8 +49,8 @@ public class DualPIDController {
         curExt =0;
         curRot = 0;
         vel =0;
-        rP = 0.013; rP2 =0.02;rD2= 4;
-        rD = 0.6946034653843217; rG = 0.16;
+        rP = 0.01; rP2 =0.02;rD2= 4;
+        rD = 0.7246034653843217; rG = 0.16;
         rG2 = 0.8;
         if(!voltScaled) {
             rP*= 13 / voltage;

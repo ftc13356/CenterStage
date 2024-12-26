@@ -286,7 +286,7 @@ public class TelescopicArm extends DualPIDController {
             goTo(getTargetExt(), getTargetRot());
         else if(!isMid())
             goTo(getTrueTargExt(), getTrueTargRot(), getMiddle(), getMiddleRot());
-        expectedHeight = sin(getRot()*PI/180)*(8+getExt())+1.8;
+        expectedHeight = sin(getRot()*PI/180)*(8+getExt())-1;
         packet.put("targExt", super.getTargetExt());
         packet.put("targRot", super.getTargetRot());
         packet.put("targMid", super.getMiddle());

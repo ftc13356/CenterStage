@@ -18,6 +18,7 @@ public class SampleDetectTest extends LinearOpMode {
         CVMaster cam = new CVMaster();
         cam.startStreamin();
         waitForStart();
+        cam.swapBlue();
         while(opModeIsActive()&&!isStopRequested()){
 
         }

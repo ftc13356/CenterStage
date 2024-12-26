@@ -39,8 +39,8 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 80, BV = 90, YH = 19, YUH = 35, YS = 90, YV = 140, AREA_RATIO_WEIGHT = -0.4,UPPIES=1.5, MIN_AREA = 7000;
-    public static int UPPER_THRESH = 180, LOWER_THRESH = 100, KERNEL_SIZE = 3;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4,UPPIES=1.5, MIN_AREA = 7000;
+    public static int UPPER_THRESH = 180, LOWER_THRESH = 100, YUPPER_THRESH = 160, YLOWER_THRESH = 60, KERNEL_SIZE = 3;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
@@ -132,7 +132,12 @@ public class ExcludePipline extends OpenCvPipeline {
 
         edges = new Mat();
         // Apply Canny edge detection
-        Imgproc.Canny(maskedImage, edges, LOWER_THRESH, UPPER_THRESH);
+        if(color!=2) {
+            Imgproc.Canny(maskedImage, edges, LOWER_THRESH, UPPER_THRESH);
+        } else{
+            Imgproc.Canny(maskedImage, edges, YLOWER_THRESH, YUPPER_THRESH);
+
+        }
         kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(KERNEL_SIZE, KERNEL_SIZE));
         closedEdges = new Mat();
         Imgproc.dilate(edges, closedEdges, kernel);

@@ -166,7 +166,7 @@ public class Twist {
         }
         for (var i : Twist.TwistTargetStates.values()) {
             if (i.state && abs(twist.getPosition() - i.position) > TWIST_SERVO_BUFFER) {
-                twistTo(Twist.TwistStates.values()[i.ordinal()]);
+//                twistTo(Twist.TwistStates.values()[i.ordinal()]);
             }
         }
         if(time - twist.getLastTime()>FLIP_TIME) {

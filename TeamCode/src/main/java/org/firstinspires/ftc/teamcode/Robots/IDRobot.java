@@ -379,7 +379,7 @@ public class IDRobot extends BasicRobot {
                             packet.put("relVect", relVect);
                             packet.put("relAng", relCent[3]);
                             lastTarg = new Point(pos2);
-//                        isAutoGrab = false;
+                        isAutoGrab = false;
                         }
                     }
                 } else if (!targeted) {
