@@ -49,9 +49,9 @@ public class DualPIDController {
         curExt =0;
         curRot = 0;
         vel =0;
-        rP = 0.01; rP2 =0.02;rD2= 4;
-        rD = 0.7246034653843217; rG = 0.16;
-        rG2 = 0.8;
+        rP = 0.012; rP2 =0.02;rD2= 2;
+        rD = 0.1; rG = 0.24;
+        rG2 = 0.95;
         if(!voltScaled) {
             rP*= 13 / voltage;
             rP2*= 13 / voltage;
@@ -91,13 +91,13 @@ public class DualPIDController {
         if(abs(rd)<0.5 && abs(rErr)>1  && curRot*TICKS_PER_DEG<90 && (curRot*TICKS_PER_DEG>10||targetRot>10)){
             power+=rF*signum(rErr);
         }
-        if(abs(rErr)<10&&rd>-1&&targetRot<3 || (targetRot<3 && lastPower==0))
+        if(abs(rErr)<10&&rd==0&&targetRot==0||lastPower==0&&targetRot==0)
             power=0;
-        rot.setPower(-power);
+        rot.setPower(power);
         lastPower = power;
-        if(power ==0 && lastPower==0) {
+        if(power ==0 &&lastPower==0&& rd==0 && targetRot ==0) {
             rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rot .setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         packet.put("powa",power);
         packet.put("rD", abs(rd));

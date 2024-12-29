@@ -84,6 +84,12 @@ public class IDRobot extends BasicRobot {
             twist.twistTo(targ);
     }
 
+    public void setTwist(double rotation, boolean p_async) {
+        if (queuer.queue(p_async, true))
+            twist.twistTo(rotation);
+    }
+
+
     public void followPath(PathChain path) {
         followPath(path, false);
     }
@@ -103,6 +109,26 @@ public class IDRobot extends BasicRobot {
                         .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
                         .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
                         .build();
+                follower.followPath(path2);
+            }
+        }
+    }
+    public void followPath(Point end, double headingInterp0, double headingInterp1, int headingInterp, boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 ;
+                if(headingInterp==0) {
+                path2 =follower.pathBuilder()
+                            .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
+                            .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                            .build();
+                } else{
+                    path2 =follower.pathBuilder()
+                            .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
+                            .setConstantHeadingInterpolation(headingInterp0)
+                            .build();
+                }
                 follower.followPath(path2);
             }
         }
