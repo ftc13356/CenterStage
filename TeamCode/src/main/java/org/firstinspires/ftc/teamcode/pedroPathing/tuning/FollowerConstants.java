@@ -136,6 +136,8 @@ public class FollowerConstants {
     // This is scales the translational error correction power when the Follower is holding a Point.
     public static double holdPointTranslationalScaling = 0.45;
 
+    public static int absoluteTimeoutTime = 5000;
+
     // This is scales the heading error correction power when the Follower is holding a Point.
     public static double holdPointHeadingScaling = 0.35;
 

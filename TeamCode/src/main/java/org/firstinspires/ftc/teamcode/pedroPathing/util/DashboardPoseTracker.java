@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.util;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
 
@@ -53,6 +56,7 @@ public class DashboardPoseTracker {
             }
             xPositions[0] = poseUpdater.getPose().getX();
             yPositions[0] = poseUpdater.getPose().getY();
+            LOGGER.log(RFLogger.Files.ODOMETRY_LOG, xPositions[0] +","+yPositions[0]);
         }
     }
 

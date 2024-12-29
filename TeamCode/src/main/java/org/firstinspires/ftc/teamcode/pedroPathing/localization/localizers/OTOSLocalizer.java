@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.SparkFunOTOSCorrected;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -38,15 +39,17 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
  * @author Anyi Lin - 10158 Scott's Bots
  * @version 1.0, 7/20/2024
  */
+@Config
 public class OTOSLocalizer extends Localizer {
     private HardwareMap hardwareMap;
     private Pose startPose;
-    private SparkFunOTOS otos;
-    private SparkFunOTOS.Pose2D otosPose;
-    private SparkFunOTOS.Pose2D otosVel;
-    private SparkFunOTOS.Pose2D otosAcc;
+    private SparkFunOTOS otos, otos2;
+    private SparkFunOTOS.Pose2D otosPose, otosPose2;
+    private SparkFunOTOS.Pose2D otosVel, otosVel2;
+    private SparkFunOTOS.Pose2D otosAcc, otosAcc2;
     private double previousHeading;
     private double totalHeading;
+    public static double MULT1 = 1.017, MULT2 = 0.996, HMULT1 = .992196, HMULT2 = .9954,  WEIGHT = 0.5;
 
     /**
      * This creates a new OTOSLocalizer from a HardwareMap, with a starting Pose at (0,0)
@@ -69,26 +72,39 @@ public class OTOSLocalizer extends Localizer {
         hardwareMap = map;
 
         otos = hardwareMap.get(SparkFunOTOS.class, "otos");
+        otos2 = hardwareMap.get(SparkFunOTOS.class,"otos2");
 
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.RADIANS);
+        otos2.setLinearUnit(DistanceUnit.INCH);
+        otos2.setAngularUnit(AngleUnit.RADIANS);
 //        otos.setSignalProcessConfig(new SparkFunOTOS.SignalProcessConfig((byte) 0x0D));
 
         // For the OTOS, left/right is the y axis a nd forward/backward is the x axis, with left being
         // positive y and forward being positive x. PI/2 radians is facing forward, and clockwise
         // rotation is negative rotation.
+        otos2.setOffset(new SparkFunOTOS.Pose2D(7.25,-3,Math.PI/2));
         otos.setOffset(new SparkFunOTOS.Pose2D(7.25,3,-Math.PI/2));
 
+
         otos.setLinearScalar(1);
-        otos.setAngularScalar(0.9921963333333333);
+        otos.setAngularScalar(HMULT1);
 
         otos.calibrateImu();
         otos.resetTracking();
+        otos2.setLinearScalar(1);
+        otos2.setAngularScalar(HMULT2);
+
+        otos2.calibrateImu();
+        otos2.resetTracking();
 
         setStartPose(setStartPose);
         otosPose = new SparkFunOTOS.Pose2D();
         otosVel = new SparkFunOTOS.Pose2D();
         otosAcc = new SparkFunOTOS.Pose2D();
+        otosPose2 = new SparkFunOTOS.Pose2D();
+        otosVel2 = new SparkFunOTOS.Pose2D();
+        otosAcc2 = new SparkFunOTOS.Pose2D();
         totalHeading = 0;
         previousHeading = startPose.getHeading();
 
@@ -102,7 +118,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getPose() {
-        return MathFunctions.addPoses(startPose, new Pose(otosPose.x*1.017, otosPose.y*1.017, otosPose.h));
+        return MathFunctions.addPoses(startPose, new Pose(otosPose.x, otosPose.y, otosPose.h));
     }
 
     /**
@@ -112,7 +128,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getVelocity() {
-        return new Pose(otosVel.x*1.017, otosVel.y*1.017, otosVel.h);
+        return new Pose(otosVel.x, otosVel.y, otosVel.h);
     }
 
     /**
@@ -155,6 +171,10 @@ public class OTOSLocalizer extends Localizer {
     @Override
     public void update() {
         otos.getPosVelAcc(otosPose,otosVel,otosAcc);
+        otos2.getPosVelAcc(otosPose2,otosVel2,otosAcc2);
+        otosPose.set(new SparkFunOTOS.Pose2D(WEIGHT*otosPose.x*MULT1+(1-WEIGHT)*otosPose2.x*MULT2,WEIGHT*otosPose.y*MULT1+(1-WEIGHT)*otosPose2.y*MULT2,WEIGHT*otosPose.h+(1-WEIGHT)*otosPose2.h));
+        otosVel.set(new SparkFunOTOS.Pose2D(WEIGHT*otosVel.x*MULT1+(1-WEIGHT)*otosVel2.x*MULT2,WEIGHT*otosVel.y*MULT1+(1-WEIGHT)*otosVel2.y*MULT2,WEIGHT*otosVel.h+(1-WEIGHT)*otosVel2.h));
+        otosAcc.set(new SparkFunOTOS.Pose2D(WEIGHT*otosAcc.x*MULT1+(1-WEIGHT)*otosAcc2.x*MULT2,WEIGHT*otosAcc.y*MULT1+(1-WEIGHT)*otosAcc2.y*MULT2,WEIGHT*otosAcc.h+(1-WEIGHT)*otosAcc2.h));
         totalHeading += MathFunctions.getSmallestAngleDifference(otosPose.h, previousHeading);
         previousHeading = otosPose.h;
     }
@@ -164,6 +184,7 @@ public class OTOSLocalizer extends Localizer {
      */
     public void resetOTOS() {
         otos.resetTracking();
+        otos2.resetTracking();
     }
 
     /**

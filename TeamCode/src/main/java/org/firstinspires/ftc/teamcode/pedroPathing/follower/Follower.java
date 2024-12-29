@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.follower;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.absoluteTimeoutTime;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFFeedForward;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFSwitch;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.forwardZeroPowerAcceleration;
@@ -138,6 +139,9 @@ public class Follower {
     private double[] driveErrors;
     private double rawDriveError;
     private double previousRawDriveError;
+
+    private double startTime;
+    private boolean isStarted = false;
 
     public static boolean drawOnDashboard = true;
     public static boolean useTranslational = true;
@@ -354,6 +358,10 @@ public class Follower {
         poseUpdater.resetOffset();
     }
 
+    public void setAbsoluteTimeoutTime(int absoluteTimeoutTime){
+        FollowerConstants.absoluteTimeoutTime = absoluteTimeoutTime;
+    }
+
     /**
      * This holds a Point.
      *
@@ -528,6 +536,9 @@ public class Follower {
                             }
                         }
                     }
+                    if(System.currentTimeMillis() - pathStartTimes[0] > absoluteTimeoutTime){
+                        breakFollowing();
+                    }
                 }
             }
         } else {
@@ -641,6 +652,7 @@ public class Follower {
         holdingPosition = false;
         isBusy = false;
         reachedParametricPathEnd = false;
+        isStarted = false;
         secondaryDrivePIDF.reset();
         drivePIDF.reset();
         secondaryHeadingPIDF.reset();

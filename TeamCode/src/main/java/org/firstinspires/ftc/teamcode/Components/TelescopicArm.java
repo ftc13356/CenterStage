@@ -35,7 +35,7 @@ public class TelescopicArm extends DualPIDController {
     public static double HOVER_EXTEND_POS = 5;
     public static double HOVER_PITCH_POS = 23;
     public static double HANG_EXTEND_POS = 5;
-    public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.5, MANUAL_ROT_SPEED = 0.5;
+    public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.5, MANUAL_ROT_SPEED = 0.5, EXP_HEIGHT_OFFSET=0;
 
     private final double EXTEND_MOTOR_BUFFER = 5;
     private final double PITCH_MOTOR_BUFFER = 5;
@@ -267,7 +267,7 @@ public class TelescopicArm extends DualPIDController {
                 ArmStates.INTAKE.state = true;
 
             }
-            if(abs(5 - (getExt()+7)*sin((getRot())*PI/180))<2 && getRot()<90){
+            if(abs(4 - (getExt()+12)*sin((getRot())*PI/180))<2 && getRot()<90){
                 ArmStates.HOVER.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HOVER.ordinal()].state = false;
             }
@@ -286,7 +286,7 @@ public class TelescopicArm extends DualPIDController {
             goTo(getTargetExt(), getTargetRot());
         else if(!isMid())
             goTo(getTrueTargExt(), getTrueTargRot(), getMiddle(), getMiddleRot());
-        expectedHeight = sin(getRot()*PI/180)*(8+getExt())-1;
+        expectedHeight = sin(getRot()*PI/180)*(8+getExt())-1+EXP_HEIGHT_OFFSET;
         packet.put("targExt", super.getTargetExt());
         packet.put("targRot", super.getTargetRot());
         packet.put("targMid", super.getMiddle());
@@ -294,8 +294,8 @@ public class TelescopicArm extends DualPIDController {
         packet.put("curExt", super.getExt());
         packet.put("curRot", super.getRot());
         packet.put("horiExt", super.getExt()*cos(getRot()*PI/180));
-        packet.put("targVertExt",(getTargetExt()+8)*sin(getTargetRot()*PI/180));
-        packet.put("curVertExt",(getExt()+7)*sin((getRot())*PI/180));
+        packet.put("targVertExt",(getTargetExt()+12)*sin(getTargetRot()*PI/180));
+        packet.put("curVertExt",(getExt()+12)*sin((getRot())*PI/180));
         packet.put("diff",abs(5-(getTargetExt()+10)*sin(getRot()*PI/180)));
         packet.put("boolean", abs(5-(getTargetExt()+10)*sin(getRot()*PI/180))>4);
         packet.put("targeted", targeted);

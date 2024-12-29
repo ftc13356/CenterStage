@@ -13,7 +13,13 @@ public class ManualSlideReset extends LinearOpMode {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
         while(opModeIsActive()&&!isStopRequested()){
-            motor.setPower(0.3*(gamepad1.right_trigger-gamepad1.left_trigger));
+            double multiply = 0.3;
+            if(gamepad1.a){
+                multiply = 1;
+            } else{
+                multiply = 0.3;
+            }
+            motor.setPower(multiply*(gamepad1.right_trigger-gamepad1.left_trigger));
         }
     }
 }

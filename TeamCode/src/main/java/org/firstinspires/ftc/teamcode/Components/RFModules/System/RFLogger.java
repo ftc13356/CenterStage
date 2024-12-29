@@ -21,7 +21,7 @@ RFLogger {
     public Logger LOGGER;
     ArrayList<FileHandler> handlerList = new ArrayList<>();
     Severity logLevel = Severity.INFO;
-    static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
+    static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH, OdometryFH;
     public static Severity FILTER = Severity.INFO;
 
     private boolean logLevelSet = false;
@@ -31,7 +31,9 @@ RFLogger {
         @SuppressLint("SdCardPath") GENERAL_LOG("/sdcard/tmp/General.log", 0),
         @SuppressLint("SdCardPath") AUTONOMOUS_LOG("/sdcard/tmp/Autonomous.log", 1),
         @SuppressLint("SdCardPath") HARDWARE_LOG("/sdcard/tmp/Hardware.log", 2),
-        @SuppressLint("SdCardPath") QUEUER_LOG("/sdcard/tmp/Queuer.log", 3);
+        @SuppressLint("SdCardPath") QUEUER_LOG("/sdcard/tmp/Queuer.log", 3),
+        @SuppressLint("SdCardPath") ODOMETRY_LOG("/sdcard/tmp/Odometry.log", 4);
+        ;
 
         final String filePath;
         final int index;
@@ -88,10 +90,17 @@ RFLogger {
             e.printStackTrace();
         }
 
+        try {
+            OdometryFH = new FileHandler(Files.ODOMETRY_LOG.filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         handlerList.add(GeneralFH);
         handlerList.add(AutonomousFH);
         handlerList.add(HardwareFH);
         handlerList.add(QueuerFH);
+        handlerList.add(OdometryFH);
 
         SimpleFormatter customSH = new SimpleFormatter() {
             private static final String format = "[%1$tT.%1$tL] [%2$-7s] %3$s %n";
@@ -110,6 +119,7 @@ RFLogger {
         AutonomousFH.setFormatter(customSH);
         HardwareFH.setFormatter(customSH);
         QueuerFH.setFormatter(customSH);
+        OdometryFH.setFormatter(customSH);
 
         LOGGER.addHandler(GeneralFH);
     }
