@@ -4,9 +4,12 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -286,7 +289,8 @@ public class ExcludePipline extends OpenCvPipeline {
                             }
 
                             double consta = 1.16* pow(Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT)*multiplia;
-                            if(consta*sqrt(coords[2]*coords[2]-coords[0]*coords[0]*Math.signum(coords[2])) > TelescopicArm.expectedHeight-0.5 && consta*sqrt(coords[2]*coords[2]-coords[0]*coords[0]*Math.signum(coords[2])) < TelescopicArm.expectedHeight+3.5) {
+                            double heighter = consta*(coords[2]*cos(TelescopicArm.angle*PI/180)+coords[0]*sin(TelescopicArm.angle*PI/180));
+                            if(heighter > TelescopicArm.expectedHeight-0.5 && heighter < TelescopicArm.expectedHeight+3.5) {
                                 centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
                                 for (int j = 0; j < 4; j++) {
                                     Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);

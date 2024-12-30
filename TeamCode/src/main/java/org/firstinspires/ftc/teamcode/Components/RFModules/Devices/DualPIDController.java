@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Config
 public class DualPIDController {
     DcMotorEx ext, rot;
-    public static double  A_OFF = -9, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*.25, TICKS_PER_DEG = 360/8192.0,P=0.43,D=0, rP = 0.01 , rP2 =0.02,rD2= 1
+    public static double  A_OFF = -9, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4, TICKS_PER_DEG = 360/8192.0,P=0.43,D=0, rP = 0.01 , rP2 =0.02,rD2= 1
             , rD = .15 , rF = .3, G = 0.15,rG = 0.19, rG2 = 1,TEST_LEN = 0, MAX_SPEED = 223*751.8/60;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
@@ -41,7 +41,7 @@ public class DualPIDController {
             rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-        rot.setDirection(DcMotorSimple.Direction.FORWARD);
+        rot.setDirection(DcMotorSimple.Direction.REVERSE);
         ext.setDirection(DcMotorSimple.Direction.REVERSE);
         mid=true;
         middle=0;
@@ -68,8 +68,8 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         targetExt = extension;
         targetRot = rotation;
-        curExt = ext.getCurrentPosition() + (rot.getCurrentPosition()*TICKS_PER_DEG)/80*360/(2*PI*4.5/2.54);
-        curRot = rot.getCurrentPosition();
+        curExt = ext.getCurrentPosition() ;
+        curRot = -rot.getCurrentPosition();
         if((targetExt+10)*cos(curRot*TICKS_PER_RAD)>27){
             extension = 27/cos(curRot*TICKS_PER_RAD)-10;
         }
@@ -78,7 +78,7 @@ public class DualPIDController {
         vel = d;
         ext.setPower(0*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
         double rErr = rotation - curRot*TICKS_PER_DEG;
-        double rd = -rot.getVelocity()*TICKS_PER_DEG;
+        double rd =     rot.getVelocity()*TICKS_PER_DEG;
         double r = curExt*TICKS_PER_IN/MAX;
         double gScale  = 1;
 
@@ -93,7 +93,7 @@ public class DualPIDController {
         }
         if(abs(rErr)<10&&rd==0&&targetRot==0||lastPower==0&&targetRot==0)
             power=0;
-        rot.setPower(power);
+//        rot.setPower(power);
         lastPower = power;
         if(power ==0 &&lastPower==0&& rd==0 && targetRot ==0) {
             rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -159,7 +159,7 @@ public class DualPIDController {
     }
 
     public double getRotPosition(){
-        return rot.getCurrentPosition();
+        return -rot.getCurrentPosition();
     }
 
 }

@@ -219,9 +219,7 @@ public class IDRobot extends BasicRobot {
         flip.update();
         follower.update();
         twist.update();
-        if(!isTeleop){
-            queuer.setFirstLoop(false);
-        }
+
     }
 
     public void teleOp(boolean isBlue) {

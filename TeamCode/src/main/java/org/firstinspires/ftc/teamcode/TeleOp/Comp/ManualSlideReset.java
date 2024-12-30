@@ -19,7 +19,7 @@ public class ManualSlideReset extends LinearOpMode {
             } else{
                 multiply = 0.3;
             }
-            motor.setPower(multiply*(gamepad1.right_trigger-gamepad1.left_trigger));
+            motor.setPower(multiply*(-gamepad1.right_trigger+gamepad1.left_trigger));
         }
     }
 }
