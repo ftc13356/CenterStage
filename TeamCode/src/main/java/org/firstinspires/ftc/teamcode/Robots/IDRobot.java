@@ -33,7 +33,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
     Point lastTarg = new Point(0,0,1);
-    public static double FOR_CONST =3, FOR_MULT = 1.0, SIDE_CONST = 1.5, SIDE_MULT = 1.2;
+    public static double FOR_CONST =0.5, FOR_MULT = 0.6, SIDE_CONST = 1.5, SIDE_MULT = 1.2;
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
@@ -200,7 +200,7 @@ public class IDRobot extends BasicRobot {
                         pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
                         follower.holdPoint(new BezierPoint(new Point(pos)), pos.getHeading());
                         double newExt = arm.getExt() + relCent[0];
-                        arm.goTo(newExt, atan2(6, newExt));
+                        arm.goTo(newExt, atan2(6, newExt+10));
                     }
                 } else if (!targeted) {
                     arm.manualGoTo(0.5, 0);
