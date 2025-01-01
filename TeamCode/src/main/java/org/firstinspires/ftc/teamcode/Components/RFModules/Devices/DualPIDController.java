@@ -50,7 +50,7 @@ public class DualPIDController {
         curRot = 0;
         vel =0;
         rP = 0.012; rP2 =0.02;rD2= 2;
-        rD = 0.1; rG = 0.19;
+        rD = 0.5; rG = 0.16;
         rG2 = 0.7;
         if(!voltScaled) {
             rP*= 13 / voltage;
@@ -68,7 +68,7 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         targetExt = extension;
         targetRot = rotation;
-        curExt = ext.getCurrentPosition() +1/TICKS_PER_IN-4*rot.getCurrentPosition()/TICKS_PER_DEG*2786.2/360;
+        curExt = ext.getCurrentPosition() +1/TICKS_PER_IN-rot.getCurrentPosition()*TICKS_PER_DEG*2786.2/360;
         curRot = -rot.getCurrentPosition();
         if((targetExt+10)*cos(curRot*TICKS_PER_RAD)>27){
             extension = 27/cos(curRot*TICKS_PER_RAD)-10;
@@ -76,7 +76,7 @@ public class DualPIDController {
         double err = extension - curExt*TICKS_PER_IN;
         double d = ext.getVelocity()*TICKS_PER_IN;
         vel = d;
-//        ext.setPower((P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
+        ext.setPower((P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
         double rErr = rotation - curRot*TICKS_PER_DEG;
         double rd =     rot.getVelocity()*TICKS_PER_DEG;
         double r = curExt*TICKS_PER_IN/MAX;
@@ -93,7 +93,7 @@ public class DualPIDController {
         }
         if(abs(rErr)<10&&rd==0&&targetRot==0||lastPower==0&&targetRot==0)
             power=0;
-//        rot.setPower(power);
+        rot.setPower(power);
         lastPower = power;
         if(power ==0 &&lastPower==0&& rd==0 && targetRot ==0) {
             rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
