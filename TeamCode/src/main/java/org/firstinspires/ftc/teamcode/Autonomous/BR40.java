@@ -88,48 +88,40 @@ public class BR40 {
     }
 
     public void grabBluesSweep(){
-        double sample1theta, sample2theta;
             robot.autoReset(false);
-            sample1theta=-Math.PI/4;
-            robot.followPath(new Point(32+x4,38+y4, Point.CARTESIAN),0, sample1theta, false);
-//            robot.setArm(12+x1,20, false);
-            robot.setTwist(0.8+x12, true);
-//            robot.setArm(12+x1,0, false);
+            robot.followPath(new Point(35+x4,37+y4, Point.CARTESIAN),0, -Math.PI/4, false);
+            robot.setArm(13+x1,5+y1, false);
+            robot.setTwist(0.83+x12, true);
+            robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
+            robot.setArm(13+x1,0, false);
             robot.setClaw(Claw.ClawStates.CLOSED, false);
-            robot.followPath(new Point(25+x4, 33+y5, Point.CARTESIAN), sample1theta, -Math.PI-sample1theta/2, false);
+            robot.setArm(8+x2,3, false);
+            robot.followPath(new Point(26+x4, 30+y5, Point.CARTESIAN), -Math.PI/4, -3*Math.PI/4, false);
             robot.setClaw(Claw.ClawStates.OPEN, false);
 
-            sample2theta= -Math.PI/4;
-            robot.followPath(new Point(31+x4,27+y6, Point.CARTESIAN),-Math.PI-sample1theta/2, sample2theta , false);
-//            robot.setArm(12+x1,20, false);
-            robot.setTwist(0.8+x12, true);
-//            robot.setArm(12+x1,0, false);
+            robot.followPath(new Point(33.5+x4,25+y6, Point.CARTESIAN),-3*Math.PI/4, -Math.PI/4 , false);
+            robot.setArm(13+x1,5+y1, false);
+            robot.setTwist(0.83+x12, true);
+            robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
+            robot.setArm(13+x1,0, false);
             robot.setClaw(Claw.ClawStates.CLOSED, false);
-            robot.followPath(new Point(25+x4, 23+y7, Point.CARTESIAN), sample2theta, -Math.PI-sample2theta/2, false);
+             robot.setArm(7+x2,3, false);
+            robot.followPath(new Point(26+x4, 20+y7, Point.CARTESIAN), -Math.PI/4, -3*Math.PI/4, false);
+            robot.setClaw(Claw.ClawStates.OPEN, false);
+//
+            robot.setArm(4, 20+y1,true);
+            robot.followPath(new Point(35.5+x8,15+y8, Point.CARTESIAN), -3*Math.PI/4, -Math.PI/4, false);
+            robot.setArm(10+x2,5+y1, false);
+            robot.setTwist(0.83+x12, true);
+            robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
+            robot.setArm(10+x1,0, false);
+            robot.setClaw(Claw.ClawStates.CLOSED, false);
+            robot.followPath(new Point(26 +x9,22+y9, Point.CARTESIAN), -Math.PI/4, 0, false);
+            robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB, false);
+            robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB,true);
             robot.setClaw(Claw.ClawStates.OPEN, false);
 
-            robot.followPath(new Point(34+x8,15+y8, Point.CARTESIAN), -Math.PI-sample2theta/2, -Math.PI/4, false);
-//        robot.setArm(8+x1,20, false);
-            robot.setTwist(0.8+x12, true);
-//        robot.setArm(8+x1,0, false);
-            robot.setClaw(Claw.ClawStates.CLOSED, false);
-//            robot.followPath(new Point(26 +x9,22+y9, Point.CARTESIAN), -Math.PI/4, 0, false);
-//////        robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB, false);
-//        robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB,true);
-//        robot.setClaw(Claw.ClawStates.OPEN, false);
-
-        //wtf is this
-////            robot.followPath(new Point(29 + x10, 10 + y10, Point.CARTESIAN),-Math.PI,-Math.PI/4, false);
-//            robot.setArm(16+x1,20, false);
-//            robot.setTwist(0.8+x12, false);
-//            robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
-//            robot.setArm(16+x1,0, false);
-//        robot.setClaw(Claw.ClawStates.CLOSED, false);
-//            robot.queuer.addDelay(0.4);
-//            robot.followPath(new Point(21+x13, 36+y13, Point.CARTESIAN), 0, 0, false);
-
-
-            robot.followPath( new Point(23, 32, Point.CARTESIAN), 0, 0, false, false); //idk bout this point tbh. should prob be 31.5
+            robot.followPath( new Point(23, 33.5, Point.CARTESIAN), 0, 0, false, false);
             robot.setTwist(Twist.TwistStates.SPECIMEN, true);
             robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
             robot.queuer.addDelay(0.4);
