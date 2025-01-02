@@ -52,7 +52,7 @@ public class DualPIDController {
         vel =0;
         rP = 0.012; rP2 =0.02;rD2= 2;
         rD = 0.6; rG = 0.16;
-        rG2 = 0.7;
+        rG2 = 0.6;
         if(!voltScaled) {
             rP*= 13 / voltage;
             rP2*= 13 / voltage;
