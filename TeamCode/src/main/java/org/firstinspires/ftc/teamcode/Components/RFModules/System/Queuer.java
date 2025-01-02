@@ -293,6 +293,9 @@ public class Queuer {
     completeCurrentEvent = 0;
     delay = 0;
   }
+  public boolean isEmpty(){
+    return queueElements.isEmpty();
+  }
 
   /** is the entire queuer done logs if queuer is done surface level */
   public boolean isFullfilled() {
