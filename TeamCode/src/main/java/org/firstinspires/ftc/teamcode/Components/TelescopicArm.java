@@ -35,7 +35,7 @@ public class TelescopicArm extends DualPIDController {
     public static double LOWSPECIMEN_TELE_EXTEND_POS = 10;
     public static double LOWSPECIMEN_TELE_PITCH_POS = 25;
     public static double SPECIMENGRAB_EXTEND_POS = 0;
-    public static double SPECIMENGRAB_PITCH_POS = 155;
+    public static double SPECIMENGRAB_PITCH_POS = 157;
     public static double HOVER_EXTEND_POS = 5;
     public static double HOVER_PITCH_POS = 23;
     public static double HANG_EXTEND_POS = 5;
