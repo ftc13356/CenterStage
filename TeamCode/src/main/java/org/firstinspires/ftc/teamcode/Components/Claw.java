@@ -37,6 +37,7 @@ public class Claw {
             ClawStates.CLOSED.setStateTrue();
         }
         claw.setLastTime(-100);
+        claw.setFlipTime(FLIP_TIME);
         ClawStates.OPEN.position=OPEN_POS;
     }
 

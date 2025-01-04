@@ -42,7 +42,7 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4,UPPIES=1.5, MIN_AREA = 7000;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4,UPPIES=.5, MIN_AREA = 7000;
     public static int UPPER_THRESH = 180, LOWER_THRESH = 100, YUPPER_THRESH = 110, YLOWER_THRESH = 60, KERNEL_SIZE = 3;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();

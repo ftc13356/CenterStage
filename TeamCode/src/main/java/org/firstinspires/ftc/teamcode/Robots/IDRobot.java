@@ -37,7 +37,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
     Point lastTarg = new Point(0,0,1);
-    public static double FOR_CONST =2, FOR_MULT = 0.6, SIDE_CONST = 1.5, SIDE_MULT = 1.2, MOVE_INTERVAL = 0.75;
+    public static double FOR_CONST =2, FOR_MULT = 0.6, SIDE_CONST = 1.5, SIDE_MULT = 1.2, MOVE_INTERVAL = 0.5;
     double lastMoveTime = -100;
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -136,6 +136,19 @@ public class IDRobot extends BasicRobot {
                 PathChain path2 = follower.pathBuilder()
                         .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
                         .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2);
+            }
+        }
+    }
+    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, double tValue) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .setPathEndTValueConstraint(tValue)
                         .build();
                 follower.followPath(path2);
             }
@@ -407,11 +420,12 @@ public class IDRobot extends BasicRobot {
                     if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 200) {
                         if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 1 && abs(arm.getVel()) + follower.getVelocityMagnitude() < 0.9) {
                             if(!Flip.FlipStates.SUBMERSIBLE.getState()) {
-                                flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
-                                claw.goTo(Claw.ClawStates.OPEN);
+                                isRB=true;
+                                isAutoGrab = false;
+                                targeted = false;
                             }
                             else{
-                                arm.lowerToIntake();
+                                isRB = true;
                                 isAutoGrab = false;
                                 targeted = false;
                             }
@@ -471,6 +485,7 @@ public class IDRobot extends BasicRobot {
                if(queuers.get(2).queue(false, true)){
                    arm.lowerToIntake();
                }
+               setClaw(Claw.ClawStates.CLOSED, false, queuers.get(2));
             } else if (TelescopicArm.ArmStates.HIGH_BUCKET.getState() && Claw.ClawStates.CLOSED.getState()) {
                 claw.goTo(Claw.ClawStates.OPEN);
             } else if (Claw.ClawStates.OPEN.getState()) {

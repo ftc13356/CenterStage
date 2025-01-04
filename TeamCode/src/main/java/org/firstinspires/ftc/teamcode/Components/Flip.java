@@ -41,6 +41,7 @@ public class Flip {
             flip.setPosition(RESET_POS);
             RESET.setStateTrue();
         }
+        flip.setFlipTime(FLIP_TIME);
         flip.setLastTime(-100);
     }
 

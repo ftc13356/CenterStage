@@ -28,7 +28,7 @@ public class DualPIDController {
     public static double x1 = 0;
     DcMotorEx ext, rot;
     public static double  A_OFF = -9, MAX=30.2, MIN=0, ROTMAX = 160, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4, TICKS_PER_DEG = 360/8192.0,P=0.43,D=0, rP = 0.01 , rP2 =0.02,rD2= 1
-            , rD = .15 , rF = .3, G = 0.15,rG = 0.19, rG2 = 1,TEST_LEN = 0, MAX_SPEED = 223*751.8/60;
+            , rD = .15 , rF = .4, G = 0.15,rG = 0.19, rG2 = 1,TEST_LEN = 0, MAX_SPEED = 223*751.8/60;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;
@@ -69,7 +69,7 @@ public class DualPIDController {
         rotation = min(max(rotation,ROTMIN),ROTMAX);
         targetExt = extension;
         targetRot = rotation;
-        curExt = ext.getCurrentPosition() +.5/TICKS_PER_IN-(.8+x1)*rot.getCurrentPosition()*TICKS_PER_DEG*2786.2/360;
+        curExt = ext.getCurrentPosition() +.5/TICKS_PER_IN-(.9+x1)*rot.getCurrentPosition()*TICKS_PER_DEG*2786.2/360;
         curRot = -rot.getCurrentPosition();
 //        if((targetExt+10)*cos(curRot*TICKS_PER_RAD)>27){
 //            extension = 27/cos(curRot*TICKS_PER_RAD)-10;

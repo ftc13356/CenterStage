@@ -68,6 +68,8 @@ public class TelescopicArm extends DualPIDController {
             ArmStates.HIGH_SPECIMEN.extendPos = HIGHSPECIMEN_TELE_EXTEND_POS;
             ArmTargetStates.HIGH_SPECIMEN.pitchPos = LOWSPECIMEN_TELE_PITCH_POS;
             ArmTargetStates.HIGH_SPECIMEN.extendPos = LOWSPECIMEN_TELE_EXTEND_POS;
+            ArmStates.HIGH_BUCKET.extendPos = HIGHBUCKET_EXTEND_POS;
+            ArmTargetStates.HIGH_BUCKET.extendPos = HIGHBUCKET_EXTEND_POS;
         }
 
     }
