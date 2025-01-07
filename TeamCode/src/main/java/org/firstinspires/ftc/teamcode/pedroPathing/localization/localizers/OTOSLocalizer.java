@@ -111,7 +111,9 @@ public class OTOSLocalizer extends Localizer {
         otosAcc2 = new SparkFunOTOS.Pose2D();
         totalHeading = 0;
         previousHeading = startPose.getHeading();
-
+        greater2Count=0;
+        greater1Count=0;
+        WEIGHT = 0.5;
         resetOTOS();
     }
 
@@ -176,13 +178,13 @@ public class OTOSLocalizer extends Localizer {
     public void update() {
         otos.getPosVelAcc(otosPose,otosVel,otosAcc);
         otos2.getPosVelAcc(otosPose2,otosVel2,otosAcc2);
-        Vector2d vel0 = new Vector2d(otosVel.x, otosVel.y);
-        Vector2d vel1 = new Vector2d(otosVel2.x, otosVel2.y);
+        Vector2d vel0 = new Vector2d(otosVel.x, 0);
+        Vector2d vel1 = new Vector2d(otosVel2.x, 0);
 
-        if(vel0.norm()*MULT1>5 && vel0.norm()*MULT1>1.02*vel1.norm()*MULT2){
+        if(vel0.norm()*MULT1>5 && vel0.norm()*MULT1>1.05*vel1.norm()*MULT2){
             greater1Count++;
             greater2Count=0;
-        } else if(vel1.norm()*MULT2>5 && vel1.norm()*MULT2>1.02*vel0.norm()*MULT1){
+        } else if(vel1.norm()*MULT2>5 && vel1.norm()*MULT2>1.05*vel0.norm()*MULT1){
             greater2Count++;
             greater1Count=0;
         }
@@ -190,9 +192,9 @@ public class OTOSLocalizer extends Localizer {
             greater1Count=0;
             greater2Count = 0;
         }
-        if(greater1Count>10 && WEIGHT==0.5){
+        if(greater1Count>30 && WEIGHT==0.5){
             WEIGHT=1;
-        }else if(greater2Count>10&& WEIGHT==0.5){
+        }else if(greater2Count>30&& WEIGHT==0.5){
             WEIGHT=0;
         }
         packet.put("x0", otosPose.x);
