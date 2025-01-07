@@ -37,7 +37,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
     Point lastTarg = new Point(0,0,1);
-    public static double FOR_CONST =2, FOR_MULT = 0.6, SIDE_CONST = 1.5, SIDE_MULT = 1.2, MOVE_INTERVAL = 0.5;
+    public static double FOR_CONST =2, FOR_MULT = 0.6, SIDE_CONST = 1.5, SIDE_MULT = 1.2, MOVE_INTERVAL = 0.7;
     double lastMoveTime = -100;
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -466,6 +466,7 @@ public class IDRobot extends BasicRobot {
             } else {
                 arm.goTo(TelescopicArm.ArmStates.HOVER);
                 flip.flipTo(Flip.FlipStates.RESET);
+                claw.goTo(Claw.ClawStates.OPEN);
                 isAutoGrab=true;
             }
         }
