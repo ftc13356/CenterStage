@@ -82,7 +82,7 @@ public class BasicRobot{
         loops++;
         double newTime = op.getRuntime();
         if(newTime!=time){
-            packet.put("loopTime", 1/(newTime-time));
+            packet.put("loopTime", loops/time);
         }
         time = newTime;
         dashboard.sendTelemetryPacket(packet);
