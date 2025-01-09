@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -113,7 +114,8 @@ public class OTOSLocalizer extends Localizer {
         previousHeading = startPose.getHeading();
         greater2Count=0;
         greater1Count=0;
-        WEIGHT = 0.5;
+        if(!isTeleop)
+            WEIGHT = 0.5;
         resetOTOS();
     }
 
@@ -176,8 +178,10 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public void update() {
-        otos.getPosVelAcc(otosPose,otosVel,otosAcc);
-        otos2.getPosVelAcc(otosPose2,otosVel2,otosAcc2);
+        if(WEIGHT!=0)
+            otos.getPosVelAcc(otosPose,otosVel,otosAcc);
+        if(WEIGHT!=1)
+            otos2.getPosVelAcc(otosPose2,otosVel2,otosAcc2);
         Vector2d vel0 = new Vector2d(otosVel.x, 0);
         Vector2d vel1 = new Vector2d(otosVel2.x, 0);
 

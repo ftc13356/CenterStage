@@ -169,10 +169,10 @@ public class Twist {
 //                twistTo(Twist.TwistStates.values()[i.ordinal()]);
             }
         }
-        if(time - twist.getLastTime()>FLIP_TIME) {
-            twist.disable();
-            packet.put("disabled", true);
-        }
-        packet.put("twisTim", twist.getLastTime());
+//        if(time - twist.getLastTime()>FLIP_TIME) {
+//            twist.disable();
+//            packet.put("disabled", true);
+//        }
+//        packet.put("twisTim", twist.getLastTime());
     }
 }

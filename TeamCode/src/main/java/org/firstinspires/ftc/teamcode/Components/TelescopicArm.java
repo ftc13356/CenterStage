@@ -26,16 +26,16 @@ public class TelescopicArm extends DualPIDController {
     public static double HIGHBUCKET_PITCH_POS = 96;
     public static double LOWBUCKET_EXTEND_POS = 11;
     public static double LOWBUCKET_PITCH_POS = 100;
-    public static double HIGHSPECIMEN_EXTEND_POS = 16.3;
+    public static double HIGHSPECIMEN_EXTEND_POS = 19.7;
     public static double HIGHSPECIMEN_PITCH_POS = 45;
     public static double LOWSPECIMEN_EXTEND_POS = 10;
     public static double LOWSPECIMEN_PITCH_POS = 25;
-    public static double HIGHSPECIMEN_TELE_EXTEND_POS = 19.3;
+    public static double HIGHSPECIMEN_TELE_EXTEND_POS = 20.3;
     public static double HIGHSPECIMEN_TELE_PITCH_POS = 45;
     public static double LOWSPECIMEN_TELE_EXTEND_POS = 10;
     public static double LOWSPECIMEN_TELE_PITCH_POS = 25;
     public static double SPECIMENGRAB_EXTEND_POS = 0;
-    public static double SPECIMENGRAB_PITCH_POS = 157;
+    public static double SPECIMENGRAB_PITCH_POS = 161;
     public static double HOVER_EXTEND_POS = 12;
     public static double HOVER_PITCH_POS = 15;
     public static double HANG_EXTEND_POS = 5;
@@ -273,7 +273,7 @@ public class TelescopicArm extends DualPIDController {
                 ArmStates.INTAKE.state = true;
 
             }
-            if(abs(5 - (getExt()+10)*sin((getRot())*PI/180))<2 && getRot()<90){
+            if(abs(5 - (getExt()+10)*sin((getRot())*PI/180))<3 && getRot()<90){
                 ArmStates.HOVER.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HOVER.ordinal()].state = false;
             }
@@ -296,19 +296,19 @@ public class TelescopicArm extends DualPIDController {
         angle = getRot();
         packet.put("targExt", super.getTargetExt());
         packet.put("targRot", super.getTargetRot());
-        packet.put("targMid", super.getMiddle());
-        packet.put("targMidRot", super.getMiddleRot());
+//        packet.put("targMid", super.getMiddle());
+//        packet.put("targMidRot", super.getMiddleRot());
         packet.put("curExt", super.getExt());
         packet.put("curRot", super.getRot());
-        packet.put("horiExt", super.getExt()*cos(getRot()*PI/180));
-        packet.put("targVertExt",(getTargetExt()+12)*sin(getTargetRot()*PI/180));
-        packet.put("curVertExt",(getExt()+12)*sin((getRot())*PI/180));
-        packet.put("diff",abs(5-(getTargetExt()+10)*sin(getRot()*PI/180)));
-        packet.put("boolean", abs(5-(getTargetExt()+10)*sin(getRot()*PI/180))>4);
-        packet.put("targeted", targeted);
-        packet.put("isMid", isMid());
-        packet.put("HOVER", ArmStates.HOVER.getState());
-        packet.put("hoverbuffa",abs(super.getRot()-HOVER_PITCH_POS));
+//        packet.put("horiExt", super.getExt()*cos(getRot()*PI/180));
+//        packet.put("targVertExt",(getTargetExt()+12)*sin(getTargetRot()*PI/180));
+        packet.put("curVertExt",(getExt()+10)*sin((getRot())*PI/180));
+//        packet.put("diff",abs(5-(getTargetExt()+10)*sin(getRot()*PI/180)));
+//        packet.put("boolean", abs(5-(getTargetExt()+10)*sin(getRot()*PI/180))>4);
+//        packet.put("targeted", targeted);
+//        packet.put("isMid", isMid());
+//        packet.put("HOVER", ArmStates.HOVER.getState());
+//        packet.put("hoverbuffa",abs(super.getRot()-HOVER_PITCH_POS));
 
     }
 
