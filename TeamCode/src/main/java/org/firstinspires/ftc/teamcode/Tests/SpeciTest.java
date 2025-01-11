@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 @Autonomous
 @Config
 public class SpeciTest extends LinearOpMode{
-    public static double BACK = -7.9, FORWARD = 7.5, TIMES = 3;
+    public static double BACK = -7.9, FORWARD = 8.5, TIMES = 7;
     public void runOpMode() throws InterruptedException{
         IDRobot robot = new IDRobot(this,false);
         robot.follower.setStartingPose(new Pose(0,0,0));

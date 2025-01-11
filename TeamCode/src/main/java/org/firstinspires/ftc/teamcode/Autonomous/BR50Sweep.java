@@ -14,7 +14,7 @@ public class BR50Sweep extends LinearOpMode{
         waitForStart();
         resetRuntime();
         BasicRobot.time=0;
-        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()){
+        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<29.8){
             aut.placeSpeci();
             aut.grabBluesSweep();
             aut.placeSpeci2(3);
@@ -24,6 +24,7 @@ public class BR50Sweep extends LinearOpMode{
             aut.placeSpeci2(9);
             aut.cycleBlueGrab(0);
             aut.placeSpeci2(12);
+            aut.park();
             aut.update();
         }
     }
