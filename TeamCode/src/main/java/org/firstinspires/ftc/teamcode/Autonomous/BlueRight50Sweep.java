@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @Autonomous
-public class BR50Sweep extends LinearOpMode{
+public class BlueRight50Sweep extends LinearOpMode{
     BR40 aut;
     public void runOpMode() throws InterruptedException {
         aut = new BR40(this);

@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @Autonomous
+@Disabled
 public class BlueRight40 extends LinearOpMode {
     BR40 aut;
     public void runOpMode() throws InterruptedException {
