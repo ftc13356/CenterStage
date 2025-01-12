@@ -105,7 +105,6 @@ public class BR40 {
         robot.queuer.addDelay(0.1);
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.queuer.addDelay(0.2);
-        robot.setArm(8.5+x1,3,false);
         //drop1
         robot.followPath(new Point(22.5, 30, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
         robot.setArm(6,5,true);
@@ -120,7 +119,6 @@ public class BR40 {
         robot.queuer.addDelay(0.1);
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.queuer.addDelay(0.2);
-        robot.setArm(8+x1,3,false);
         //drop2
         robot.followPath(new Point(23.5+x7, 22+y7, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
         robot.setArm(5,5,true);
