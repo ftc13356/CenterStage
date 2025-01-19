@@ -54,7 +54,7 @@ public class OTOSLocalizer extends Localizer {
     private int greater1Count = 0, greater2Count = 0;
     private double previousHeading;
     private double totalHeading;
-    public static double MULT1 = 1.017, MULT2 = 0.996, HMULT1 = .992196, HMULT2 = .9954,  WEIGHT = 0.5;
+    public static double MULT1 = .99730660924, MULT2 = .98714377, HMULT1 = 0.98450498725, HMULT2 = .99705,  WEIGHT = 0.5;
 
     /**
      * This creates a new OTOSLocalizer from a HardwareMap, with a starting Pose at (0,0)

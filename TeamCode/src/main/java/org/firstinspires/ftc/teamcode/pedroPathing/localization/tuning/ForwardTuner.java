@@ -26,7 +26,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
  * @version 1.0, 5/6/2024
  */
 @Config
-@Disabled
 @Autonomous(name = "Forward Localizer Tuner", group = "Autonomous Pathing Tuning")
 public class ForwardTuner extends OpMode {
     private PoseUpdater poseUpdater;
