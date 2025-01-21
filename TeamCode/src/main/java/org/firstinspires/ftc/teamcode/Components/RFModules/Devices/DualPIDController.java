@@ -27,9 +27,9 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 public class DualPIDController {
     public static double x1 = 0;
     DcMotorEx ext, ext2, rot, extEnc, rotEnc;
-    public static double  A_OFF = -9, MAX=30.2, MIN=0
-            , ROTMAX = 151, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.025 , rP2 =0.02, rD2= 0.9
-            , rD = 0.7 , rF = 0.2, G = 0.3,rG = 0.14, rG2 = 0.4,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
+    public static double  A_OFF = -9, MAX=32.2, MIN=0
+            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.025 , rP2 =0.025, rD2= 0.9
+            , rD = 0.9 , rF = 0.2, G = 0.3,rG = 0.14, rG2 = 0.38,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;
@@ -38,7 +38,7 @@ public class DualPIDController {
         ext = op.hardwareMap.get(DcMotorEx.class, "extendMotor");
         ext2 = op.hardwareMap.get(DcMotorEx.class, "extendMotor2");
         extEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        rot = op.hardwareMap.get(DcMotorEx.class, "rotateMotor");
+        rot = op.hardwareMap.get(DcMotorEx.class, "rotateMotor"); 
         rotEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
         if(!isTeleop) {
             extEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
