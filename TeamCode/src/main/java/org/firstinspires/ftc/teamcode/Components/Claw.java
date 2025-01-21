@@ -18,7 +18,8 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Claw {
     RFServo claw;
 
-    public static double OPEN_POS = .45      ;
+    public static double OPEN_POS = .65;
+    public static double OPEN_POS_TELE = .45;
     public static double CLOSED_POS = 0.1;
 
     public static double FLIP_TIME = 0.2;
@@ -33,12 +34,14 @@ public class Claw {
             ClawTargetStates.values()[i].state=false;
         }
         if(!isTeleop) {
+            ClawStates.OPEN.position=OPEN_POS;
             claw.setPosition(CLOSED_POS);
             ClawStates.CLOSED.setStateTrue();
+        } else {
+            ClawStates.OPEN.position=OPEN_POS_TELE;
         }
         claw.setLastTime(-100);
         claw.setFlipTime(FLIP_TIME);
-        ClawStates.OPEN.position=OPEN_POS;
     }
 
     /**
