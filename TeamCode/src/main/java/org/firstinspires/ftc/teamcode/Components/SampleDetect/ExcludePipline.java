@@ -43,7 +43,7 @@ public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
     public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4,UPPIES=.5, MIN_AREA = 7000;
-    public static int UPPER_THRESH = 160, LOWER_THRESH = 100, YUPPER_THRESH = 140, YLOWER_THRESH = 60, KERNEL_SIZE = 2;
+    public static int UPPER_THRESH = 160, LOWER_THRESH = 100, YUPPER_THRESH = 120, YLOWER_THRESH = 60, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 3;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
@@ -137,15 +137,21 @@ public class ExcludePipline extends OpenCvPipeline {
         // Apply Canny edge detection
         if(color!=2) {
             Imgproc.Canny(maskedImage, edges, LOWER_THRESH, UPPER_THRESH);
+            kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(KERNEL_SIZE, KERNEL_SIZE));
+            closedEdges = new Mat();
+            Imgproc.dilate(edges, closedEdges, kernel);
+            kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNEL_SIZE, KERNEL_SIZE));
+            Imgproc.morphologyEx(closedEdges, edges,Imgproc.MORPH_CLOSE, kernel);
         } else{
             Imgproc.Canny(maskedImage, edges, YLOWER_THRESH, YUPPER_THRESH);
+            kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(YELLOW_KERNEL_SIZE, YELLOW_KERNEL_SIZE));
+            closedEdges = new Mat();
+            Imgproc.dilate(edges, closedEdges, kernel);
+            kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(YELLOW_KERNEL_SIZE, YELLOW_KERNEL_SIZE));
+            Imgproc.morphologyEx(closedEdges, edges,Imgproc.MORPH_CLOSE, kernel);
 
         }
-        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(KERNEL_SIZE, KERNEL_SIZE));
-        closedEdges = new Mat();
-        Imgproc.dilate(edges, closedEdges, kernel);
-        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNEL_SIZE, KERNEL_SIZE));
-        Imgproc.morphologyEx(closedEdges, edges,Imgproc.MORPH_CLOSE, kernel);
+
         contours = new ArrayList<>();
         Imgproc.findContours(closedEdges, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         ArrayList<Double[]> colorCoords = contoursToCoords();
@@ -290,7 +296,7 @@ public class ExcludePipline extends OpenCvPipeline {
 
                             double consta = 1.16* pow(Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT)*multiplia;
                             double heighter = consta*(coords[2]*cos(TelescopicArm.angle*PI/180)+coords[0]*sin(TelescopicArm.angle*PI/180));
-                            if(heighter > TelescopicArm.expectedHeight-0.5 && heighter < TelescopicArm.expectedHeight+3.5) {
+                            if(heighter > TelescopicArm.expectedHeight-2.5 && heighter < TelescopicArm.expectedHeight+5.5) {
                                 centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
                                 for (int j = 0; j < 4; j++) {
                                     Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);
