@@ -37,9 +37,9 @@ public class DualPIDController {
 
         ext = op.hardwareMap.get(DcMotorEx.class, "extendMotor");
         ext2 = op.hardwareMap.get(DcMotorEx.class, "extendMotor2");
-        extEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
+        extEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
         rot = op.hardwareMap.get(DcMotorEx.class, "rotateMotor");
-        rotEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
+        rotEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
         if(!isTeleop) {
             extEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
