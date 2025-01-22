@@ -18,7 +18,7 @@ public class BR40 {
     IDRobot robot;
     public static double x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0, x7 = 0;
     public static double x8 = 0, x9 = 0, x10=0, x12=0;
-    public double  y2 = 0, y3 = 0, y4 = 0, y5 = 0, y6 = 0, y7 = 0, y8 = 0, y9 = 0, y10=0,DROP_DELAY = .9;
+    public double  y2 = 0, y3 = 0, y4 = 0, y5 = 0, y6 = 0, y7 = 0, y8 = 0, y9 = 0, y10=0,DROP_DELAY = 1.2;
     boolean shouldPark = false;
 
     public BR40(LinearOpMode opmode) {
@@ -95,7 +95,7 @@ public class BR40 {
         robot.queuer.addDelay(1.75);
         robot.autoReset(true);
         robot.followPath(new Point(34+x1, 64,Point.CARTESIAN), 0,0,false);
-        robot.followPath(new Point(37.5+x3,32+y3, Point.CARTESIAN),0, Math.toRadians(-40), false);
+        robot.followPath(new Point(36+x3,32+y3, Point.CARTESIAN),0, Math.toRadians(-40), false);
         robot.queuer.addDelay(0.75);
         robot.setArm(7.5+x1,5,true);
         robot.queuer.addDelay(0.2);
@@ -107,7 +107,7 @@ public class BR40 {
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.queuer.addDelay(0.2);
         //drop1
-        robot.followPath(new Point(21.5, 30, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
+        robot.followPath(new Point(20, 30, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
         robot.setArm(6,5,true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
@@ -121,7 +121,7 @@ public class BR40 {
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.queuer.addDelay(0.1);
         //drop2
-        robot.followPath(new Point(23.5+x7, 22+y7, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
+        robot.followPath(new Point(21.5+x7, 22+y7, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
         robot.setArm(5,5,true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
@@ -135,7 +135,7 @@ public class BR40 {
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         robot.queuer.addDelay(0.1);
         //drop3
-        robot.followPath(new Point(26,22, Point.CARTESIAN), -Math.PI/4, 0, false);
+        robot.followPath(new Point(25,22, Point.CARTESIAN), -Math.PI/4, 0, false);
         robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB,true);
         robot.queuer.addDelay(0.4);

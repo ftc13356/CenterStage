@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Claw {
     RFServo claw;
 
-    public static double OPEN_POS = .65;
+    public static double OPEN_POS = .6;
     public static double OPEN_POS_TELE = .45;
     public static double CLOSED_POS = 0.1;
 
@@ -48,7 +48,8 @@ public class Claw {
      * possible states of claw
      */
     public enum ClawStates{
-        OPEN(true, OPEN_POS),
+        GIGA_OPEN(false, OPEN_POS),
+        OPEN(true, OPEN_POS_TELE),
         CLOSED(false, CLOSED_POS);
         boolean state;
         double position;
@@ -70,7 +71,8 @@ public class Claw {
     }
 
     public enum ClawTargetStates{
-        OPEN(false, OPEN_POS),
+        GIGA_OPEN(false, OPEN_POS),
+        OPEN(false, OPEN_POS_TELE),
         CLOSED(false, CLOSED_POS);
         boolean state;
         double position;

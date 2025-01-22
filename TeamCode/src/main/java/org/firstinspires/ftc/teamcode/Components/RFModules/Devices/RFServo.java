@@ -101,6 +101,9 @@ public class RFServo implements Servo {
             target = p_position;
             position = p_position;
         }
+        if(time - plastTime > FLIP_TIME){
+            target = p_position;
+        }
 
     }
 
@@ -159,6 +162,12 @@ public class RFServo implements Servo {
                 flipped = true;
             }
             plastTime = time;
+        }
+    }
+
+    public void update(){
+        if(position != target){
+            setPosition(target);
         }
     }
 

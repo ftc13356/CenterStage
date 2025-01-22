@@ -169,6 +169,7 @@ public class Twist {
 //                twistTo(Twist.TwistStates.values()[i.ordinal()]);
             }
         }
+        twist.update();
 //        if(time - twist.getLastTime()>FLIP_TIME) {
 //            twist.disable();
 //            packet.put("disabled", true);
