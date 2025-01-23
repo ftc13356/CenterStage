@@ -20,7 +20,7 @@ public class Claw {
 
     public static double OPEN_POS = .6;
     public static double OPEN_POS_TELE = .45;
-    public static double CLOSED_POS = 0.1;
+    public static double CLOSED_POS = 0.05;
 
     public static double FLIP_TIME = 0.2;
     private final double CLAW_SERVO_BUFFER = 0.05;
@@ -34,11 +34,11 @@ public class Claw {
             ClawTargetStates.values()[i].state=false;
         }
         if(!isTeleop) {
-            ClawStates.OPEN.position=OPEN_POS;
+//            ClawStates.OPEN.position=OPEN_POS;
             claw.setPosition(CLOSED_POS);
             ClawStates.CLOSED.setStateTrue();
         } else {
-            ClawStates.OPEN.position=OPEN_POS_TELE;
+//            ClawStates.OPEN.position=OPEN_POS_TELE;
         }
         claw.setLastTime(-100);
         claw.setFlipTime(FLIP_TIME);
