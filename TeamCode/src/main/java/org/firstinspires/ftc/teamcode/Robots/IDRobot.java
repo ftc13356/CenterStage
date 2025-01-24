@@ -216,7 +216,7 @@ public class IDRobot extends BasicRobot {
                         .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
                         .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
                         .build();
-                follower.followPath(path2);
+                follower.followPath(path2,false);
             }
         }
     }
@@ -270,9 +270,17 @@ public class IDRobot extends BasicRobot {
         follower.update();
         twist.update();
 
+
     }
 
     public void teleOp(boolean isBlue) {
+        if(queuer.isFirstLoop()){
+            if(isBlue)
+                cv.swapBlue();
+            else
+                cv.swapRed();
+            queuer.setFirstLoop(false);
+        }
         boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "high basket");
         boolean isB = gampad.readGamepad(op.gamepad1.b, "gamepad1_b", "specimen grab");
         boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "retract slide(flat if from drop, vert if from grab)");
@@ -303,7 +311,7 @@ public class IDRobot extends BasicRobot {
                 follower.startTeleopDrive();
                 follower.breakFollowing();
             }
-            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y * driveConst, -op.gamepad1.left_stick_x *max(.75*driveConst, 0.4), -op.gamepad1.right_stick_x * driveConst * .5);
+            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y * driveConst*1/.7, -op.gamepad1.left_stick_x *max(.75*driveConst, 0.4), -op.gamepad1.right_stick_x * driveConst * .5);
 //            isAutoGrab = false;
         }
         double extend = op.gamepad1.right_trigger - op.gamepad1.left_trigger;
@@ -543,6 +551,12 @@ public class IDRobot extends BasicRobot {
             flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
             claw.goTo(Claw.ClawStates.OPEN);
 //            isAutoGrab = false;
+        }
+        else if(isSuperRB){
+            if(Claw.ClawStates.CLOSED.getState())
+                claw.goTo(Claw.ClawStates.OPEN);
+            else
+                claw.goTo(Claw.ClawStates.CLOSED);
         }
         if(isDD2 && isSuperLB){
             claw.goTo(Claw.ClawStates.CLOSED);

@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 public class BR40 {
     IDRobot robot;
     public static double x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0, x7 = 0;
-    public static double x8 = 0, x9 = 0, x10=0, x12=0;
-    public double  y2 = 0, y3 = 0, y4 = 0, y5 = 0, y6 = 0, y7 = 0, y8 = 0, y9 = 0, y10=0,DROP_DELAY = 1;
+    public static double x8 = 0, x9 = 0, x10=0, x12=0, y9 =0;
+    public double  y2 = 0, y3 = 0, y4 = 0, y5 = 0, y6 = 0, y7 = 0, y8 = 0, y10=0,DROP_DELAY = 1;
     boolean shouldPark = false;
 
     public BR40(LinearOpMode opmode) {
@@ -40,7 +40,13 @@ public class BR40 {
     public void cycleBlueGrab(int i) {
         robot.queuer.addDelay(0.4);
         robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB, true);
-        robot.followPath(new Point(22.8, 39.25, Point.CARTESIAN),new Point(18.5 + x9, 36.75 + y9, Point.CARTESIAN), 0,0, false);
+//        if(i==1){
+//            y9+=2;
+//        }
+        robot.followPath(new Point(22.8+x6, 37.25+y6, Point.CARTESIAN),new Point(19.25 + x9, 36.25 + y9, Point.CARTESIAN), 0,0, false);
+//        if(i==1){
+//            y9-=2;
+//        }
 //        robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);
 //        robot.followPath(new Point(25.8 + x8, 38 + y8, Point.CARTESIAN), 0, 0, false, false);
 
@@ -96,7 +102,7 @@ public class BR40 {
         //grab1
         robot.followPath(new Point(34+x1, 64,Point.CARTESIAN), 0,0,false);
         robot.autoReset(true);
-        robot.followPath(new Point(32.5+x3,36+y3, Point.CARTESIAN),0, Math.toRadians(-40), false);
+        robot.followPath(new Point(32+x3,35.5+y3, Point.CARTESIAN),0, Math.toRadians(-40), false);
         robot.queuer.addDelay(0.75);
         robot.setArm(12.5+x1,5,true);
         robot.queuer.addDelay(0.2);
@@ -113,7 +119,7 @@ public class BR40 {
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab2
-        robot.followPath(new Point(31.5+x4,26+y4, Point.CARTESIAN),-3*Math.PI/4, Math.toRadians(-40) , false);
+        robot.followPath(new Point(31.75+x4,26+y4, Point.CARTESIAN),-3*Math.PI/4, Math.toRadians(-42) , false);
         robot.setTwist(0.83+x12, true);
         robot.setArm(12,8,true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
@@ -128,7 +134,7 @@ public class BR40 {
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab3
-        robot.followPath(new Point(31.25+x8,14+y8, Point.CARTESIAN), -3*Math.PI/4, Math.toRadians(-40), false);
+        robot.followPath(new Point(32.5+x8,14+y8, Point.CARTESIAN), -3*Math.PI/4, Math.toRadians(-40), false);
         robot.setArm(9+x5,5,true);
         robot.setTwist(0.83+x12, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
@@ -165,7 +171,7 @@ public class BR40 {
     }
 
     public void park() {
-        robot.followPath(new Point(20, 20, 1), 0, 0, false, false);
+        robot.followPath(new Point(17, 20, 1), 0, 0, false, false);
         robot.autoReset(true);
         robot.setArm(0, 0, true);
     }

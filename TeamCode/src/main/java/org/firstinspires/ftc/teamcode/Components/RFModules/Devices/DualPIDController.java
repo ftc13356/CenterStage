@@ -27,9 +27,9 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 public class DualPIDController {
     public static double x1 = 0;
     DcMotorEx ext, ext2, rot, extEnc, rotEnc;
-    public static double  A_OFF = -9, MAX=31.2, MIN=0
-            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.03 , rP2 =0.025, rD2= 0.5
-            , rD = 0.5 , rF = 0.3, G = 0.3,rG = 0.06, rG2 = 0.27
+    public static double  A_OFF = -9, MAX=30.7, MIN=0
+            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.03 , rP2 =0.025, rD2= .5
+            , rD = .5 , rF = 0.3, G = 0.3,rG = 0.12, rG2 = 0.3
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
@@ -101,7 +101,7 @@ public class DualPIDController {
         }
         if(abs(rErr)<10&&rd==0&&targetRot==0||lastPower==0&&targetRot==0)
             power=0;
-        rot.setPower(power);
+        rot.setPower(power*13/voltage);
         lastPower = power;
         if(power ==0 &&lastPower==0&& rd==0 && targetRot ==0 && curRot!=0) {
             rotEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
