@@ -196,9 +196,9 @@ public class OTOSLocalizer extends Localizer {
             greater1Count=0;
             greater2Count = 0;
         }
-        if(greater1Count>30 && WEIGHT==0.5){
+        if(greater1Count>10 && WEIGHT==0.5){
             WEIGHT=1;
-        }else if(greater2Count>30&& WEIGHT==0.5){
+        }else if(greater2Count>10 && WEIGHT==0.5){
             WEIGHT=0;
         }
         packet.put("x0", otosPose.x);
