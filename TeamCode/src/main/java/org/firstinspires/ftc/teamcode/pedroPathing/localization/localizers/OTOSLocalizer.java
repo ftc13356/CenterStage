@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.SparkFunOTOSCorrected;
@@ -185,10 +186,10 @@ public class OTOSLocalizer extends Localizer {
         Vector2d vel0 = new Vector2d(otosVel.x, 0);
         Vector2d vel1 = new Vector2d(otosVel2.x, 0);
 
-        if(vel0.norm()*MULT1>5 && vel0.norm()*MULT1>1.05*vel1.norm()*MULT2){
+        if(vel0.norm()*MULT1>5 && vel0.norm()*MULT1>1.05*vel1.norm()*MULT2 && time<1.5){
             greater1Count++;
             greater2Count=0;
-        } else if(vel1.norm()*MULT2>5 && vel1.norm()*MULT2>1.05*vel0.norm()*MULT1){
+        } else if(vel1.norm()*MULT2>5 && vel1.norm()*MULT2>1.05*vel0.norm()*MULT1&& time<1.5){
             greater2Count++;
             greater1Count=0;
         }
@@ -203,9 +204,9 @@ public class OTOSLocalizer extends Localizer {
         }
         packet.put("x0", otosPose.x);
         packet.put("x1",otosPose2.x);
-        otosPose.set(new SparkFunOTOS.Pose2D(WEIGHT*otosPose.x*MULT1+(1-WEIGHT)*otosPose2.x*MULT2,WEIGHT*otosPose.y*MULT1+(1-WEIGHT)*otosPose2.y*MULT2,0.5*otosPose.h+0.5*otosPose2.h));
-        otosVel.set(new SparkFunOTOS.Pose2D(WEIGHT*otosVel.x*MULT1+(1-WEIGHT)*otosVel2.x*MULT2,WEIGHT*otosVel.y*MULT1+(1-WEIGHT)*otosVel2.y*MULT2,0.5*otosVel.h+0.5*otosVel2.h));
-        otosAcc.set(new SparkFunOTOS.Pose2D(WEIGHT*otosAcc.x*MULT1+(1-WEIGHT)*otosAcc2.x*MULT2,WEIGHT*otosAcc.y*MULT1+(1-WEIGHT)*otosAcc2.y*MULT2,0.5*otosAcc.h+0.5*otosAcc2.h));
+        otosPose.set(new SparkFunOTOS.Pose2D(WEIGHT*otosPose.x*MULT1+(1-WEIGHT)*otosPose2.x*MULT2,WEIGHT*otosPose.y*MULT1+(1-WEIGHT)*otosPose2.y*MULT2,WEIGHT*otosPose.h+(1-WEIGHT)*otosPose2.h));
+        otosVel.set(new SparkFunOTOS.Pose2D(WEIGHT*otosVel.x*MULT1+(1-WEIGHT)*otosVel2.x*MULT2,WEIGHT*otosVel.y*MULT1+(1-WEIGHT)*otosVel2.y*MULT2,WEIGHT*otosVel.h+(1-WEIGHT)*otosVel2.h));
+        otosAcc.set(new SparkFunOTOS.Pose2D(WEIGHT*otosAcc.x*MULT1+(1-WEIGHT)*otosAcc2.x*MULT2,WEIGHT*otosAcc.y*MULT1+(1-WEIGHT)*otosAcc2.y*MULT2,WEIGHT*otosAcc.h+(1-WEIGHT)*otosAcc2.h));
         totalHeading += MathFunctions.getSmallestAngleDifference(otosPose.h, previousHeading);
         previousHeading = otosPose.h;
         packet.put("vel0",vel0.norm()*MULT1);

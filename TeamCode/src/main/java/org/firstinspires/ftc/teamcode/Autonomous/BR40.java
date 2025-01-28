@@ -30,23 +30,22 @@ public class BR40 {
 
     public void placeSpeci() {
         robot.queuer.addDelay(.35);
-        robot.followPath(new Point(37.3 + x1, 64, Point.CARTESIAN), 0, 0, false, false);
+        robot.followPath(new Point(39.4 + x1, 64, Point.CARTESIAN), 0, 0, false, .9);
         robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN, true);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
-//        robot.setClaw(Claw.ClawStates.OPEN, /false);
     }
 
     public void cycleBlueGrab(int i) {
         robot.queuer.addDelay(0.4);
         robot.setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB, true);
-//        if(i==1){
-//            y9+=2;
-//        }
-        robot.followPath(new Point(22.8+x6, 36.9+y6, Point.CARTESIAN),new Point(19.25 + x9, 36.25 + y9, Point.CARTESIAN), 0,0, false);
-//        if(i==1){
-//            y9-=2;
-//        }
+        if(i==1){
+            y9+=0.45;
+        }
+        robot.followPath(new Point(23.5+x6, 36.6+y6, Point.CARTESIAN),new Point(19.45 + x9, 36.3 + y9, Point.CARTESIAN), 0,0, false);
+        if(i==1){
+            y9-=0.45;
+        }
 //        robot.setArm(TelescopicArm.ArmStates.RETRACTED, true);
 //        robot.followPath(new Point(25.8 + x8, 38 + y8, Point.CARTESIAN), 0, 0, false, false);
 
@@ -102,30 +101,30 @@ public class BR40 {
         //grab1
         robot.followPath(new Point(34+x1, 64,Point.CARTESIAN), 0,0,false);
         robot.autoReset(true);
-        robot.followPath(new Point(32+x3,35.5+y3, Point.CARTESIAN),0, Math.toRadians(-40), false);
-        robot.queuer.addDelay(0.75);
-        robot.setArm(12.5+x1,5,true);
+        robot.followPath(new Point(33.4+x3,34.75+y3, Point.CARTESIAN),0, Math.toRadians(-40), false);
+        robot.queuer.addDelay(0.85);
+        robot.setArm(11+x1,5,true);
         robot.queuer.addDelay(0.2);
         robot.setTwist(0.83+x12, true);
         robot.queuer.addDelay(0.2);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
-        robot.setArm(13+x1,0,false);
-//        robot.queuer.addDelay(0.3);
+        robot.setArm(12+x1,0,false);
+        robot.queuer.addDelay(0.2);
         robot.setClaw(Claw.ClawStates.CLOSED, false);
 //        robot.queuer.addDelay(0.2);
         //drop1
-        robot.followPath(new Point(24, 32, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
-        robot.setArm(9,5,true);
+        robot.followPath(new Point(22, 32, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
+        robot.setArm(7,5,true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab2
-        robot.followPath(new Point(31.75+x4,26+y4, Point.CARTESIAN),-3*Math.PI/4, Math.toRadians(-42) , false);
+        robot.followPath(new Point(32.8+x4,25.25+y4, Point.CARTESIAN),-3*Math.PI/4, Math.toRadians(-44) , false);
         robot.setTwist(0.83+x12, true);
-        robot.setArm(12,8,true);
+        robot.setArm(10,5,true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
         robot.queuer.addDelay(0.2);
         robot.setArm(12,0,false);
-        robot.queuer.addDelay(0.1);
+        robot.queuer.addDelay(0.2);
         robot.setClaw(Claw.ClawStates.CLOSED, false);
 //        robot.queuer.addDelay(0.1);
         //drop2
@@ -134,8 +133,8 @@ public class BR40 {
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab3
-        robot.followPath(new Point(32.5+x8,14+y8, Point.CARTESIAN), -3*Math.PI/4, Math.toRadians(-40), false);
-        robot.setArm(9+x5,5,true);
+        robot.followPath(new Point(33.5+x8,13.5+y8, Point.CARTESIAN), -3*Math.PI/4, Math.toRadians(-40), false);
+        robot.setArm(7+x5,5,true);
         robot.setTwist(0.83+x12, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
         robot.setArm(9+x5,0,false);
@@ -160,7 +159,7 @@ public class BR40 {
     }
 
     public void placeSpeci2(int i) {
-        robot.followPath(new Point(21, 64 + i, 1),new Point(34 + x7, 64 + i, Point.CARTESIAN), 0,0, false);
+        robot.followPath(new Point(21, 64 + i, 1),new Point(36 + x7, 64 + i, Point.CARTESIAN), 0,0, false);
 //        robot.followPath(new Point(21, 64 + i, 1), 0, 0, false, 0.9);
         robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN, true);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
@@ -174,6 +173,8 @@ public class BR40 {
         robot.followPath(new Point(17, 20, 1), 0, 0, false, false);
         robot.autoReset(true);
         robot.setArm(0, 0, true);
+        robot.queuer.addDelay(1);
+        robot.queuer.queue(false,true);
     }
 
     public void update() {

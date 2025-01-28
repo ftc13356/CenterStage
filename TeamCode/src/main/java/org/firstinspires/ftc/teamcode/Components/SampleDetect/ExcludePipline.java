@@ -42,8 +42,9 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4,UPPIES=.5, MIN_AREA = 7000;
-    public static int UPPER_THRESH = 160, LOWER_THRESH = 100, YUPPER_THRESH = 120, YLOWER_THRESH = 60, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 3;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=.85,
+            FOR_CONST = 3.25;
+    public static int UPPER_THRESH = 100, LOWER_THRESH = 50, YUPPER_THRESH = 120, YLOWER_THRESH = 60, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 3;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
@@ -51,7 +52,7 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat(), maskedImage = new Mat();
 
-    public static double AREA_THRESH = .5, FCL = 1, UP_TOLERANCE = 0.9, DOWN_TOLERANCE =0.7, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
+    public static double AREA_THRESH = .5, FCL = 1, UP_TOLERANCE = 0.9, DOWN_TOLERANCE = 0.7, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
     double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
     double objectHeight = 1.5;  // Replace with your object's height in real-world units
 
@@ -79,7 +80,7 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat rvec = new Mat();
     Mat tvec = new Mat();
     MatOfPoint2f imagePoints = new MatOfPoint2f(), contour2f = new MatOfPoint2f();
-    private volatile double[] center = {0,0,0,0};
+    private volatile double[] center = {0, 0, 0, 0};
 
     int color = 0;
 
@@ -112,20 +113,19 @@ public class ExcludePipline extends OpenCvPipeline {
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
         Scalar rlFilt = new Scalar(RLH, RS, RV),
                 ruFilt = new Scalar(180, 255, 255),
-                rllFilt = new Scalar(0,RS,RV),
-                rulFilt = new Scalar(RUH, 255,255),
+                rllFilt = new Scalar(0, RS, RV),
+                rulFilt = new Scalar(RUH, 255, 255),
                 blFilt = new Scalar(BH, BS, BV),
                 buFilt = new Scalar(BUH, 255, 255),
                 ylFilt = new Scalar(YH, YS, YV),
                 yuFilt = new Scalar(YUH, 255, 255);
 
         input.copyTo(boundingImage);  // More memory-efficient
-        if(color ==0) {
+        if (color == 0) {
             Core.inRange(hsv, rlFilt, ruFilt, mask);
             Core.inRange(hsv, rllFilt, rulFilt, mask2);
-            Core.bitwise_or(mask,mask2,colorMask);
-        }
-        else if(color == 1)
+            Core.bitwise_or(mask, mask2, colorMask);
+        } else if (color == 1)
             Core.inRange(hsv, blFilt, buFilt, colorMask);
         else
             Core.inRange(hsv, ylFilt, yuFilt, colorMask);
@@ -135,35 +135,35 @@ public class ExcludePipline extends OpenCvPipeline {
 
         edges = new Mat();
         // Apply Canny edge detection
-        if(color!=2) {
+        if (color != 2) {
             Imgproc.Canny(maskedImage, edges, LOWER_THRESH, UPPER_THRESH);
             kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(KERNEL_SIZE, KERNEL_SIZE));
             closedEdges = new Mat();
             Imgproc.dilate(edges, closedEdges, kernel);
             kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNEL_SIZE, KERNEL_SIZE));
-            Imgproc.morphologyEx(closedEdges, edges,Imgproc.MORPH_CLOSE, kernel);
-        } else{
+            Imgproc.morphologyEx(closedEdges, edges, Imgproc.MORPH_CLOSE, kernel);
+        } else {
             Imgproc.Canny(maskedImage, edges, YLOWER_THRESH, YUPPER_THRESH);
             kernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new Size(YELLOW_KERNEL_SIZE, YELLOW_KERNEL_SIZE));
             closedEdges = new Mat();
             Imgproc.dilate(edges, closedEdges, kernel);
             kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(YELLOW_KERNEL_SIZE, YELLOW_KERNEL_SIZE));
-            Imgproc.morphologyEx(closedEdges, edges,Imgproc.MORPH_CLOSE, kernel);
+            Imgproc.morphologyEx(closedEdges, edges, Imgproc.MORPH_CLOSE, kernel);
 
         }
 
         contours = new ArrayList<>();
         Imgproc.findContours(closedEdges, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         ArrayList<Double[]> colorCoords = contoursToCoords();
-        if(!contours.isEmpty()) {
+        if (!contours.isEmpty()) {
             Double[] centerd = matchedCoords(colorCoords, colorCoords);
             if (centerd[0] != 100) center = convertToDoubleArray(centerd);
         }
-        if(retVal ==0)
+        if (retVal == 0)
             boundingImage.copyTo(input);
-        else if(retVal == 1)
+        else if (retVal == 1)
             maskedImage.copyTo(input);
-        else if(retVal ==2)
+        else if (retVal == 2)
             return edges;
         else
             return closedEdges;
@@ -179,6 +179,7 @@ public class ExcludePipline extends OpenCvPipeline {
         boundingImage.release();
         return input;
     }
+
     double[] convertToDoubleArray(Double[] wrapperArray) {
         double[] primitiveArray = new double[wrapperArray.length];
 
@@ -188,6 +189,7 @@ public class ExcludePipline extends OpenCvPipeline {
 
         return primitiveArray;
     }
+
     public synchronized void setCenter(double[] newCenter) {
         center = newCenter;
     }
@@ -195,29 +197,27 @@ public class ExcludePipline extends OpenCvPipeline {
     public synchronized double[] getCenter() {
         return center;
     }
-    public Double[] matchedCoords(ArrayList<Double[]> colorCoords, ArrayList<Double[]> allCoords){
+
+    public Double[] matchedCoords(ArrayList<Double[]> colorCoords, ArrayList<Double[]> allCoords) {
         ArrayList<Double[]> matchedCenters = new ArrayList<>();
         double minDist = 1000;
         int coord = 0;
-        for(int i = 0 ; i < colorCoords.size(); i++){
-            for(int j=0;j<allCoords.size();j++){
-                double x = colorCoords.get(i)[0] - allCoords.get(j)[0];
-                double y = colorCoords.get(i)[1] - allCoords.get(j)[1];
-                if(x*x+y*y<9){
-                    matchedCenters.add(colorCoords.get(i));
-                    if((colorCoords.get(i)[0]-UPPIES)*(colorCoords.get(i)[0]-UPPIES)+colorCoords.get(i)[1]*colorCoords.get(i)[1]<minDist){
-                        coord = matchedCenters.size()-1;
-                        minDist = (colorCoords.get(i)[0]-UPPIES)*(colorCoords.get(i)[0]-UPPIES)+colorCoords.get(i)[1]*colorCoords.get(i)[1];
-                    }
-                }
+        for (int i = 0; i < colorCoords.size(); i++) {
+
+            matchedCenters.add(colorCoords.get(i));
+            double[] relCent = convertToDoubleArray(colorCoords.get(i));
+            relCent[0] = (relCent[2] * Math.sin(TelescopicArm.angle * PI / 180) + relCent[0] * Math.cos(TelescopicArm.angle * PI / 180) - FOR_CONST)*FOR_MULT;
+            if (relCent[0]*relCent[0]+relCent[1]*relCent[1] < minDist) {
+                coord = matchedCenters.size() - 1;
+                minDist = relCent[0]*relCent[0]+relCent[1]*relCent[1];
             }
         }
-        if(matchedCenters.isEmpty())
-            return new Double[] {100.0,100.0,100.0, 100.0};
+        if (matchedCenters.isEmpty())
+            return new Double[]{100.0, 100.0, 100.0, 100.0};
         return matchedCenters.get(coord);
     }
 
-    public ArrayList<Double[]> contoursToCoords(){
+    public ArrayList<Double[]> contoursToCoords() {
         ArrayList<Double[]> centers = new ArrayList<>();
         // Set acceptable aspect ratio range
         double minAspectRatio = 3.5 / 1.5 - DOWN_TOLERANCE;
@@ -289,20 +289,20 @@ public class ExcludePipline extends OpenCvPipeline {
                             double[] coords = new double[3];
                             tvec.get(0, 0, coords);
                             tvec.get(0, 0, coords);
-                            double multiplia = sqrt(aspectRatio/(3.5/1.5));
-                            if(multiplia<1){
-                                multiplia = 1/multiplia;
+                            double multiplia = sqrt(aspectRatio / (3.5 / 1.5));
+                            if (multiplia < 1) {
+                                multiplia = 1 / multiplia;
                             }
 
-                            double consta = 1.16* pow(Imgproc.contourArea(contour)/(minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT)*multiplia;
-                            double heighter = consta*(coords[2]*cos(TelescopicArm.angle*PI/180)+coords[0]*sin(TelescopicArm.angle*PI/180));
-                            if(heighter > TelescopicArm.expectedHeight-1 && heighter < TelescopicArm.expectedHeight+5.5) {
+                            double consta = 1.16 * pow(Imgproc.contourArea(contour) / (minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT) * multiplia;
+                            double heighter = consta * (coords[2] * cos(TelescopicArm.angle * PI / 180) + coords[0] * sin(TelescopicArm.angle * PI / 180));
+                            if (heighter > TelescopicArm.expectedHeight - 1 && heighter < TelescopicArm.expectedHeight + 5.5) {
                                 centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
                                 for (int j = 0; j < 4; j++) {
                                     Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);
                                 }
                             }
-                            if (center!=null) {
+                            if (center != null) {
 //                                packet.put("CAM X", center[0]);
 //                                packet.put("CAM y", center[1]);
 //                                packet.put("CAM Z", center[2]);
@@ -395,6 +395,7 @@ public class ExcludePipline extends OpenCvPipeline {
         double cosTheta = dotProd / (magP1 * magP2);
         return Math.acos(cosTheta) * (180.0 / Math.PI); // Return the angle in degrees
     }
+
     public static Point[] orderPoints(Point[] pts) {
         if (pts.length != 4) {
             throw new IllegalArgumentException("Exactly four points are required.");
@@ -469,22 +470,22 @@ public class ExcludePipline extends OpenCvPipeline {
     }
 
 
-
     static Scalar getColorScalar(String color) {
         switch (color) {
             case "Blue":
-                return new Scalar(0,0,255);
+                return new Scalar(0, 0, 255);
             case "Yellow":
-                return new Scalar(255,255,0);
+                return new Scalar(255, 255, 0);
             default:
-                return new Scalar(255,0,0);
+                return new Scalar(255, 0, 0);
         }
     }
 
-    public void setColor(int color){
+    public void setColor(int color) {
         this.color = color;
     }
-    public int getColor(){
+
+    public int getColor() {
         return color;
     }
 }

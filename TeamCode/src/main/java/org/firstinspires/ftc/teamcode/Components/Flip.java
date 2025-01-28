@@ -124,6 +124,7 @@ public class Flip {
 //                flipTo(Flip.FlipStates.values()[i.ordinal()]);
             }
         }
+        flip.update();
         packet.put("FLIPRESET", RESET.getState());
     }
 }

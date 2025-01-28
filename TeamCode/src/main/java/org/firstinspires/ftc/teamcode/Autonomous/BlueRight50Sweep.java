@@ -13,13 +13,13 @@ public class BlueRight50Sweep extends LinearOpMode{
         waitForStart();
         resetRuntime();
         BasicRobot.time=0;
-        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<29.8){
+        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<30.0){
             aut.placeSpeci();
             aut.grabBluesSweep();
             aut.placeSpeci2(3);
             aut.cycleBlueGrab(0);
             aut.placeSpeci2(6);
-            aut.cycleBlueGrab(0);
+            aut.cycleBlueGrab(1);
             aut.placeSpeci2(9);
             aut.cycleBlueGrab(1);
             aut.placeSpeci2(12);
