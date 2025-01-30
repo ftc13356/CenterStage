@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
+import java.util.Vector;
 
 @Config
 public class IDRobot extends BasicRobot {
@@ -42,6 +43,7 @@ public class IDRobot extends BasicRobot {
     public static double FOR_CONST =3.25, FOR_MULT = 0.85, SIDE_CONST = 2, SIDE_MULT = 1, MOVE_INTERVAL = 0.7, DELAY_TIME=0.2;
     double driveConst = .7;
     double lastMoveTime = -100;
+    Pose grabPoint = new Pose(0,0,0);
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
@@ -60,6 +62,7 @@ public class IDRobot extends BasicRobot {
         queuers.add(new Queuer());//HIGH_BASKET
         queuers.add(new Queuer());//LOWER_INTAKE&GRAB
         queuers.add(new Queuer());//SPECI_RESET
+        queuers.add(new Queuer());
         queuers.add(new Queuer());
         queuers.add(new Queuer());
     }
@@ -195,7 +198,31 @@ public class IDRobot extends BasicRobot {
             }
         }
     }
+    public void followPath(Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean hodlPoint, Queuer queuer) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2, hodlPoint);
+            }
+        }
+    }
     public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean holdEnd) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .build();
+                follower.followPath(path2,holdEnd);
+            }
+        }
+    }
+    public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, boolean holdEnd, Queuer queuer) {
         if (queuer.queue(p_asynchronous, !follower.isBusy())) {
             if (!queuer.isExecuted()) {
                 Pose current = follower.getPose();
@@ -550,11 +577,32 @@ public class IDRobot extends BasicRobot {
             }
             isAutoGrab = false;
         }
-        if(isDD2&&isSuperRB){
-            arm.lowerToIntake();
-            flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
-            claw.goTo(Claw.ClawStates.OPEN);
-//            isAutoGrab = false;
+        if(isDD2&&isSuperRB||!queuers.get(6).isEmpty()){
+            if(queuers.get(6).isEmpty()) {
+                grabPoint = follower.getPose();
+                follower.stopTeleopDrive();
+            }
+            Vector2d dist = new Vector2d(41-19.45, 64-36.5);
+            Vector2d dist2 = new Vector2d(21-19.45, 64-36.5);
+            Vector2d dist3 = new Vector2d(2.5, 2.5);
+            dist2 = dist2.rotated(grabPoint.getHeading());
+            dist2 = dist3.rotated(grabPoint.getHeading());
+            dist = dist.rotated(grabPoint.getHeading());
+            followPath(new Point(dist2.getX()+grabPoint.getX(), dist2.getY()+grabPoint.getY(), 1), new Point(dist.getX()+grabPoint.getX(), dist.getY()+grabPoint.getY(), Point.CARTESIAN), grabPoint.getHeading(),grabPoint.getHeading(), false, false, queuers.get(6));
+//            queuers.get(6).addDelay(0.2);
+            setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN.getExtendPos(), TelescopicArm.ArmStates.HIGH_SPECIMEN.getPitchPos(), true, queuers.get(6));
+            setTwist(Twist.TwistStates.PARALLEL, true, queuers.get(6));
+            setFlip(Flip.FlipStates.SPECIMEN, true, queuers.get(6));
+            queuers.get(6).addDelay(0.4);
+            setClaw(Claw.ClawStates.GIGA_OPEN, false, queuers.get(6));
+            queuers.get(6).addDelay(0.4);
+            setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB, true, queuers.get(6));
+            followPath(new Point(grabPoint.getX()+dist3.getX(), grabPoint.getY()+dist3.getY(), Point.CARTESIAN), grabPoint.getHeading(),grabPoint.getHeading(), false, false, queuers.get(6));
+            setTwist(Twist.TwistStates.SPECIMEN, true, queuers.get(6));
+            queuers.get(6).addDelay(0.2);
+            setFlip(Flip.FlipStates.SPECIMEN_GRAB, true, queuers.get(6));
+            queuers.get(6).addDelay(0.2);
+            setClaw(Claw.ClawStates.CLOSED, false, queuers.get(6));
         }
         else if(isSuperRB){
             if(Claw.ClawStates.CLOSED.getState())
