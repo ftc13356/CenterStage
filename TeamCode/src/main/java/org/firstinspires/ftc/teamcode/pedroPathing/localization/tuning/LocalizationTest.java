@@ -126,6 +126,7 @@ public class LocalizationTest extends LinearOpMode {
             Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
             Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
             Drawing.sendPacket();
+            robot.update();
         }
     }
 }

@@ -55,7 +55,7 @@ public class OTOSLocalizer extends Localizer {
     private int greater1Count = 0, greater2Count = 0;
     private double previousHeading;
     private double totalHeading;
-    public static double MULT1 = .99730660924, MULT2 = .98714377, HMULT1 = 0.98450498725, HMULT2 = .99705,  WEIGHT = 0.5;
+    public static double MULT1 = 1.0039066092, MULT2 = .98714377, HMULT1 = 0.98450498725, HMULT2 = .99705,  WEIGHT = 0.5;
 
     /**
      * This creates a new OTOSLocalizer from a HardwareMap, with a starting Pose at (0,0)
@@ -150,6 +150,12 @@ public class OTOSLocalizer extends Localizer {
         return getVelocity().getVector();
     }
 
+    public Vector2d getRotVelocity(){
+        Vector2d vec = new Vector2d(otosVel.x, otosVel.y);
+        vec.rotated(-otosPose.h);
+        return vec;
+    }
+
     /**
      * This sets the start pose. Changing the start pose should move the robot as if all its
      * previous movements were displacing it from its new start pose.
@@ -202,8 +208,8 @@ public class OTOSLocalizer extends Localizer {
         }else if(greater2Count>10 && WEIGHT==0.5){
             WEIGHT=0;
         }
-        packet.put("x0", otosPose.x);
-        packet.put("x1",otosPose2.x);
+        packet.put("x0", otosPose.x*MULT1);
+        packet.put("x1",otosPose2.x*MULT2);
         otosPose.set(new SparkFunOTOS.Pose2D(WEIGHT*otosPose.x*MULT1+(1-WEIGHT)*otosPose2.x*MULT2,WEIGHT*otosPose.y*MULT1+(1-WEIGHT)*otosPose2.y*MULT2,WEIGHT*otosPose.h+(1-WEIGHT)*otosPose2.h));
         otosVel.set(new SparkFunOTOS.Pose2D(WEIGHT*otosVel.x*MULT1+(1-WEIGHT)*otosVel2.x*MULT2,WEIGHT*otosVel.y*MULT1+(1-WEIGHT)*otosVel2.y*MULT2,WEIGHT*otosVel.h+(1-WEIGHT)*otosVel2.h));
         otosAcc.set(new SparkFunOTOS.Pose2D(WEIGHT*otosAcc.x*MULT1+(1-WEIGHT)*otosAcc2.x*MULT2,WEIGHT*otosAcc.y*MULT1+(1-WEIGHT)*otosAcc2.y*MULT2,WEIGHT*otosAcc.h+(1-WEIGHT)*otosAcc2.h));

@@ -25,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstan
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -255,6 +256,13 @@ public class Follower {
      */
     public Vector getVelocity() {
         return poseUpdater.getVelocity();
+    }
+    public Vector2d getRotVelocity(){
+        Vector vel = poseUpdater.getVelocity();
+        double h = poseUpdater.getPose().getHeading();
+        Vector2d vec = new Vector2d(vel.getXComponent(), vel.getYComponent());
+        vec = vec.rotated(-h);
+        return vec;
     }
 
     /**
