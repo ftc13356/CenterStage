@@ -50,7 +50,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
     Point lastTarg = new Point(0,0,1);
-    public static double FOR_CONST =3.5, FOR_MULT = 0.75, SIDE_CONST = 2, SIDE_MULT = 1, MOVE_INTERVAL = 0.7, DELAY_TIME=0.15, DROP_DELAY_TIME = 0.15, MIN_EXT = 5.5, HANGEXT1 = 14, HANGROT1 = 107, HANGEXT2=0, HANGROT2 = 80;
+    public static double FOR_CONST =3.0, FOR_MULT = 0.75, SIDE_CONST = 2, SIDE_MULT = 1.1, MOVE_INTERVAL = 0.5, DELAY_TIME=0.1, DROP_DELAY_TIME = 0.12, MIN_EXT = 5.6, HANGEXT1 = 16, HANGROT1 = 104, HANGEXT2=1, HANGROT2 = 94;
     double driveConst = .7;
     double lastMoveTime = -100;
     Pose grabPoint = new Pose(0,0,0);
@@ -400,6 +400,7 @@ public class IDRobot extends BasicRobot {
             isAutoGrab = false;
         }
         if (isA||!queuers.get(0).isEmpty()||!queuers.get(3).isEmpty()||!queuers.get(4).isEmpty()) {
+            isAutoGrab = false;
             if(isA){
                 for(var i : queuers)
                     i.reset();
@@ -506,14 +507,16 @@ public class IDRobot extends BasicRobot {
                     if (follower.isTeleDrive())
                         follower.stopTeleopDrive();
                     if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 200) {
-                        if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 2 && abs(arm.getVel()) + follower.getVelocityMagnitude() < 1.9) {
+                        if (relCent[0] * relCent[0] + relCent[1] * relCent[1] < 3 && abs(arm.getVel()) + follower.getVelocityMagnitude() < 4) {
                             if(!Flip.FlipStates.SUBMERSIBLE.getState()) {
                                 isRB=true;
+                                twist.twistToAng(relCent[3]);
                                 isAutoGrab = false;
                                 targeted = false;
                             }
                             else{
                                 isRB = true;
+                                twist.twistToAng(relCent[3]);
                                 isAutoGrab = false;
                                 targeted = false;
                             }
@@ -540,7 +543,7 @@ public class IDRobot extends BasicRobot {
                                 follower.holdPoint(new BezierPoint(new Point(pos)), head);
                             }
                             double newExt = Math.max(arm.getExt() + relCent[0] - (arm.getVel() + follower.getRotVelocity().getX()) * .1, MIN_EXT);
-                            arm.goToResetManual(newExt, Math.atan2(3, newExt + 14) * 180 / PI);
+                            arm.goToResetManual(newExt, Math.atan2(2.85, newExt + 12) * 180 / PI);
                             twist.twistToAng(relCent[3]);
                             packet.put("newExt", newExt);
                             packet.put("relVect", relVect);
@@ -576,7 +579,7 @@ public class IDRobot extends BasicRobot {
                     queuers.get(2).addDelay(DROP_DELAY_TIME);
                 }
                 else{
-                    queuers.get(2).addDelay(0.2);
+                    queuers.get(2).addDelay(0.14);
                 }
                if(queuers.get(2).queue(false, true)){
                    arm.lowerToIntake();
