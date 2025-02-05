@@ -63,6 +63,10 @@ public class PathBuilder {
         this.paths.get(paths.size()-1).setLinearHeadingInterpolation(startHeading, endHeading);
         return this;
     }
+    public PathBuilder setPathMaxVelMultiplier(double pathMaxVelMultiplier) {
+        this.paths.get(paths.size()-1).setPathMaxVelMutliplier(pathMaxVelMultiplier);
+        return this;
+    }
 
     /**
      * This sets a linear heading interpolation on the last Path added to the PathBuilder.

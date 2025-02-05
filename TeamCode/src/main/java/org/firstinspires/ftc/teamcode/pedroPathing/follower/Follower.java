@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.absoluteTimeoutTime;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.convertToPolar;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFFeedForward;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFSwitch;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.forwardZeroPowerAcceleration;
@@ -486,12 +487,14 @@ public class Follower {
         if (!teleopDrive) {
             if (currentPath != null) {
                 Pose current = getPose();
+
                 packet.put("x",current.getX());
                 packet.put("y",current.getY());
                 packet.put("heading",current.getHeading());
                 Point target = getCurrentPath().getPoint(1);
                 packet.put("targ x", target.getX());
                 packet.put("targ y", target.getY());
+                driveVectorScaler = new DriveVectorScaler(MathFunctions.normalizeVector(new Vector(convertToPolar[0]*currentPath.getPathMaxVelMutliplier(),convertToPolar[1])));
                 if (holdingPosition) {
                     closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), 1);
 
@@ -1048,6 +1051,7 @@ public class Follower {
         return dashboardPoseTracker;
     }
     public void stopTeleopDrive(){
+        startTeleopDrive();
         teleopDrive = false;
     }
     public boolean isTeleDrive(){

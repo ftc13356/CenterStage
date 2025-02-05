@@ -21,7 +21,7 @@ public class Flip {
 
     public static double RETRACT_POS = 0.4;
     public static double SUBMERSIBLE_POS = 0.12;
-    public static double SPECIMEN_POS = .8;
+    public static double SPECIMEN_POS = .75;
     public static double SPECIMENGRAB_POS = 0.63;
     public static double BUCKET_POS = 0.75, FLIP_TIME = 0.3;
 

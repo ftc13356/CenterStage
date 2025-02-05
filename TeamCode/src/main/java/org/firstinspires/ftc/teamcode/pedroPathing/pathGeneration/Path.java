@@ -44,6 +44,8 @@ public class Path {
     // This can be custom set for each Path.
     private double pathEndVelocityConstraint = FollowerConstants.pathEndVelocityConstraint;
 
+    private double pathMaxVelMutliplier = 1;
+
     // When the robot is at the end of its current Path or PathChain and the translational error
     // goes below this value, then end the Path. This is in inches.
     // This can be custom set for each Path.
@@ -206,6 +208,13 @@ public class Path {
      */
     public double getClosestPointTValue() {
         return closestPointTValue;
+    }
+
+    public void setPathMaxVelMutliplier(double maxVelMutliplier){
+        pathMaxVelMutliplier = maxVelMutliplier;
+    }
+    public double getPathMaxVelMutliplier(){
+        return  pathMaxVelMutliplier;
     }
 
     /**

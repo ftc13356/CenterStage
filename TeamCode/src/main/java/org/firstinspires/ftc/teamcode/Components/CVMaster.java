@@ -33,9 +33,9 @@ public class CVMaster {
                 .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
             exclude = new ExcludePipline();
             hsvTest = new SampleDetectionPipelinePNP();
-            if(isTeleop) {
+//            if(isTeleop) {
                 startStreamin();
-            }
+//            }
     }
     public double[] getCenter(){
         return exclude.getCenter();
