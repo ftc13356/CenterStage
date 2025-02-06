@@ -42,6 +42,7 @@ public class Twist {
             PARALLEL.setStateTrue();
         }
         twist.setLastTime(-100);
+        twist.setFlipTime(FLIP_TIME);
     }
 
     /**
@@ -110,6 +111,9 @@ public class Twist {
     public void twistTo(Twist.TwistStates p_state) {
         twist.setPosition(p_state.position);
     }
+    public double getLastTwisTime(){
+        return twist.getLastTime();
+    }
 
     public void iterateTwist(int it) {
         int ord = -1;
@@ -149,7 +153,7 @@ public class Twist {
             }
             p_ang += 180;
         }
-        p_ang = min(1, p_ang / 150);
+        p_ang = min(1, p_ang / 160);
         twist.setPosition(p_ang);
     }
 

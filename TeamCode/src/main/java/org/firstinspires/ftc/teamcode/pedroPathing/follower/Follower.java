@@ -494,7 +494,6 @@ public class Follower {
                 Point target = getCurrentPath().getPoint(1);
                 packet.put("targ x", target.getX());
                 packet.put("targ y", target.getY());
-                driveVectorScaler = new DriveVectorScaler(MathFunctions.normalizeVector(new Vector(convertToPolar[0]*currentPath.getPathMaxVelMutliplier(),convertToPolar[1])));
                 if (holdingPosition) {
                     closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), 1);
 
@@ -503,7 +502,7 @@ public class Follower {
                     limitDrivePowers();
 
                     for (int i = 0; i < motors.size(); i++) {
-                        motors.get(i).setPower(drivePowers[i]);
+                        motors.get(i).setPower(drivePowers[i]*getCurrentPath().getPathMaxVelMutliplier());
                     }
                 } else {
                     if (isBusy) {
@@ -516,7 +515,7 @@ public class Follower {
                         limitDrivePowers();
 
                         for (int i = 0; i < motors.size(); i++) {
-                            motors.get(i).setPower(drivePowers[i]);
+                            motors.get(i).setPower(drivePowers[i]*getCurrentPath().getPathMaxVelMutliplier());
                         }
                     }
                     if (currentPath.isAtParametricEnd()) {

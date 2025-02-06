@@ -23,7 +23,7 @@ public class AutoGrabTest {
     public void autoGrab() {
         robot.queuer.queue(false, true);
         robot.queuer.addDelay(1);
-        robot.followPathNotTargeted(new Point(7.5, 84,1), 0.1,0,0,false);
+        robot.followPathNotTargeted(new Point(7.5, 84,1), 0.5,0,0,false);
         robot.autoGrab(2);
         robot.queuer.waitForFinish();
         robot.queuer.addDelay(1);
