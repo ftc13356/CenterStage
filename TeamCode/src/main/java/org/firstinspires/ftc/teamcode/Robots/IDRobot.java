@@ -10,6 +10,8 @@ import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST3
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST3_Y;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.H_OFFSET;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.RAISE_DELAY;
+import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_EXTEND_POS;
+import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_PITCH_POS;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
@@ -50,7 +52,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 2.5, FOR_MULT = 0.85, SIDE_CONST = 1.5, SIDE_MULT = 0.9, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.1, MIN_EXT = 6.5, HANGEXT1 = 16, HANGROT1 = 104, HANGEXT2 = 1, HANGROT2 = 94, LAG_CONSST = .36, MAX_EXT = 18;
+    public static double FOR_CONST = 2.5, FOR_MULT = 0.85, SIDE_CONST = 1.5, SIDE_MULT = 0.9, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.13, MIN_EXT = 6.0, HANGEXT1 = 16, HANGROT1 = 104, HANGEXT2 = 1, HANGROT2 = 94, LAG_CONSST = .33, MAX_EXT = 17;
     double driveConst = .7;
     double lastMoveTime = -100;
     Pose grabPoint = new Pose(0, 0, 0);
@@ -89,7 +91,7 @@ public class IDRobot extends BasicRobot {
     }
 
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {
-        if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 3 && abs(arm.getTargetRot() - arm.getRot()) < 5) && !queuer.isExecuted() && !queuer.isFirstLoop())
+        if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 1 && abs(arm.getTargetRot() - arm.getRot()) < 3)  && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(targ);
     }
 
@@ -360,7 +362,7 @@ public class IDRobot extends BasicRobot {
                                 pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
                                 Pose pos2 = follower.getPose();
                                 pos2.add(new Pose(relVect2.getX(), relVect2.getY(), 0));
-                                double newExt = Math.max(arm.getExt() + relCent[0] - (arm.getVel() + follower.getRotVelocity().getX()) * LAG_CONSST, MIN_EXT);
+                                double newExt = Math.max(arm.getExt() + relCent[0] - (-arm.getVel() + follower.getRotVelocity().getX()) * LAG_CONSST, MIN_EXT);
 
                                 if (newExt > MAX_EXT) {
                                     targeted = false;
@@ -509,7 +511,7 @@ public class IDRobot extends BasicRobot {
                 flip.flipTo(Flip.FlipStates.BUCKET);
                 twist.twistTo(Twist.TwistStates.PERPENDICULAR);
             } else if (queuers.get(0).isEmpty()) {
-                setArm(TelescopicArm.ArmStates.HIGH_BUCKET, false, queuers.get(1));
+                setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS, false, queuers.get(1));
                 setFlip(Flip.FlipStates.RESET, true, queuers.get(1));
                 setTwist(Twist.TwistStates.PERPENDICULAR, true, queuers.get(1));
                 setFlip(Flip.FlipStates.BUCKET, false, queuers.get(1));

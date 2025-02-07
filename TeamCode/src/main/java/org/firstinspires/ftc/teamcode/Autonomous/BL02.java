@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,7 +25,7 @@ public class BL02 {
 
     public BL02(LinearOpMode opmode){
         robot = new IDRobot(opmode,false);
-        robot.follower.setStartingPose(new Pose(7.5,104,0));
+        robot.follower.setStartingPose(new Pose(7.5,104,-toRadians(90)));
     }
 
     public void placeSample(){
