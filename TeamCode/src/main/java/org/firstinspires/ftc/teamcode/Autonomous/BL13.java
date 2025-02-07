@@ -67,7 +67,6 @@ public class BL13 {
             case 3:
                 robot.followPath(new Point(24,140, Point.CARTESIAN),Math.PI*3/4, -Math.PI/2, false);
                 shouldPark=true;
-                //needs to be vertical
         }
         double height=4, length=17;
         double ext = length-7, rot = 180/PI *Math.atan2(height, length);
