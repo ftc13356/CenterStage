@@ -23,12 +23,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
+import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
+
 @Config
 public class DualPIDController {
     public static double x1 = 0;
     DcMotorEx ext, ext2, rot, extEnc, rotEnc;
     public static double  A_OFF = -9, MAX=31.3, MIN=0
-            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.025 , rP2 =0.025, rD2= .5
+            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.025 , rP2 =0.025, rD2= 1.5
             , rD = .5 , rF = 0.4, G = 0.3,rG = 0.122, rG2 = 0.2, HORIZ_LIM = 27.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
     boolean mid=true, voltScaled = false;
@@ -82,21 +84,29 @@ public class DualPIDController {
         }
         double err = extension - curExt*TICKS_PER_IN;
         double d = extEnc.getVelocity()*TICKS_PER_IN;
-        vel = d;
-        ext.setPower(MULT*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
-        ext2.setPower(MULT2*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
-        double rErr = rotation - curRot*TICKS_PER_DEG;
         double rd = rotEnc.getVelocity()*TICKS_PER_DEG;
+        vel = d;
+        if((extension < curExt * TICKS_PER_IN) || abs(rotation - curRot*TICKS_PER_DEG + rd *0.3) < 30){
+            ext.setPower(MULT*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
+            ext2.setPower(MULT2*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
+        }
+        double rErr = rotation - curRot*TICKS_PER_DEG;
         double r = curExt*TICKS_PER_IN/MAX;
         double gScale  = 1;
 
-        double power = 13/voltage*((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r));
+        double power = 0;
+        if(curExt*TICKS_PER_IN<25 || extension > 25){
+            power = 13/voltage*((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r));
+        }
+        else{
+            power = Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r);
+        }
 //        if(signum(rd) != signum(power)){
 //            gScale = 1/(1-abs(rd/MAX_SPEED/TICKS_PER_DEG));
 //        }
         power*=gScale;
 //        packet.put("powab4rF",power);
-        if(abs(rd)<0.5 && abs(rErr)>1  && curRot*TICKS_PER_DEG<90 && (curRot*TICKS_PER_DEG>10||targetRot>1)){
+        if(abs(rd)<0.5 && abs(rErr)>1 && (curRot<90|| abs(rErr) > 3)  && (curRot*TICKS_PER_DEG>10||targetRot>1)){
             power+=rF*signum(rErr);
         }
         if(abs(rErr)<10&&rd==0&&targetRot==0||lastPower==0&&targetRot==0)

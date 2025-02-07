@@ -127,7 +127,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getPose() {
-        return MathFunctions.addPoses(startPose, new Pose(otosPose.x, otosPose.y, otosPose.h));
+        return MathFunctions.addPoses(startPose, new Pose(otosPose.x, otosPose.y, otosPose.h-startPose.getHeading()));
     }
 
     /**
@@ -165,6 +165,8 @@ public class OTOSLocalizer extends Localizer {
     @Override
     public void setStartPose(Pose setStart) {
         startPose = setStart;
+        otos.setPosition(new SparkFunOTOS.Pose2D(0,0, setStart.getHeading()));
+        otos2.setPosition(new SparkFunOTOS.Pose2D(0, 0, setStart.getHeading()));
     }
 
     /**
