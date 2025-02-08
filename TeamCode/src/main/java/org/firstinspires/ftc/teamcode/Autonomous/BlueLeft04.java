@@ -20,6 +20,7 @@ public class BlueLeft04 extends LinearOpMode {
         BasicRobot.time=0;
         while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()){
             aut.nonSubCycles();
+            aut.autoGrahCycle();
             aut.update();
         }
     }

@@ -53,7 +53,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 2.5, FOR_MULT = 0.85, SIDE_CONST = 1.5, SIDE_MULT = 0.9, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.13, MIN_EXT = 6.0, HANGEXT1 = 16, HANGROT1 = 104, HANGEXT2 = 1, HANGROT2 = 94, LAG_CONSST = .33, MAX_EXT = 17;
+    public static double FOR_CONST = 2.5, FOR_MULT = 0.85, SIDE_CONST = 1.5, SIDE_MULT = 0.9, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.13, MIN_EXT = 6.0, HANGEXT1 = 16, HANGROT1 = 104, HANGEXT2 = 1, HANGROT2 = 94, LAG_CONSST = .23, MAX_EXT = 17;
     double driveConst = .7;
     double lastMoveTime = -100;
     Pose grabPoint = new Pose(0, 0, 0);
@@ -155,6 +155,32 @@ public class IDRobot extends BasicRobot {
         if (queuer.queue(p_asynchronous, !follower.isBusy())) {
             if (!queuer.isExecuted())
                 follower.followPath(path);
+        }
+    }
+    public void followPath(Point end, Point ctrl1, Point ctrl2, boolean p_asynchronous, boolean reversed) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), ctrl1, ctrl2, end))
+                        .setReversed(reversed)
+                        .build();
+                follower.followPath(path2, false);
+            }
+        }
+    }
+    public void followPath(Point end, Point ctrl1, boolean p_asynchronous, boolean reversed) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), ctrl1, end))
+                        .setReversed(reversed)
+                        .setTangentHeadingInterpolation()
+                        .setReversed(reversed)
+                        .build();
+                follower.followPath(path2, false);
+            }
         }
     }
 
@@ -306,15 +332,12 @@ public class IDRobot extends BasicRobot {
     public void autoGrab(int color) {
         boolean isRB = false;
         if (queuer.queue(true, !isAutoGrab && TelescopicArm.ArmStates.INTAKE.getState() && queuers.get(2).isEmpty())) {
-            if (!queuer.isExecuted()) {
-                isAutoGrab = true;
-            }
-            if (isAutoGrab) {
-                if (!queuer.isExecuted()) {
+            if(!targeted && queuers.get(2).isEmpty()) {
+                if (cv.getCurrent()!=color) {
                     claw.goTo(Claw.ClawStates.OPEN);
-                    if (color == 0)
+                    if (color == 1)
                         cv.swapBlue();
-                    else if (color == 1)
+                    else if (color == 0)
                         cv.swapRed();
                     else
                         cv.swapYellow();
@@ -322,7 +345,7 @@ public class IDRobot extends BasicRobot {
                     flip.flipTo(Flip.FlipStates.RESET);
                 }
 
-                if ((TelescopicArm.ArmStates.AUTO_GRAB.getState() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.LOW_SPECIMEN.getState()) && arm.getTargetExt() > 3) {
+                if ((TelescopicArm.ArmStates.AUTO_GRAB.getState() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.LOW_SPECIMEN.getState()) && arm.getTargetExt() > 3 && follower.getVelocityMagnitude() < 5) {
                     if (!isAutoGrab) {
                         cv.resetCenter();
                         targeted = false;
@@ -330,19 +353,7 @@ public class IDRobot extends BasicRobot {
                     isAutoGrab = true;
 
                     double[] relCent = cv.getCenter().clone();
-                    if (targeted && abs(arm.getVel()) + follower.getVelocityMagnitude() < 4 && abs(arm.getTargetExt() - arm.getExt()) < 1) {
-                        if (!Flip.FlipStates.SUBMERSIBLE.getState()) {
-                            isRB = true;
-//                            twist.twistToAng(relCent[3]);
-                            isAutoGrab = false;
-                            targeted = false;
-                        } else {
-                            isRB = true;
-//                            twist.twistToAng(relCent[3]);
-                            isAutoGrab = false;
-                            targeted = false;
-                        }
-                    }
+
                     if (!targeted && !isRB && !Arrays.equals(relCent, new double[]{0, 0, 0, 0})) {
                         isAutoGrab = true;
                         cv.resetCenter();
@@ -405,10 +416,22 @@ public class IDRobot extends BasicRobot {
                     isAutoGrab = true;
                 }
             }
-        }
+            if (targeted && abs(arm.getVel()) + follower.getVelocityMagnitude() < 4 && abs(arm.getTargetExt() - arm.getExt()) < 1) {
+                if (!Flip.FlipStates.SUBMERSIBLE.getState()) {
+                    isRB = true;
+//                            twist.twistToAng(relCent[3]);
+                    isAutoGrab = false;
+                    targeted = false;
+                } else {
+                    isRB = true;
+//                            twist.twistToAng(relCent[3]);
+                    isAutoGrab = false;
+                    targeted = false;
+                }
+            }
         if (isRB || !queuers.get(2).isEmpty()) {
             if ((!queuers.get(2).isEmpty() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.AUTO_GRAB.getState()) && queuers.get(0).isEmpty()) {
-                if (!Flip.FlipStates.SUBMERSIBLE.getState() || time - twist.getLastTwisTime() < 0.3) {
+                if (!Flip.FlipStates.SUBMERSIBLE.getState() || time - twist.getLastTwisTime() < 0.2) {
                     queuers.get(2).addDelay(DROP_DELAY_TIME);
                 }
                 if (queuers.get(2).queue(false, true)) {
@@ -436,7 +459,7 @@ public class IDRobot extends BasicRobot {
             if (!i.isEmpty() && i.isFullfilled()) {
                 i.reset();
             }
-        }
+        }}
     }
 
     public void update() {
