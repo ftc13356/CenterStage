@@ -17,12 +17,12 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Flip {
     RFServo flip;
-    public static double RESET_POS = 0.6;
+    public static double RESET_POS = 0.68;
 
-    public static double RETRACT_POS = 0.4;
-    public static double SUBMERSIBLE_POS = 0.12;
-    public static double SPECIMEN_POS = .75;
-    public static double SPECIMENGRAB_POS = 0.63;
+    public static double RETRACT_POS = 0.48;
+    public static double SUBMERSIBLE_POS = 0.24;
+    public static double SPECIMEN_POS = .83;
+    public static double SPECIMENGRAB_POS = 0.71;
     public static double BUCKET_POS = 0.75, FLIP_TIME = 0.12;
 
     private final double FLIP_SERVO_BUFFER = 0.05;

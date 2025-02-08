@@ -18,6 +18,7 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.max;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -47,7 +48,7 @@ public class IDRobot extends BasicRobot {
     Flip flip;
     public Follower follower;
     ArrayList<Queuer> queuers;
-    TelescopicArm arm;
+    public TelescopicArm arm;
     Twist twist;
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
@@ -91,12 +92,12 @@ public class IDRobot extends BasicRobot {
     }
 
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {
-        if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 1 && abs(arm.getTargetRot() - arm.getRot()) < 3)  && !queuer.isExecuted() && !queuer.isFirstLoop())
+        if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 1 && abs(arm.getTargetRot() - arm.getRot()) < 3)   && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(targ);
     }
 
     public void setArm(double extension, double rot, boolean p_async) {
-        if (queuer.queue(p_async, abs(arm.getExt() - extension) < 2 && abs(arm.getRot() - rot) < 5) && !queuer.isExecuted() && !queuer.isFirstLoop())
+        if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 1 && abs(arm.getTargetRot() - arm.getRot()) < 3)/*&& abs(arm.getRotVel())<15*/ && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(extension, rot);
     }
 
@@ -116,7 +117,7 @@ public class IDRobot extends BasicRobot {
     }
 
     public void setFlip(Flip.FlipStates targ, boolean p_async) {
-        if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
+        if (queuer.queue(p_async, true) && !queuer.isExecuted() && !queuer.isFirstLoop())
             flip.flipTo(targ);
     }
 
@@ -430,7 +431,10 @@ public class IDRobot extends BasicRobot {
         arm.update();
         claw.update();
         flip.update();
-        follower.update();
+        if(!follower.isTeleDrive())
+            follower.update();
+        else
+            follower.updatePose();
         twist.update();
 
 
@@ -444,9 +448,9 @@ public class IDRobot extends BasicRobot {
                 cv.swapRed();
             queuer.setFirstLoop(false);
         }
-        boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "high basket");
-        boolean isB = gampad.readGamepad(op.gamepad1.b, "gamepad1_b", "specimen grab");
-        boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "retract slide(flat if from drop, vert if from grab)");
+        boolean isY = gampad.readGamepad(op.gamepad1.y||op.gamepad2.y, "gamepad1_y", "high basket");
+        boolean isB = gampad.readGamepad(op.gamepad1.b||op.gamepad2.b, "gamepad1_b", "specimen grab");
+        boolean isA = gampad.readGamepad(op.gamepad1.a||op.gamepad2.a, "gamepad1_a", "retract slide(flat if from drop, vert if from grab)");
         boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "specimen drop");
         boolean isX2 = gampad.readGamepad(op.gamepad2.x, "gamepad1_x", "specimen drop");
         boolean isA2 = gampad.readGamepad(op.gamepad2.a, "gamepad1_a", "retract slide(flat if from drop, vert if from grab)");
@@ -465,9 +469,11 @@ public class IDRobot extends BasicRobot {
         boolean isDD2 = op.gamepad2.dpad_down;
         boolean isLD2 = op.gamepad2.dpad_left;
 
-        if (TelescopicArm.ArmStates.HIGH_BUCKET.getState() || (TelescopicArm.ArmStates.HOVER.getState() && arm.getTargetExt() != 0 && arm.getTargetRot() != 15) || Claw.ClawStates.GIGA_OPEN.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
+        if ( (TelescopicArm.ArmStates.HOVER.getState() && arm.getTargetExt() != 0 && arm.getTargetRot() != 15) || Claw.ClawStates.GIGA_OPEN.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
             driveConst = 0.3;
-        } else if (!TelescopicArm.ArmTargetStates.SPECIMEN_GRAB.getState() && !TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
+        } else if(TelescopicArm.ArmStates.HIGH_BUCKET.getState()){
+            driveConst = .7;
+        }else if (!TelescopicArm.ArmTargetStates.SPECIMEN_GRAB.getState() && !TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
             driveConst = .7;
         }
 
@@ -476,7 +482,7 @@ public class IDRobot extends BasicRobot {
                 follower.startTeleopDrive();
                 follower.breakFollowing();
             }
-            follower.setTeleOpMovementVectors(-op.gamepad1.left_stick_y * driveConst * 1 / .7, -op.gamepad1.left_stick_x * max(.75 * driveConst, 0.4), -op.gamepad1.right_stick_x * driveConst * .8);
+            follower.rawDriving(new Pose2d(-op.gamepad1.left_stick_y * driveConst * 1 / .7, -op.gamepad1.left_stick_x * max(.75 * driveConst, 0.4), -op.gamepad1.right_stick_x * driveConst ), arm.getExt());
 //            isAutoGrab = false;
             targeted = false;
         }

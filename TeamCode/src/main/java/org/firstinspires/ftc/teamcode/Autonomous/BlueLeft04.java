@@ -12,7 +12,10 @@ public class BlueLeft04 extends LinearOpMode {
     BL04 aut;
     public void runOpMode() throws InterruptedException {
         aut = new BL04(this);
-        waitForStart();
+        while(!isStarted()){
+            aut.initPos();
+            aut.robot.update();
+        }
         resetRuntime();
         BasicRobot.time=0;
         while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()){

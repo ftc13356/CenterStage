@@ -30,12 +30,12 @@ public class DualPIDController {
     public static double x1 = 0;
     DcMotorEx ext, ext2, rot, extEnc, rotEnc;
     public static double  A_OFF = -9, MAX=31.3, MIN=0
-            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.025 , rP2 =0.025, rD2= 1.5
-            , rD = .5 , rF = 0.4, G = 0.3,rG = 0.122, rG2 = 0.2, HORIZ_LIM = 27.2
+            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.0005, rP = 0.03 , rP2 =0.04, rD2= 4
+            , rD =0.5 , rF = 0.4, G = 0.3,rG = 0.122, rG2 = 0.24, HORIZ_LIM = 27.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
-    double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel;
+    double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel, rotVel;
     public DualPIDController() {
 
         ext = op.hardwareMap.get(DcMotorEx.class, "extendMotor");
@@ -58,6 +58,7 @@ public class DualPIDController {
         curExt =0;
         curRot = 0;
         vel =0;
+        rotVel = 0;
 //        rP = 0.012; rP2 =0.02;rD2= 2;
 //        rD = 0.6; rG = 0.07;
 //        rG2 = 0.6;
@@ -86,6 +87,7 @@ public class DualPIDController {
         double d = extEnc.getVelocity()*TICKS_PER_IN;
         double rd = rotEnc.getVelocity()*TICKS_PER_DEG;
         vel = d;
+        rotVel = rd*-1;
         if((extension < curExt * TICKS_PER_IN) || abs(rotation - curRot*TICKS_PER_DEG + rd *0.3) < 30){
             ext.setPower(MULT*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
             ext2.setPower(MULT2*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
@@ -95,7 +97,7 @@ public class DualPIDController {
         double gScale  = 1;
 
         double power = 0;
-        if(curExt*TICKS_PER_IN<25 || extension > 25){
+        if(curExt*TICKS_PER_IN<19 || extension > 19){
             power = 13/voltage*((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r));
         }
         else{
@@ -172,6 +174,7 @@ public class DualPIDController {
     public boolean isMid(){return mid;}
 
     public double getVel(){return vel;}
+    public double getRotVel(){return rotVel;}
     public double getExtPosition(){
         return extEnc.getCurrentPosition();
     }
