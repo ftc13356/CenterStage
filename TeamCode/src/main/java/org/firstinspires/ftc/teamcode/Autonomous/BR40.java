@@ -40,11 +40,11 @@ public class BR40 {
 
     public void autoGrab() {
         robot.setArm(0,33,false);
-        robot.autoReset(true);
-        robot.followPath(new Point(36.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
+        robot.autoReset(false);
+//        robot.followPath(new Point(36.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
 //        robot.queuer.addDelay(.5);
-        robot.followPath(new Point(38.4 + x1, 67, Point.CARTESIAN), 0, 0, true, .9);
-        robot.autoGrab(0);
+        robot.followPath(new Point(39 + x1, 67, Point.CARTESIAN), 0, 0, true, .9);
+        robot.autoGrab(1);
         robot.queuer.waitForFinish();
         robot.setArm(0, 15, false);
         robot.queuer.addDelay(0.3);
@@ -97,25 +97,25 @@ public class BR40 {
     public void grabBluesSweep(){
         //grab1
         robot.autoReset(false);
-        robot.followPath(new Point(32+x3,34.85+y3, Point.CARTESIAN),0, Math.toRadians(-40), false, .8);
+        robot.followPath(new Point(31.5+x3,34.85+y3, Point.CARTESIAN),0, Math.toRadians(-40), false, .8);
         robot.queuer.addDelay(0.85);
-        robot.setArm(8+x1,12,true);
+        robot.setArm(10+x1,12,true);
 //        robot.queuer.addDelay(0.2);
         robot.setTwist(0.83+x12, true);
         robot.queuer.addDelay(0.2);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
-        robot.setArm(8+x1,0,false);
+        robot.setArm(10+x1,0,false);
         robot.queuer.addDelay(0.2);
         robot.setClaw(Claw.ClawStates.CLOSED, false);
         //drop1
         robot.followPath(new Point(22, 32, Point.CARTESIAN), Math.toRadians(-40), -3*Math.PI/4, false,0.9);
-        robot.setArm(7,5,true);
+        robot.setArm(8,5,true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab2
-        robot.followPath(new Point(33+x4,25.25+y4, Point.CARTESIAN),-3*Math.PI/4, Math.toRadians(-44) , false, .8);
+        robot.followPath(new Point(34.5+x4,25.25+y4, Point.CARTESIAN),-3*Math.PI/4, Math.toRadians(-44) , false, .8);
         robot.setTwist(0.83+x12, true);
-        robot.setArm(7,5,true);
+        robot.setArm(8,5,true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
 //        robot.queuer.addDelay(0.2);
         robot.setArm(9,0,false);
