@@ -48,7 +48,6 @@ dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
     implementation 'org.ftclib.ftclib:core:2.1.1'
-    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v3.0.3-ALPHA'
 
 }
 repositories {
