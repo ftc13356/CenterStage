@@ -26,7 +26,7 @@ public class BR40 {
     public static double x8 = 0, x9 = 0, x10=0, x12=0, y9 =0;
     public double  y2 = 0, y3 = 0, y4 = 0, y5 = 0, y6 = 0, y7 = 0, y8 = 0, y10=0,DROP_DELAY = 0.6;
     int position = 0;
-    boolean shouldPark = false, shouldAuto = true;
+    boolean shouldPark = false, shouldAuto = true; int isRed = 0;
 
     public BR40(LinearOpMode opmode) {
         robot = new IDRobot(opmode, false);
@@ -37,6 +37,7 @@ public class BR40 {
         boolean isRD = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "auto grab red");
         boolean isLD = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "auto grab red");
         boolean isUD = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "auto grab red");
+        boolean isDD = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "isRed");
         if(isLD){
             position+=1;
         }
@@ -46,7 +47,11 @@ public class BR40 {
         if(isUD){
             shouldAuto = !shouldAuto;
         }
+        if(isDD){
+            isRed++;
+        }
         packet.put("position",position);packet.put("shouldGrah",shouldAuto);
+        packet.put("isred",isRed);
         op.telemetry.addData("position", position);
         op.telemetry.addData("shouldGrah", shouldAuto);
 
@@ -69,7 +74,10 @@ public class BR40 {
 //        robot.followPath(new Point(36.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
 //        robot.queuer.addDelay(.5);
             robot.followPath(new Point(42 + x1, 72 + position * 4, Point.CARTESIAN), 0, 0, true, .9);
-            robot.autoGrab(1);
+            if(isRed>0)
+                robot.autoGrab(0);
+            else
+                robot.autoGrab(1);
             robot.queuer.waitForFinish();
             Vector2d dist3 = new Vector2d(DIST3_X, DIST3_Y);
             robot.followPath(new Point(17 + dist3.getX(), 33.5 + dist3.getY(), Point.CARTESIAN), 0, 0, false, false);
@@ -126,9 +134,9 @@ public class BR40 {
     public void grabBluesSweep(){
         //grab1
         robot.autoReset(false);
-        robot.followPath(new Point(29.5+x3,34.85+y3, Point.CARTESIAN),0, Math.toRadians(-40), false, .8);
+        robot.followPath(new Point(31+x3,33+y3, Point.CARTESIAN),0, Math.toRadians(-40), false, .8);
         robot.queuer.addDelay(0.85);
-        robot.setArm(11.5+x1,10,true);
+        robot.setArm(11.5+x1,5,true);
 //        robot.queuer.addDelay(0.2);
         robot.setTwist(0.83+x12, true);
         robot.queuer.addDelay(0.2);
@@ -138,12 +146,12 @@ public class BR40 {
         robot.queuer.queue(false, true);
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop1
-        robot.followPath(new Point(29.5, 32, Point.CARTESIAN), -3*Math.PI/4, -3*Math.PI/4, false,0.85);
+        robot.followPath(new Point(31, 32, Point.CARTESIAN), -3*Math.PI/4, -3*Math.PI/4, false,0.85);
         robot.setArm(13,5,true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab2
-        robot.followPath(new Point(31+x4,26.85+y4, Point.CARTESIAN),Math.toRadians(-44), Math.toRadians(-44) , false, .8);
+        robot.followPath(new Point(31.5+x4,25.5+y4, Point.CARTESIAN),Math.toRadians(-44), Math.toRadians(-44) , false, .8);
         robot.setTwist(0.83+x12, true);
         robot.setArm(11,5,true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
@@ -153,12 +161,12 @@ public class BR40 {
         robot.queuer.queue(false, true);
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop2
-        robot.followPath(new Point(29.5+x7, 21+y7, Point.CARTESIAN), -3*Math.PI/4, -3*Math.PI/4, false,0.9);
+        robot.followPath(new Point(31+x7, 21+y7, Point.CARTESIAN), -3*Math.PI/4, -3*Math.PI/4, false,0.9);
         robot.setArm(13,5,true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab3
-        robot.followPath(new Point(31.5+x8,17.5+y8, Point.CARTESIAN), Math.toRadians(-45), Math.toRadians(-43), false, .8);
+        robot.followPath(new Point(33+x8,16.5+y8, Point.CARTESIAN), Math.toRadians(-45), Math.toRadians(-43), false, .8);
         robot.setArm(12+x5,5,true);
         robot.setTwist(0.83+x12, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
