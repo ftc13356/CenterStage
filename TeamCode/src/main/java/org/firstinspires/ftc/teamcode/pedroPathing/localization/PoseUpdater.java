@@ -222,6 +222,10 @@ public class PoseUpdater {
         }
     }
 
+    public Pose getVelocityPose(){
+        return localizer.getVelocity();
+    }
+
     /**
      * This sets the current pose without using resettable offsets.
      *

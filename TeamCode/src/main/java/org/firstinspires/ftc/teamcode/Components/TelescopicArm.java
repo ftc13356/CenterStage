@@ -40,7 +40,7 @@ public class TelescopicArm extends DualPIDController {
     public static double HOVER_EXTEND_POS = 12;
     public static double HOVER_PITCH_POS = 15;
     public static double HANG_EXTEND_POS = 5;
-    public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.75, MANUAL_ROT_SPEED = 0.5, EXP_HEIGHT_OFFSET=3.5,AUTO_GRAB_PITCH = 9, AUTO_GRAB_EXTEND =12, AUTO_AUTO_GRAB_PITCH = 11;
+    public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.75, MANUAL_ROT_SPEED = 0.5, EXP_HEIGHT_OFFSET=3.5,AUTO_GRAB_PITCH = 10, AUTO_GRAB_EXTEND =12, AUTO_AUTO_GRAB_PITCH = 12;
 
     private final double EXTEND_MOTOR_BUFFER = 5;
     private final double PITCH_MOTOR_BUFFER = 5;
@@ -179,7 +179,7 @@ public class TelescopicArm extends DualPIDController {
                 i.state = false;
             }
         } else{
-            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(2, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+10)*180/PI);
+            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(4, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+10)*180/PI);
         }
     }
     public void lowerToIntake(){

@@ -271,6 +271,9 @@ public class Follower {
         vec = vec.rotated(-h);
         return vec;
     }
+    public Pose getVelocityPose(){
+        return poseUpdater.getVelocityPose();
+    }
 
     /**
      * This returns the current acceleration of the robot as a Vector.
