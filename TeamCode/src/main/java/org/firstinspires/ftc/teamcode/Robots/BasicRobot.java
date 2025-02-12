@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
+import static java.lang.Math.abs;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -36,6 +38,7 @@ public class BasicRobot{
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
     public static final boolean isSim = false;
+    public double lastLoopTime = -100;
 
     /**
      * instantiates basic robot
@@ -66,6 +69,7 @@ public class BasicRobot{
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         voltage = voltageSensor.getVoltage();
+        lastLoopTime = -100;
     }
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         this(opMode, p_isTeleop, false);
@@ -80,11 +84,12 @@ public class BasicRobot{
 
     public void update(){
         loops++;
-        double newTime = op.getRuntime();
-        if(newTime!=time){
-            packet.put("loopTime", loops/time);
+        time = op.getRuntime();
+        if(abs(time-lastLoopTime)>1){
+            packet.put("loopTime", loops/abs(time-lastLoopTime));
+            lastLoopTime = time;
+            loops=0;
         }
-        time = newTime;
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
         packet.clearLines();
