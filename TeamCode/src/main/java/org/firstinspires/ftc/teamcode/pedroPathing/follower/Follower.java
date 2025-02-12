@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.follower;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.absoluteTimeoutTime;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.convertToPolar;
@@ -25,8 +26,12 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstan
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.useSecondaryTranslationalPID;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.xMovement;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
 import static java.lang.Math.signum;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -59,6 +64,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -157,6 +163,12 @@ public class Follower {
     public static boolean useHeading = true;
     public static boolean useDrive = true;
 
+    boolean isStable=false;
+
+    private ArrayList<Double> xVeloHistory, yVeloHistory, hVeloHistory;
+
+    double lastStableTime = -100;
+
     /**
      * This creates a new Follower given a HardwareMap.
      *
@@ -164,6 +176,11 @@ public class Follower {
      */
     public Follower(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
+        xVeloHistory = new ArrayList<>(Collections.nCopies(10,0.0));
+        yVeloHistory = new ArrayList<>(Collections.nCopies(10,0.0));
+        hVeloHistory = new ArrayList<>(Collections.nCopies(10,0.0));
+        lastStableTime = -100;
+        isStable = false;
         initialize();
     }
 
@@ -410,6 +427,10 @@ public class Follower {
         closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), 1);
     }
 
+    public double lastStableTime(){
+        return lastStableTime;
+    }
+
     /**
      * This holds a Point.
      *
@@ -488,13 +509,77 @@ public class Follower {
         breakFollowing();
         teleopDrive = true;
     }
+    public Pose getStableRotVelo(){
+        double xTot =0, yTot = 0, hTot = 0;
+        int size = xVeloHistory.size();
+        for (int i=0; i<size; i++){
+            xTot+=xVeloHistory.get(i);
+            yTot += yVeloHistory.get(i);
+            hTot += hVeloHistory.get(i);
+        }
+        return new Pose(xTot/size, yTot/size, hTot/size);
+
+    }
+    public boolean isVeloStable(){
+        double xMax=xVeloHistory.get(0), yMax = yVeloHistory.get(0), hMax = clampAngle(hVeloHistory.get(0));
+        double xMin=xVeloHistory.get(0), yMin = yVeloHistory.get(0), hMin = clampAngle(hVeloHistory.get(0));
+        for(int i=1;i<xVeloHistory.size();i++){
+            if(xVeloHistory.get(i)>xMax){
+                xMax = xVeloHistory.get(i);
+            }if(xVeloHistory.get(i)<xMin){
+                xMin = xVeloHistory.get(i);
+            }if(yVeloHistory.get(i)>yMax){
+                yMax = yVeloHistory.get(i);
+            }if(yVeloHistory.get(i)<yMin){
+                yMin = yVeloHistory.get(i);
+            }if(hVeloHistory.get(i)>hMax){
+                hMax = clampAngle(hVeloHistory.get(i));
+            }if(hVeloHistory.get(i)<hMin){
+                hMin = clampAngle(hVeloHistory.get(i));
+            }
+        }
+        boolean stable = xMax - xMin<2 && yMax-yMin<3 && abs(hMax)<toRadians(10) && abs(hMin) < toRadians(10);
+        packet.put("xDiff", xMax-xMin);
+        packet.put("yDiff", yMax-yMin);
+        packet.put("hDiff", max(hMax,hMin));
+        double stabl = 10;
+        if(!stable)
+            stabl=0;
+        packet.put("stable", stable);
+
+        if(stable && !isStable)
+            lastStableTime = time;
+        isStable = stable;
+        return stable;
+
+    }
+
+    public double clampAngle(double angle_rad){
+        double ret = angle_rad*180/PI;
+        while(ret>180){
+            ret-=360;
+        }
+        while(ret<-180){
+            ret+=360;
+        }
+        return ret*PI/180;
+    }
 
     /**
      * Calls an update to the PoseUpdater, which updates the robot's current position estimate.
      */
     public void updatePose() {
         poseUpdater.update();
-
+        Pose velo = poseUpdater.getVelocityPose();
+        double h = poseUpdater.getPose().getHeading();
+        Vector2d vect = new Vector2d(velo.getX(), velo.getY()).rotated(-h);
+        velo = new Pose(vect.getX(), vect.getY(), clampAngle(velo.getHeading()));
+        xVeloHistory.remove(0);
+        xVeloHistory.add(velo.getX());
+        yVeloHistory.remove(0);
+        yVeloHistory.add(velo.getY());
+        hVeloHistory.remove(0);
+        hVeloHistory.add(velo.getHeading());
         if (drawOnDashboard) {
             dashboardPoseTracker.update();
         }

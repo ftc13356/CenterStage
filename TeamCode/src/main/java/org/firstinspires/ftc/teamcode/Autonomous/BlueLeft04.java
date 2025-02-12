@@ -13,18 +13,26 @@ public class BlueLeft04 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         aut = new BL04(this);
         while(!isStarted()){
-            aut.initPos();
-            aut.robot.update();
+            aut.initLoop();
         }
         resetRuntime();
         BasicRobot.time=0;
         while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()){
             aut.nonSubCycles();
             aut.autoGrahCycle(0);
-            aut.autoGrahCycle(0);
-            aut.autoGrahCycle(4);
-            aut.autoGrahCycle(4);
+            aut.autoGrahCycle(1);
+            aut.autoGrahCycle(2);
+            aut.autoGrahCycle(3);
+            if(BasicRobot.time>28.8&& !aut.isDroppi()){
+                break;
+            }
             aut.update();
         }
+        aut.robot.queuer.reset();
+        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<30.2){
+            aut.park();
+            aut.update();
+        }
+
     }
 }

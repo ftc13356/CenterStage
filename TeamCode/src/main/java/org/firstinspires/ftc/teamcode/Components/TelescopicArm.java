@@ -40,7 +40,8 @@ public class TelescopicArm extends DualPIDController {
     public static double HOVER_EXTEND_POS = 12;
     public static double HOVER_PITCH_POS = 15;
     public static double HANG_EXTEND_POS = 5;
-    public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.75, MANUAL_ROT_SPEED = 0.5, EXP_HEIGHT_OFFSET=3.5,AUTO_GRAB_PITCH = 10, AUTO_GRAB_EXTEND =12, AUTO_AUTO_GRAB_PITCH = 12;
+    public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.75, MANUAL_ROT_SPEED = 0.5, EXP_HEIGHT_OFFSET=3.5,
+            AUTO_GRAB_PITCH = 13, AUTO_GRAB_EXTEND =13, AUTO_AUTO_GRAB_PITCH = 13;
 
     private final double EXTEND_MOTOR_BUFFER = 5;
     private final double PITCH_MOTOR_BUFFER = 5;
