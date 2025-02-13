@@ -54,8 +54,8 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.8, FOR_MULT = 0.78, SIDE_CONST = 2.5, SIDE_MULT = 0.8, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.12, MIN_EXT = 7.2, HANGEXT1 = 17, HANGROT1 = 110,
-            HANGEXT2 = 1, HANGROT2 = 110, HANGEXT3 = 5, HANGROT3 = 50, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0.4;
+    public static double FOR_CONST = 3.8, FOR_MULT = 0.8, SIDE_CONST = 2.5, SIDE_MULT = 0.8, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.12, MIN_EXT = 7.2, HANGEXT1 = 17, HANGROT1 = 110,
+            HANGEXT2 = 1, HANGROT2 = 110, HANGEXT3 = 5, HANGROT3 = 50, LAG_CONSST = .25, MAX_EXT = 15, RETRACT_CONST = 0, STABLIZE_TIME = 0.8;
     double driveConst = .7;
     double lastMoveTime = -100;
     Pose grabPoint = new Pose(0, 0, 0);
@@ -205,7 +205,7 @@ public class IDRobot extends BasicRobot {
     public void followPathNotTargeted(Point end, Point end2, double pathMaxVelMultipler, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous,  targeted || !queuers.get(2).isEmpty())) {
             if (!follower.isBusy() && !targeted && queuers.get(2).isEmpty()) {
-                if (follower.getPose().getX() < 75 && follower.isVeloStable()) {
+                if (follower.getPose().getX() < 75 && follower.isVeloStable() && abs(BasicRobot.time - follower.lastStableTime())>STABLIZE_TIME) {
                     Pose current = follower.getPose();
                     PathChain path2 = follower.pathBuilder()
                             .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
@@ -213,7 +213,7 @@ public class IDRobot extends BasicRobot {
                             .setPathMaxVelMultiplier(pathMaxVelMultipler)
                             .build();
                     follower.followPath(path2);
-                } else if(follower.isVeloStable()) {
+                } else if(follower.isVeloStable()&& abs(BasicRobot.time - follower.lastStableTime())>STABLIZE_TIME) {
                     Pose current = follower.getPose();
                     PathChain path2 = follower.pathBuilder()
                             .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end2))
@@ -390,7 +390,7 @@ public class IDRobot extends BasicRobot {
                     cv.resetCenter();
                     flip.flipTo(Flip.FlipStates.RESET);
                 }
-                if (isAutoGrab && (follower.getVelocityMagnitude() < 0.5 && abs(arm.getVel()) < 1 && abs(follower.getVelocityPose().getHeading()) < toRadians(1) /*|| (follower.isVeloStable())*/)) {
+                if (isAutoGrab && (follower.getVelocityMagnitude() < 1 && abs(arm.getVel()) < 1 && abs(follower.getVelocityPose().getHeading()) < toRadians(1) || (follower.isVeloStable()))) {
 
                     double[] relCent = cv.getCenter().clone();
 
@@ -408,7 +408,7 @@ public class IDRobot extends BasicRobot {
 //                            claw.goTo(Claw.ClawStates.OPEN);
                                 targeted = true;
                                 follower.stopTeleopDrive();
-                                Vector2d relVect = new Vector2d(0, ((-relCent[1] + Math.signum(-relCent[1]) * SIDE_CONST)) * SIDE_MULT - follower.getStableRotVelo().getY() * cv.getLatency()).rotated(follower.getPose().getHeading());
+                                Vector2d relVect = new Vector2d(0, ((-relCent[1] + Math.signum(-relCent[1]- follower.getStableRotVelo().getY()) * SIDE_CONST)) * SIDE_MULT - follower.getStableRotVelo().getY() * cv.getLatency()).rotated(follower.getPose().getHeading());
                                 Vector2d relVect2 = new Vector2d(0, (-relCent[1] * SIDE_MULT)).rotated(follower.getPose().getHeading());
                                 Pose pos = follower.getPose();
                                 pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
@@ -430,7 +430,7 @@ public class IDRobot extends BasicRobot {
                                     Point newTarg = new Point(pos2);
                                     if (curTarg == null) {
                                         follower.holdPoint(new BezierPoint(new Point(pos)), head);
-                                    } else if (curTarg.distanceFrom(newTarg) > 0.3) {
+                                    } else if (curTarg.distanceFrom(newTarg) > 0.05) {
                                         follower.holdPoint(new BezierPoint(new Point(pos)), head);
                                     }
 //                                    if(newExt>arm.getTargetExt()+.25){

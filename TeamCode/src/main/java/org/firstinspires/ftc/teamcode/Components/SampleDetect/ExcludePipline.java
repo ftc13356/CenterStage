@@ -52,7 +52,7 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat(), maskedImage = new Mat();
 
-    public static double AREA_THRESH = .7, FCL = 1, UP_TOLERANCE = 0.75, DOWN_TOLERANCE = 0.8, CLASSUP_TOL = 0.8, CLASSDOWN_TOL = 0.7;
+    public static double AREA_THRESH = .82, FCL = 1, UP_TOLERANCE = 0.75, DOWN_TOLERANCE = 0.8, CLASSUP_TOL = 0.5, CLASSDOWN_TOL = 0.3;
     double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
     double objectHeight = 1.5;  // Replace with your object's height in real-world units
 
@@ -285,6 +285,9 @@ public class ExcludePipline extends OpenCvPipeline {
                                 false,
                                 Calib3d.SOLVEPNP_SQPNP
                         );
+                        for (int j = 0; j < 4; j++) {
+                            Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 0, 255), 2);
+                        }
                         if (success) {
                             double[] coords = new double[3];
                             tvec.get(0, 0, coords);
@@ -296,7 +299,11 @@ public class ExcludePipline extends OpenCvPipeline {
 
                             double consta = 1.16 * pow(Imgproc.contourArea(contour) / (minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT) * multiplia;
                             double heighter = consta * (coords[2] * cos(TelescopicArm.angle * PI / 180) + coords[0] * sin(TelescopicArm.angle * PI / 180));
-                            if (heighter > TelescopicArm.expectedHeight - 1 && heighter < TelescopicArm.expectedHeight + 3.5) {
+                            centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
+                            for (int j = 0; j < 4; j++) {
+                                Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(255, 255, 0), 2);
+                            }
+                            if (heighter > TelescopicArm.expectedHeight - 1 && heighter < TelescopicArm.expectedHeight + 1.5) {
                                 centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
                                 for (int j = 0; j < 4; j++) {
                                     Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);

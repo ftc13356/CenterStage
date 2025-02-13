@@ -106,7 +106,7 @@ public class CVMaster {
         exclude.setColor(newy);
     }
     public double getLatency(){
-        return 0/*Math.min(1/ webcam.getFps()+.1,0.35)*/;
+        return Math.min(1/ webcam.getFps(),.2/*,0.1+webcam.getTotalFrameTimeMs()*/);
     }
     public void swapRed(){
         exclude.setColor(0);
