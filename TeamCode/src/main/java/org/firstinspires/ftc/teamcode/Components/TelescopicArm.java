@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDContro
 public class TelescopicArm extends DualPIDController {
     public static double INTAKE_EXTEND_POS = 4;
     public static double INTAKE_PITCH_POS = 3;
-    public static double HIGHBUCKET_EXTEND_POS = 31.3;
+    public static double HIGHBUCKET_EXTEND_POS = 32.3;
     public static double HIGHBUCKET_PITCH_POS = 96;
     public static double LOWBUCKET_EXTEND_POS = 16;
     public static double LOWBUCKET_PITCH_POS = 100;
@@ -41,7 +41,7 @@ public class TelescopicArm extends DualPIDController {
     public static double HOVER_PITCH_POS = 15;
     public static double HANG_EXTEND_POS = 5;
     public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.75, MANUAL_ROT_SPEED = 0.5, EXP_HEIGHT_OFFSET=3,
-            AUTO_GRAB_PITCH = 11, AUTO_GRAB_EXTEND =13, AUTO_AUTO_GRAB_PITCH = 11;
+            AUTO_GRAB_PITCH = 11, AUTO_GRAB_EXTEND =13, AUTO_AUTO_GRAB_PITCH = 14;
 
     private final double EXTEND_MOTOR_BUFFER = 5;
     private final double PITCH_MOTOR_BUFFER = 5;
@@ -184,7 +184,7 @@ public class TelescopicArm extends DualPIDController {
         }
     }
     public void lowerToIntake(){
-        super.goTo((super.getTargetExt()+7)*cos((super.getTargetRot())*PI/180)-7,0);
+        super.goTo((super.getTargetExt()+4)*cos((super.getTargetRot())*PI/180)-4,0);
         ArmStates.INTAKE.setStateTrue();
     }
 

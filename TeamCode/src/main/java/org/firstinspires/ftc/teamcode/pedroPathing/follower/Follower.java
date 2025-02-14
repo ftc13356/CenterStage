@@ -538,7 +538,7 @@ public class Follower {
                 hMin = clampAngle(hVeloHistory.get(i));
             }
         }
-        boolean stable = xMax - xMin<2 && yMax-yMin<3 && abs(hMax)<toRadians(10) && abs(hMin) < toRadians(10);
+        boolean stable = xMax - xMin<4 && yMax-yMin<4 /*&& abs(hMax)<toRadians(20) && abs(hMin) < toRadians(20)*/;
         packet.put("xDiff", xMax-xMin);
         packet.put("yDiff", yMax-yMin);
         packet.put("hDiff", max(hMax,hMin));
@@ -547,8 +547,9 @@ public class Follower {
             stabl=0;
         packet.put("stable", stable);
 
-        if(stable && !isStable)
+        if(stable && !isStable && abs(time-lastStableTime)>.5)
             lastStableTime = time;
+
         isStable = stable;
         return stable;
 

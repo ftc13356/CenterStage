@@ -24,18 +24,18 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 @Config
 public class BL04 {
     public IDRobot robot;
-    public static double X1 = 9, X2 = 27, X3= 12.5, X4= 26.5, X6=30, SX1=57.9443447037702, SX2=57.949730700179536, SX3=60.7, SX4=12.0310592459605,SX5=51.70556552962298, SX6=34.77199281867145;
-    public static double Y1 = 125, Y2 = 122.5, Y3 = 127.5, Y4=128.5, Y6=127.5, SY1=98.73339317773788, SY2=120.79353680430879, SY3=106, SY4=128.5858168761221, SY5=119.6983842010772, SY6=118.53500897666068;
-    public static double H1 = -70, H2 = -15, H3 = -30, H4 = 0, H6=35, H7 = -30;
-    public static double EXT1 = 9, EXT2 = 10, EXT3 = 9.5, CLOSE_DELAY = 0.00, DROP_DELAY_0 = 0.3, DROP_DELAY_1 = 0.6, DROP_DELAY_2= 0.7, DROP_DELAY_3 = 0.6
-            , DOWN_DELAY = 0.7, GRABDROP_DELAY = 0.1, STRAFE_DELAY = 1.5;
+    public static double X1 = 9, X2 = 26.5, X3= 12.75, X4= 27.5, X6=29.5, SX1=59.9443447037702, SX2=57.949730700179536, SX3=60.7, SX4=10.0310592459605,SX5=51.70556552962298, SX6=34.77199281867145;
+    public static double Y1 = 125, Y2 = 122.5, Y3 = 129.5, Y4=129, Y6=129, SY1=98.73339317773788, SY2=120.79353680430879, SY3=106, SY4=130.5858168761221, SY5=119.6983842010772, SY6=118.53500897666068;
+    public static double H1 = -70, H2 = -11, H3 = -33, H4 = 0, H6=35, H7 = -30;
+    public static double EXT1 = 9.5, EXT2 = 9.5, EXT3 = 9.5, CLOSE_DELAY = 0.00, DROP_DELAY_0 = 0.4, DROP_DELAY_1 = 0.6, DROP_DELAY_2= 0.75, DROP_DELAY_3 = 0.7
+            , DOWN_DELAY = 0.75, GRABDROP_DELAY = 0.1, STRAFE_DELAY = 0.0;
     int[] positions = {0,0,0,0};
     int ind = 0;
     boolean isDroppi= false;
 
     public BL04(LinearOpMode opmode) {
         robot = new IDRobot(opmode, false);
-        robot.follower.setStartingPose(new Pose(7, 112, toRadians(-90)));
+        robot.follower.setStartingPose(new Pose(6.7, 112, toRadians(-90)));
         robot.update();
         robot.update();
         isDroppi = false;
@@ -74,7 +74,7 @@ public class BL04 {
 //      Preload
         robot.queuer.queue(false, true);
         robot.queuer.addDelay(DROP_DELAY_0);
-        robot.followPath(new Point(X3-1, Y3+1.4, Point.CARTESIAN), toRadians(-90), toRadians(H3), false,0.85);
+        robot.followPath(new Point(X3-3.5, Y3+1.4, Point.CARTESIAN), toRadians(-90), toRadians(-30), false,0.98);
         robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS, true);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
@@ -143,7 +143,7 @@ public class BL04 {
         robot.followPath(new Point(X6, Y6, Point.CARTESIAN), toRadians(H3), toRadians(H6), false);
         robot.setArm(0,HIGHBUCKET_PITCH_POS,true);
         robot.queuer.addDelay(DOWN_DELAY);
-        robot.setArm(EXT3,2, true);
+        robot.setArm(EXT3,3, true);
         robot.queuer.addDelay(0.1);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
         robot.setTwist(0.2, true);
@@ -171,7 +171,7 @@ public class BL04 {
         if(robot.queuer.queue(false, true)){
             isDroppi = false;
         }
-        robot.followPath(new Point(SX2, SY2,1),new Point(SX1+positions[ind]*5, SY1+positions[ind]*1, Point.CARTESIAN), toRadians(-20), toRadians(-90), false, 4.4, false, 1);
+        robot.followPath(new Point(SX2, SY2,1),new Point(SX1+positions[ind]*5, SY1+positions[ind]*1, Point.CARTESIAN), toRadians(-20), toRadians(-87), false, 5, false, 1);
         robot.setArm(0,HIGHBUCKET_PITCH_POS,true);
         robot.queuer.addDelay(0.1);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
@@ -184,7 +184,7 @@ public class BL04 {
         if(robot.queuer.queue(false, true) || !robot.queuers.get(2).isEmpty()){
             isDroppi = true;
         }
-        robot.followPath( new Point(SX5, SY5,1),new Point(SX4, SY4, Point.CARTESIAN), toRadians(-60), toRadians(-33), false ,5,false,.97);
+        robot.followPath( new Point(SX5, SY5,1),new Point(SX4, SY4, Point.CARTESIAN), toRadians(-60), toRadians(-33), false ,4.7,false,.97);
         robot.setArm(0, HIGHBUCKET_PITCH_POS, true);
         robot.queuer.addDelay(.5);
         robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS, true);
