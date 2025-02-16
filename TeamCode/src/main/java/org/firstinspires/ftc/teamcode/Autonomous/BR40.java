@@ -65,7 +65,7 @@ public class BR40 {
     }
 
     public void placeSpeci() {
-        robot.followPath(new Point(41.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
+        robot.followPath(new Point(38.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
         robot.setArm(17,38.5,true);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
@@ -127,30 +127,30 @@ public class BR40 {
     public void grabBluesSweep(){
         //grab1
         robot.queuer.addDelay(0.4);
-        robot.followPath(new Point(31.5+x3,33.5+y3, Point.CARTESIAN),0, Math.toRadians(-40), false, .8);
+        robot.followPath(new Point(32.5+x3,31.5+y3, Point.CARTESIAN),0, Math.toRadians(-40), false, .8);
         robot.autoReset(true);
         robot.queuer.addDelay(1.25);
-        robot.setArm(12+x1,8,true);
+        robot.setArm(10+x1,8,true);
 //        robot.queuer.addDelay(0.2);
         robot.setTwist(0.83+x12, true);
         robot.queuer.addDelay(0.6);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
-        robot.setArm(12+x1,0,false);
+        robot.setArm(10+x1,0,false);
         robot.queuer.addDelay(0.3);
         robot.queuer.queue(false, true);
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop1
         robot.followPath(new Point(30, 32, Point.CARTESIAN), -3*Math.PI/4, -3*Math.PI/4, false,0.85);
-        robot.setArm(13.5,5,true);
+        robot.setArm(11.5,5,true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab2
-        robot.followPath(new Point(32+x4,26+y4, Point.CARTESIAN),Math.toRadians(-44), Math.toRadians(-44) , false, .8);
+        robot.followPath(new Point(33+x4,26+y4, Point.CARTESIAN),Math.toRadians(-44), Math.toRadians(-44) , false, .8);
         robot.setTwist(0.83+x12, true);
-        robot.setArm(13.5,8,true);
+        robot.setArm(12,8,true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
 //        robot.queuer.addDelay(0.2);
-        robot.setArm(13.5,0,false);
+        robot.setArm(12,0,false);
         robot.queuer.addDelay(0.2);
         robot.queuer.queue(false, true);
         robot.setClaw(Claw.ClawStates.CLOSED, true);
@@ -160,11 +160,11 @@ public class BR40 {
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         //grab3
-        robot.followPath(new Point(32.5+x8,18+y8, Point.CARTESIAN), Math.toRadians(-45), Math.toRadians(-43), false, .8);
-        robot.setArm(13.5+x5,7,true);
+        robot.followPath(new Point(34+x8,16+y8, Point.CARTESIAN), Math.toRadians(-45), Math.toRadians(-43), false, .8);
+        robot.setArm(11.5+x5,7,true);
         robot.setTwist(0.83+x12, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
-        robot.setArm(13.5+x5,0,false);
+        robot.setArm(11.5+x5,0,false);
         robot.queuer.addDelay(0.4);
         robot.queuer.queue(false, true);
 //        robot.queuer.addDelay(0.2);
@@ -180,7 +180,7 @@ public class BR40 {
         robot.followPath(new  Point(23, 24.5, Point.CARTESIAN),0,0, false,.8);
         robot.setTwist(Twist.TwistStates.SPECIMEN, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
-        robot.followPath(new Point(17, 23.5, Point.CARTESIAN), 0, 0, false, false);
+        robot.followPath(new Point(19, 22.5, Point.CARTESIAN), 0, 0, false, false);
         robot.setClaw(Claw.ClawStates.CLOSED, false);
 //        robot.queuer.addDelay(0.4);
     }
@@ -223,7 +223,7 @@ public class BR40 {
     }
 
     public void placeSpeci2(int i) {
-        robot.followPath(new Point(21, 68 + i, 1),new Point(42 + x7, 68 + i, Point.CARTESIAN), 0,0, false,0.9);
+        robot.followPath(new Point(21, 68 + i, 1),new Point(38 + x7, 68 + i, Point.CARTESIAN), 0,0, false,0.9);
         robot.setArm(0,TelescopicArm.ArmStates.HIGH_SPECIMEN.getPitchPos(),true);
         robot.queuer.addDelay(RAISE_DELAY);
         robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN.getExtendPos(), TelescopicArm.ArmStates.HIGH_SPECIMEN.getPitchPos(),true);
