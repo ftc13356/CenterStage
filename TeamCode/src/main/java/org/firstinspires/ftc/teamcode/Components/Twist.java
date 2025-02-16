@@ -153,7 +153,7 @@ public class Twist {
             }
             p_ang += 180;
         }
-        p_ang = min(1, p_ang / 150);
+        p_ang = min(1, p_ang / 170);
         twist.setPosition(p_ang);
     }
 

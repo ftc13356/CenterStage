@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 @Config
 public class CVMaster {
-    public static boolean shouldStream = false;
+    public static boolean shouldStream = true;
     public static boolean isHsvTest = false;
     OpenCvWebcam webcam;
 
@@ -78,10 +78,10 @@ public class CVMaster {
                         webcam.startStreaming(
                                     1280, 720, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
-                        webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.SOFTWARE);
+                        webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.NATIVE_VIEW);
 //                        dashboard.startCameraStream(webcam,5);
 
-//                        if(shouldStream)
+                        if(shouldStream)
                             dashboard.startCameraStream(webcam, 4);
                         LOGGER.log("Camera Streaming now!");
                     }

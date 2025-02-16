@@ -27,15 +27,14 @@ import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
 public class DualPIDController {
     public static double x1 = 0;
     DcMotorEx ext, ext2, rot, extEnc, rotEnc;
-    public static double  A_OFF = -9, MAX=32.3, MIN=0
-            , ROTMAX = 158, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.01, rP = 0.033 , rP2 =0.015, rD2= 0.2
-            , rD =0.55 , rF = 0.2, G = 0.3,rG = 0.08, rG2 = 0.24, HORIZ_LIM = 30.2
+    public static double  A_OFF = -15, MAX=31.5, MIN=0
+            , ROTMAX = 162, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.015 , rP2 =0.03, rD2= 2
+            , rD = .3 , rF = 0.4, G = 0.3,rG = 0.13, rG2 = 0.35, HORIZ_LIM = 27.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel, rotVel;
     public DualPIDController() {
-
         ext = op.hardwareMap.get(DcMotorEx.class, "extendMotor");
         ext2 = op.hardwareMap.get(DcMotorEx.class, "extendMotor2");
         extEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
@@ -94,24 +93,24 @@ public class DualPIDController {
         }
         double rErr = rotation - curRot*TICKS_PER_DEG;
         double r = curExt*TICKS_PER_IN/MAX;
-        double gScale  = 1;
+        double gScale  = 1/(1-abs(rd)/300);
 
         double power = 0;
-        if(curExt*TICKS_PER_IN<19 || extension > 19){
-            power = 13/voltage*((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r));
+        if(curExt*TICKS_PER_IN<23 || extension > 23 || true){
+            power = 13/voltage*((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r))*gScale;
         }
         else{
-            power = Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r);
+            power = Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r)-.1;
         }
 //        if(signum(rd) != signum(power)){
 //            gScale = 1/(1-abs(rd/MAX_SPEED/TICKS_PER_DEG));
 //        }
         power*=gScale;
 //        packet.put("powab4rF",power);
-        if(abs(rd)<0.5 && abs(rErr)>1 && (curRot<90|| abs(rErr) > 3)  && (curRot*TICKS_PER_DEG>10||targetRot>1)){
+        if(abs(rd)<0.5 && abs(rErr)>2 && (targetRot>1)){
             power+=rF*signum(rErr);
         }
-        if(abs(rErr)<10&&rd==0&&targetRot==0||lastPower==0&&targetRot==0)
+        if(abs(rErr)<10&&targetRot==0||lastPower==0&&targetRot==0)
             power=0;
         rot.setPower(power);
         lastPower = power;

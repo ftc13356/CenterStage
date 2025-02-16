@@ -323,9 +323,10 @@ public class Follower {
         double vf = rawDrive.getX();
         double vs = rawDrive.getY();
         double vw = rawDrive.getHeading();
-        if(abs(vf-getRotVelocity().getX()/xMovement)> (1.3-height/DualPIDController.MAX) * 1.5){
-            vf =getRotVelocity().getX()/xMovement +  Math.signum(vf-getRotVelocity().getX()/xMovement) * (1.3-height/DualPIDController.MAX)*1.5;
-        }
+        vf = vf * (1.5 - height/DualPIDController.MAX)/1.5;
+//        if(abs(vf-getRotVelocity().getX()/xMovement)> (1.3-height/DualPIDController.MAX) * 1.2){
+//            vf =getRotVelocity().getX()/xMovement +  Math.signum(vf-getRotVelocity().getX()/xMovement) * (1.3-height/DualPIDController.MAX)*1.2;
+//        }
         leftFront.setPower(vf+vs-vw);
         leftRear.setPower(vf-vs-vw);
         rightFront.setPower(vf-vs+vw);
@@ -515,7 +516,7 @@ public class Follower {
         for (int i=0; i<size; i++){
             xTot+=xVeloHistory.get(i);
             yTot += yVeloHistory.get(i);
-            hTot += hVeloHistory.get(i);
+            hTot += clampAngle(hVeloHistory.get(i));
         }
         return new Pose(xTot/size, yTot/size, hTot/size);
 
@@ -538,7 +539,7 @@ public class Follower {
                 hMin = clampAngle(hVeloHistory.get(i));
             }
         }
-        boolean stable = xMax - xMin<4 && yMax-yMin<4 /*&& abs(hMax)<toRadians(20) && abs(hMin) < toRadians(20)*/;
+        boolean stable = xMax - xMin<4 && yMax-yMin<4 && abs(hMax)<toRadians(10) && abs(hMin) < toRadians(10);
         packet.put("xDiff", xMax-xMin);
         packet.put("yDiff", yMax-yMin);
         packet.put("hDiff", max(hMax,hMin));

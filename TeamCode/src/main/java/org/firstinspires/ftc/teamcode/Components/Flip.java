@@ -17,13 +17,14 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Flip {
     RFServo flip;
-    public static double RESET_POS = 0.68;
+    public static double RESET_POS = 0.67;
 
-    public static double RETRACT_POS = 0.48;
-    public static double SUBMERSIBLE_POS = 0.2;
-    public static double SPECIMEN_POS = .83;
-    public static double SPECIMENGRAB_POS = 0.71;
-    public static double BUCKET_POS = 0.75, FLIP_TIME = 0.3;
+    public static double RETRACT_POS = 0.47;
+    public static double SUBMERSIBLE_POS = 0.26;
+    public static double SPECIMEN_POS = .87;
+    public static double SPECIMENGRAB_POS = 0.79;
+    public static double BUCKET_POS = 0.77, AUTO_GRAH_POS= .55,
+            FLIP_TIME = 0.1;
 
     private final double FLIP_SERVO_BUFFER = 0.05;
 
@@ -54,7 +55,8 @@ public class Flip {
         SPECIMEN(false, SPECIMEN_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
         RETRACT(false, Flip.RETRACT_POS),
-        BUCKET(false, BUCKET_POS);
+        BUCKET(false, BUCKET_POS),
+        AUTO_GRAH(false, AUTO_GRAH_POS);
         boolean state;
         double position;
         FlipStates(boolean p_state, double p_position){
@@ -79,7 +81,9 @@ public class Flip {
         SPECIMEN(false, SPECIMEN_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
         RETRACT(false, RETRACT_POS),
-        BUCKET(false, BUCKET_POS);
+        BUCKET(false, BUCKET_POS),
+        AUTO_GRAH(false, AUTO_GRAH_POS);
+
         boolean state;
         double position;
         FlipTargetStates(boolean p_state, double p_position){

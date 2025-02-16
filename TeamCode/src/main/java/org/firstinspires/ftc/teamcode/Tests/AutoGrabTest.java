@@ -33,9 +33,9 @@ public class AutoGrabTest {
         robot.queuer.addDelay(1);
         robot.queuer.queue(false, true);
         robot.setArm(0, 15, false);
-        robot.queuer.addDelay(0.3);
+        robot.queuer.addDelay(1);
         robot.setFlip(Flip.FlipStates.RESET, true);
-        robot.queuer.addDelay(0.3);
+        robot.queuer.addDelay(1);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
     }
 

@@ -27,7 +27,7 @@ public class RFServo implements Servo {
 
     private double plastTime = -100;
 
-    private double target = 0;
+    private double target = -100;
 
     final double SERVO_LIMIT;
 
@@ -166,7 +166,7 @@ public class RFServo implements Servo {
     }
 
     public void update(){
-        if(position != target){
+        if(position != target && target !=-100){
             setPosition(target);
         }
     }

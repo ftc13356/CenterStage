@@ -42,6 +42,8 @@ import java.util.List;
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
     List<MatOfPoint> contours = new ArrayList<>();
+
+    public static boolean printStuff= true;
     public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=.7,
             FOR_CONST = 3;
     public static int UPPER_THRESH = 100, LOWER_THRESH = 50, YUPPER_THRESH = 120, YLOWER_THRESH = 60, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 3;
@@ -52,7 +54,7 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat(), maskedImage = new Mat();
 
-    public static double AREA_THRESH = .82, FCL = 1, UP_TOLERANCE = 0.75, DOWN_TOLERANCE = 0.8, CLASSUP_TOL = 0.5, CLASSDOWN_TOL = 0.3;
+    public static double AREA_THRESH = .82, FCL = 1, UP_TOLERANCE = 0.6, DOWN_TOLERANCE = 0.8, CLASSUP_TOL = 0.5, CLASSDOWN_TOL = 0.3;
     double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
     double objectHeight = 1.5;  // Replace with your object's height in real-world units
 
@@ -159,14 +161,16 @@ public class ExcludePipline extends OpenCvPipeline {
             Double[] centerd = matchedCoords(colorCoords, colorCoords);
             if (centerd[0] != 100) center = convertToDoubleArray(centerd);
         }
-        if (retVal == 0)
-            boundingImage.copyTo(input);
-        else if (retVal == 1)
-            maskedImage.copyTo(input);
-        else if (retVal == 2)
-            return edges;
-        else
-            return closedEdges;
+        if(printStuff) {
+            if (retVal == 0)
+                boundingImage.copyTo(input);
+            else if (retVal == 1)
+                maskedImage.copyTo(input);
+            else if (retVal == 2)
+                return edges;
+            else
+                return closedEdges;
+        }
         closedEdges.release();
         colorMask.release();
         edges.release();
@@ -222,7 +226,6 @@ public class ExcludePipline extends OpenCvPipeline {
         // Set acceptable aspect ratio range
         double minAspectRatio = 3.5 / 1.5 - DOWN_TOLERANCE;
         double maxAspectRatio = 3.5 / 1.5 + UP_TOLERANCE;
-        double minAreaThreshold = 10000;  // Minimum area threshold
         // Iterate over contours
         for (MatOfPoint contour : contours) {
             // Filter out small contours based on area
@@ -257,7 +260,7 @@ public class ExcludePipline extends OpenCvPipeline {
 
 
                         // Order the image points in the same order as object points
-                        orderedRectPoints = orderPoints(box);
+                        orderedRectPoints = orded;
 
                         int classify = 0;
                         if (aspectRatio < 3.5 / 1.5 - CLASSDOWN_TOL) {
@@ -283,10 +286,12 @@ public class ExcludePipline extends OpenCvPipeline {
                                 rvec,
                                 tvec,
                                 false,
-                                Calib3d.SOLVEPNP_SQPNP
+                                Calib3d.SOLVEPNP_P3P
                         );
-                        for (int j = 0; j < 4; j++) {
-                            Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 0, 255), 2);
+                        if(printStuff) {
+                            for (int j = 0; j < 4; j++) {
+                                Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 0, 255), 2);
+                            }
                         }
                         if (success) {
                             double[] coords = new double[3];
@@ -300,13 +305,17 @@ public class ExcludePipline extends OpenCvPipeline {
                             double consta = 1.16 * pow(Imgproc.contourArea(contour) / (minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT) * multiplia;
                             double heighter = consta * (coords[2] * cos(TelescopicArm.angle * PI / 180) + coords[0] * sin(TelescopicArm.angle * PI / 180));
                             centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
-                            for (int j = 0; j < 4; j++) {
-                                Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(255, 255, 0), 2);
+                            if(printStuff) {
+                                for (int j = 0; j < 4; j++) {
+                                    Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(255, 255, 0), 2);
+                                }
                             }
                             if (heighter > TelescopicArm.expectedHeight - 1 && heighter < TelescopicArm.expectedHeight + 1.5) {
                                 centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
-                                for (int j = 0; j < 4; j++) {
-                                    Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);
+                                if(printStuff) {
+                                    for (int j = 0; j < 4; j++) {
+                                        Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);
+                                    }
                                 }
                             }
                             if (center != null) {

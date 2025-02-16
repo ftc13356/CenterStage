@@ -55,6 +55,7 @@ public class OTOSLocalizer extends Localizer {
     private int greater1Count = 0, greater2Count = 0;
     private double previousHeading;
     private double totalHeading;
+    private double lastTime = -100;
     public static double MULT1 = 1.013, MULT2 = .96, HMULT1 = 0.98450498725, HMULT2 = .99705,  WEIGHT = 0.5;
 
     /**
@@ -213,9 +214,10 @@ public class OTOSLocalizer extends Localizer {
         packet.put("x0", otosPose.x*MULT1);
         packet.put("x1",otosPose2.x*MULT2);
         otosPose.set(new SparkFunOTOS.Pose2D(WEIGHT*otosPose.x*MULT1+(1-WEIGHT)*otosPose2.x*MULT2,WEIGHT*otosPose.y*MULT1+(1-WEIGHT)*otosPose2.y*MULT2,WEIGHT*otosPose.h+(1-WEIGHT)*otosPose2.h));
-        otosVel.set(new SparkFunOTOS.Pose2D(WEIGHT*otosVel.x*MULT1+(1-WEIGHT)*otosVel2.x*MULT2,WEIGHT*otosVel.y*MULT1+(1-WEIGHT)*otosVel2.y*MULT2,WEIGHT*otosVel.h+(1-WEIGHT)*otosVel2.h));
         otosAcc.set(new SparkFunOTOS.Pose2D(WEIGHT*otosAcc.x*MULT1+(1-WEIGHT)*otosAcc2.x*MULT2,WEIGHT*otosAcc.y*MULT1+(1-WEIGHT)*otosAcc2.y*MULT2,WEIGHT*otosAcc.h+(1-WEIGHT)*otosAcc2.h));
         totalHeading += MathFunctions.getSmallestAngleDifference(otosPose.h, previousHeading);
+        otosVel.set(new SparkFunOTOS.Pose2D(WEIGHT*otosVel.x*MULT1+(1-WEIGHT)*otosVel2.x*MULT2,WEIGHT*otosVel.y*MULT1+(1-WEIGHT)*otosVel2.y*MULT2, WEIGHT*otosVel.h));
+        lastTime = time;
         previousHeading = otosPose.h;
         packet.put("vel0",vel0.norm()*MULT1);
         packet.put("vel1",vel1.norm()*MULT2);
