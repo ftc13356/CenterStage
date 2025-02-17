@@ -20,15 +20,15 @@ public class BlueRight60Sweep extends LinearOpMode {
             aut.grabBluesSweep();
             aut.placeSpeci2(1);
             aut.autoGrab();
-//            aut.autoBlueGrab(0);
-//            aut.placeSpeci2(3);
-//            aut.cycleBlueGrab(1);
-//            aut.placeSpeci2(5);
-//            aut.cycleBlueGrab(2);
-//            aut.placeSpeci2(7);
-//            aut.cycleBlueGrab(2);
-//            aut.placeSpeci2(9);
-//            aut.park();
+            aut.autoBlueGrab(0);
+            aut.placeSpeci2(3);
+            aut.cycleBlueGrab(0);
+            aut.placeSpeci2(5);
+            aut.cycleBlueGrab(1);
+            aut.placeSpeci2(7);
+            aut.cycleBlueGrab(2);
+            aut.placeSpeci2(9);
+            aut.park();
             aut.update();
         }
     }
