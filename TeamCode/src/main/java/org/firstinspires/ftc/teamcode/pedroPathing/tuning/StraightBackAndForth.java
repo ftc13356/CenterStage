@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.tuning;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
@@ -27,9 +32,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Disabled
+//@Disabled
 @Autonomous (name = "Straight Back And Forth", group = "Autonomous Pathing Tuning")
-public class StraightBackAndForth extends OpMode {
+public class StraightBackAndForth extends LinearOpMode {
     private Telemetry telemetryA;
 
     public static double DISTANCE = 40;
@@ -41,14 +46,10 @@ public class StraightBackAndForth extends OpMode {
     private Path forwards;
     private Path backwards;
 
-    /**
-     * This initializes the Follower and creates the forward and backward Paths. Additionally, this
-     * initializes the FTC Dashboard telemetry.
-     */
     @Override
-    public void init() {
+    public void runOpMode() throws InterruptedException {
+        BasicRobot robot = new BasicRobot(this, false);
         follower = new Follower(hardwareMap);
-
         forwards = new Path(new BezierLine(new Point(0,0, Point.CARTESIAN), new Point(DISTANCE,0, Point.CARTESIAN)));
         forwards.setConstantHeadingInterpolation(0);
         backwards = new Path(new BezierLine(new Point(DISTANCE,0, Point.CARTESIAN), new Point(0,0, Point.CARTESIAN)));
@@ -58,29 +59,26 @@ public class StraightBackAndForth extends OpMode {
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.addLine("This will run the robot in a straight line going " + DISTANCE
-                            + " inches forward. The robot will go forward and backward continuously"
-                            + " along the path. Make sure you have enough room.");
+                + " inches forward. The robot will go forward and backward continuously"
+                + " along the path. Make sure you have enough room.");
+        packet = new TelemetryPacket();
         telemetryA.update();
-    }
-
-    /**
-     * This runs the OpMode, updating the Follower as well as printing out the debug statements to
-     * the Telemetry, as well as the FTC Dashboard.
-     */
-    @Override
-    public void loop() {
-        follower.update();
-        if (!follower.isBusy()) {
-            if (forward) {
-                forward = false;
-                follower.followPath(backwards, true);
-            } else {
-                forward = true;
-                follower.followPath(forwards, true);
+        waitForStart();
+        while(!isStopRequested()){
+            if (!follower.isBusy()) {
+                if (forward) {
+                    forward = false;
+                    follower.followPath(backwards, true);
+                } else {
+                    forward = true;
+                    follower.followPath(forwards, true);
+                }
             }
+            follower.update();
+            telemetryA.addData("going forward", forward);
+            follower.telemetryDebug(telemetryA);
+            robot.update();
         }
-
-        telemetryA.addData("going forward", forward);
-        follower.telemetryDebug(telemetryA);
     }
+
 }

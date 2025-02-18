@@ -461,6 +461,8 @@ public class Follower {
         breakFollowing();
         holdPositionAtEnd = holdEnd;
         isBusy = true;
+        pathStartTimes = new long[1];
+        pathStartTimes[0] = System.currentTimeMillis();
         followingPathChain = false;
         currentPath = path;
         closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), BEZIER_CURVE_BINARY_STEP_LIMIT);

@@ -4,5 +4,5 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class AutoSpec {
-    public static double DIST1_X=25, DIST1_Y=30,DIST2_X=1.55, DIST2_Y=27.5,DIST3_X=1.0, DIST3_Y=0, RAISE_DELAY = 0.4, CYCLE_OFFSET_X = 1.23, CYCLE_OFFSET_Y=1.1, H_OFFSET = 0;
+    public static double DIST1_X=25, DIST1_Y=30,DIST2_X=1.55, DIST2_Y=27.5,DIST3_X=1, DIST3_Y=-1.8, RAISE_DELAY = 0.55, CYCLE_OFFSET_X = 0.42, CYCLE_OFFSET_Y=0.4, H_OFFSET = 0;
 }
