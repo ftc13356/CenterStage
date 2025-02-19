@@ -28,8 +28,9 @@ public class DualPIDController {
     public static double x1 = 0.5;
     DcMotorEx ext, ext2, rot, extEnc, rotEnc;
     public static double  A_OFF = -15, MAX=31.5, MIN=0
-            , ROTMAX = 162, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.01 , rP2 =0.01, rD2= 2
-            , rD = .05, rF = 0.3, G = 0.3,rG = 0.14, rG2 = 0.3, HORIZ_LIM = 27.2
+            , ROTMAX = 162, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35*86/90, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.011 , rP2 =0.012, rD2= 0.05
+
+            , rD = .01, rF = 0.6, G = 0.3,rG = 0.2, rG2 = 1, HORIZ_LIM = 27.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
@@ -97,7 +98,7 @@ public class DualPIDController {
 
         double power = 0;
         if(curExt*TICKS_PER_IN<23 || extension > 23 || true){
-            power = 13/voltage*((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+2*r)*PI/180)*(rG+ rG2*r))*gScale;
+            power = ((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+(13/voltage)*Math.cos(curRot*TICKS_PER_RAD+(A_OFF+2*r)*PI/180)*(rG+ rG2*r))*gScale;
         }
         else{
             power = Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r)-.1;
@@ -107,7 +108,7 @@ public class DualPIDController {
 //        }
 //        power*=gScale;
 //        packet.put("powab4rF",power);
-        if(abs(rd)<0.5 && abs(rErr)>2 && (targetRot>1)){
+        if(abs(rd)<0.5 && abs(rErr)>2){
             power+=rF*signum(rErr);
         }
         if(abs(rErr)<10&&targetRot==0||lastPower==0&&targetRot==0)
