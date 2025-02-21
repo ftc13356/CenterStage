@@ -26,7 +26,7 @@ public class BlueLeft04 extends LinearOpMode {
             if(BasicRobot.time>28&& !aut.isDroppi()){
                 break;
             }
-            aut.park();
+//            aut.park();
             aut.update();
         }
         aut.robot.queuer.reset();

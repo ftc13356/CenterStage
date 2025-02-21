@@ -32,10 +32,10 @@ public class DualPIDController {
 //            , rD = .25 , rF = 0.4, G = 0.3,rG = 0.2, rG2 = 0.35, HORIZ_LIM = 27.2
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
-    public static double  A_OFF = -15, MAX=31.5, MIN=0
-            , ROTMAX = 162, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.016 , rP2 =0.015, rD2= .05
-            , rD = .01 , rF = 0.3, G = 0.3,rG = 0.225, rG2 = 0.5, HORIZ_LIM = 27.2
-            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
+    public static double  A_OFF = -15, MAX=30, MIN=0
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.012               , rP2 =0.012, rD2= .5
+            , rD = .19 , rF = 0.4, G = 0.1,rG = 0.2, rG2 = 0.35, HORIZ_LIM = 27.2
+            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rF0 = 0.8, rG0= .13;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel, rotVel;
@@ -83,7 +83,7 @@ public class DualPIDController {
         targetExt = extension;
         targetRot = rotation;
         curRot = -rotEnc.getCurrentPosition();
-        curExt = -extEnc.getCurrentPosition() + (.5+x1)*curRot*TICKS_PER_DEG*2786.2/360;
+        curExt = -extEnc.getCurrentPosition() + (x1)*curRot*TICKS_PER_DEG*2786.2/360;
         if((targetExt+10)*cos(curRot*TICKS_PER_RAD)>HORIZ_LIM){
             extension = HORIZ_LIM/cos(curRot*TICKS_PER_RAD)-10;
         }
@@ -98,25 +98,35 @@ public class DualPIDController {
         }
         double rErr = rotation - curRot*TICKS_PER_DEG;
         double r = curExt*TICKS_PER_IN/MAX;
-        double gScale  = 1/(1-abs(rd)/300);
+        double gScale  = 1/(1-Math.max(-rd/400,0));
 
         double power = 0;
         if(curExt*TICKS_PER_IN<23 || extension > 23 || true){
-            power = 13/voltage*((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r))*gScale;
+            power = (13/voltage)*(((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF-2*r)*PI/180)*(rG+ rG2*r))*gScale);
+            if(targetRot < 30){
+                power -= (13/voltage)*Math.cos(curRot*TICKS_PER_RAD+(A_OFF-2*r)*PI/180)*(rG0)*gScale;
+            }
         }
         else{
-            power = Math.cos(curRot*TICKS_PER_RAD+(A_OFF+6*r)*PI/180)*(rG+ rG2*r)-.1;
+            power = Math.cos(curRot*TICKS_PER_RAD+(A_OFF+3*r)*PI/180)*(rG+ rG2*r)-.1;
         }
 //        if(signum(rd) != signum(power)){
 //            gScale = 1/(1-abs(rd/MAX_SPEED/TICKS_PER_DEG));
 //        }
-        power*=gScale;
+//        power*=gScale;
 //        packet.put("powab4rF",power);
-        if(abs(rd)<0.5 && abs(rErr)>2 && (targetRot>1)){
-            power+=rF*signum(rErr);
+        if(abs(rd)<1 && abs(rErr)>2){
+            if(targetRot!=0) {
+                power += rF * signum(rErr);
+            } else{
+                power += rF0 * signum(rErr);
+            }
         }
         if(abs(rErr)<10&&targetRot==0||lastPower==0&&targetRot==0)
             power=0;
+        if(abs(rErr)<10&&targetRot == ROTMAX){
+            power = SPECIPOWER;
+        }
         rot.setPower(power);
         lastPower = power;
         if(power ==0 &&lastPower==0&& rd==0 && targetRot ==0 && curRot!=0) {

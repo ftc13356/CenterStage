@@ -12,6 +12,8 @@ import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.H_OFF
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.RAISE_DELAY;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_EXTEND_POS;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_PITCH_POS;
+import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.SPECIMENGRAB_EXTEND_POS;
+import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.SPECIMENGRAB_PITCH_POS;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
@@ -54,8 +56,8 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.50, FOR_MULT = .95, SIDE_CONST = 2.5, SIDE_MULT = 0.8, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.3, DROP_DELAY_TIME = 0.12, MIN_EXT = 5.8, HANGEXT1 = 20.5, HANGROT1 = 110,
-            HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 4, HANGROT3 = 50, LAG_CONSST = .25, MAX_EXT = 17, RETRACT_CONST = 0, STABLIZE_TIME = 0.4;
+    public static double FOR_CONST = 3.80, FOR_MULT = 1, SIDE_CONST = 2.2, SIDE_MULT = 0.9, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.3, DROP_DELAY_TIME = 0.12, MIN_EXT = 5.8, HANGEXT1 = 20.5, HANGROT1 = 110,
+            HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 17, RETRACT_CONST = 0, STABLIZE_TIME = 0.4;
     double driveConst = .7;
     double lastMoveTime = -100;
     Pose grabPoint = new Pose(0, 0, 0);
@@ -96,7 +98,7 @@ public class IDRobot extends BasicRobot {
     }
 
     public void setArm(double extension, double rot, boolean p_async) {
-        if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 2 && abs(arm.getTargetRot() - arm.getRot()) < 3)/*&& abs(arm.getRotVel())<15*/ && !queuer.isExecuted() && !queuer.isFirstLoop())
+        if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 2 && abs(arm.getTargetRot() - arm.getRot()) < 3.5)/*&& abs(arm.getRotVel())<15*/ && !queuer.isExecuted() && !queuer.isFirstLoop())
             arm.goTo(extension, rot);
     }
 
@@ -324,6 +326,20 @@ public class IDRobot extends BasicRobot {
         }
     }
 
+    public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, double decel, boolean holdEnd) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .setZeroPowerAccelerationMultiplier(decel)
+                        .build();
+                follower.followPath(path2, holdEnd);
+            }
+        }
+    }
+
     public void followPath(Point mid, Point end, boolean p_asynchronous, double zeroMultiply, boolean holdEnd, double tValue, boolean isReverse) {
         if (queuer.queue(p_asynchronous, !follower.isBusy())) {
             if (!queuer.isExecuted()) {
@@ -429,7 +445,7 @@ public class IDRobot extends BasicRobot {
                     flip.flipTo(Flip.FlipStates.AUTO_GRAH);
                     lastStartAUtoGrabTime = time;
                 }
-                if (isAutoGrab && ((follower.getVelocityMagnitude() < 5 && abs(arm.getVel()) < 3&& abs(follower.getVelocityPose().getHeading()) < 3) || (follower.isVeloStable() && abs(arm.getVel()) < 3))) {
+                if (isAutoGrab && ((follower.getVelocityMagnitude() < 4 && abs(arm.getVel()) < 3&& abs(follower.getVelocityPose().getHeading()) < 3) || (follower.isVeloStable() && abs(arm.getVel()) < 3))) {
 
                     double[] relCent = cv.getCenter().clone();
 
@@ -481,7 +497,7 @@ public class IDRobot extends BasicRobot {
                                     if (newExt < arm.getTargetExt() - .25) {
                                         newExt -= RETRACT_CONST;
                                     }
-                                    arm.goToResetManual(newExt, Math.atan2(3.5, newExt + 12) * 180 / PI);
+                                    arm.goToResetManual(newExt, Math.atan2(2.5, newExt + 12) * 180 / PI);
                                     twist.twistToAng(relCent[3]);
                                     packet.put("newExt", newExt);
                                     packet.put("relVect", relVect);
@@ -604,7 +620,7 @@ public class IDRobot extends BasicRobot {
         boolean isDD2 = op.gamepad2.dpad_down;
         boolean isLD2 = op.gamepad2.dpad_left;
 
-        if ((TelescopicArm.ArmStates.HOVER.getState() && arm.getTargetExt() != 0 && arm.getTargetRot() != 15) || Claw.ClawStates.GIGA_OPEN.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
+        if (Claw.ClawStates.GIGA_OPEN.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
             driveConst = 0.3;
         } else if (TelescopicArm.ArmStates.HIGH_BUCKET.getState()) {
             driveConst = .7;
@@ -650,19 +666,19 @@ public class IDRobot extends BasicRobot {
             targeted = false;
         }
         if (isB && isDD) {
-            arm.goTo(TelescopicArm.ArmStates.SPECIMEN_GRAB);
+            arm.goTo(SPECIMENGRAB_EXTEND_POS, SPECIMENGRAB_PITCH_POS);
             flip.flipTo(Flip.FlipStates.SPECIMEN_GRAB);
             twist.twistTo(Twist.TwistStates.PERPENDICULAR);
             isAutoGrab = false;
         } else if (isB && !Claw.ClawStates.CLOSED.getState()) {
-            arm.goTo(TelescopicArm.ArmStates.SPECIMEN_GRAB);
+            arm.goTo(SPECIMENGRAB_EXTEND_POS, SPECIMENGRAB_PITCH_POS);
             flip.flipTo(Flip.FlipStates.SPECIMEN_GRAB);
             twist.twistTo(Twist.TwistStates.SPECIMEN);
             claw.goTo(Claw.ClawStates.GIGA_OPEN);
             isAutoGrab = false;
             driveConst = .3;
         } else if (isB) {
-            arm.goTo(TelescopicArm.ArmStates.SPECIMEN_GRAB);
+            arm.goTo(SPECIMENGRAB_EXTEND_POS, SPECIMENGRAB_PITCH_POS);
             flip.flipTo(Flip.FlipStates.SPECIMEN_GRAB);
             twist.twistTo(Twist.TwistStates.PERPENDICULAR);
             isAutoGrab = false;

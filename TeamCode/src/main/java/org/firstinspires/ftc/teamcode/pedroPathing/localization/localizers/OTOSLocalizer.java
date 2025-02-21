@@ -56,7 +56,7 @@ public class OTOSLocalizer extends Localizer {
     private double previousHeading;
     private double totalHeading;
     private double lastTime = -100;
-    public static double MULT1 = .983, MULT2 = .982, HMULT1 = 0.98450498725, HMULT2 = .99705,  WEIGHT = 0.5;
+    public static double MULT1 = .974, MULT2 = .982, HMULT1 = 0.98450498725, HMULT2 = .99705,  WEIGHT = 0.5;
 
     /**
      * This creates a new OTOSLocalizer from a HardwareMap, with a starting Pose at (0,0)
