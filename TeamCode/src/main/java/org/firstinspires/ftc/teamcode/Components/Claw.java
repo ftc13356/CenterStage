@@ -112,11 +112,12 @@ public class Claw {
             }
 
         }
+        claw.update();
 //        for (var i : Claw.ClawTargetStates.values()) {
 //            if (i.state && abs(claw.getPosition() - i.position) > CLAW_SERVO_BUFFER) {
 //                goTo(Claw.ClawStates.values()[i.ordinal()]);
 //            }
 //        }
-        packet.put("claw open", ClawStates.OPEN.getState());
+//        packet.put("claw open", ClawStates.OPEN.getState());
     }
 }

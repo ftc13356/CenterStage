@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 @Config
 public class BR40 {
     IDRobot robot;
-    public static double x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0, x7 = 0, X_OFF = 0.35, Y_OFF = 0.6;
+    public static double x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0, x7 = 0, X_OFF = 0.35, Y_OFF = 0.5;
     public static double x8 = 0, x9 = 0, x10 = 0, x12 = 0, y9 = 0;
     public double y2 = 0, y3 = 0, y4 = 0, y5 = 0, y6 = 0, y7 = 0, y8 = 0, y10 = 0, DROP_DELAY = 0.8, RAISE_DEL = .45;
     int position = 0;
@@ -218,14 +218,14 @@ public class BR40 {
 
     public void autoBlueGrab(int i) {
         robot.queuer.addDelay(0.8);
-        robot.followPath(new Point(23, 28, Point.CARTESIAN), 0, 0, false, false);
+        robot.followPath(new Point(22, 29.5, Point.CARTESIAN), 0, 0, false, false);
         robot.queuer.addDelay(0.45);
         robot.setArm(0, 14, true);
         robot.queuer.addDelay(0.6);
         robot.setFlip(Flip.FlipStates.RESET, true);
         robot.queuer.addDelay(0.7);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
-        robot.queuer.addDelay(1.05);
+        robot.queuer.addDelay(1.2);
         robot.setArm(SPECIMENGRAB_EXTEND_POS, SPECIMENGRAB_PITCH_POS, true);
         robot.queuer.addDelay(1.8);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
@@ -243,7 +243,7 @@ public class BR40 {
         else{
             x7=0;
         }
-        robot.followPath(new Point(21, 66 + i, 1), new Point(36.8+i*.05 + x7, 68 + i, Point.CARTESIAN), 0, 0, false, 0.9);
+        robot.followPath(new Point(21, 66 + i, 1), new Point(36.9+i*.1 + x7, 68 + i, Point.CARTESIAN), 0, 0, false, 0.9);
         robot.setArm(0, TelescopicArm.ArmStates.HIGH_SPECIMEN.getPitchPos(), true);
         robot.queuer.addDelay(RAISE_DEL);
         robot.setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN.getExtendPos(), TelescopicArm.ArmStates.HIGH_SPECIMEN.getPitchPos(), true);

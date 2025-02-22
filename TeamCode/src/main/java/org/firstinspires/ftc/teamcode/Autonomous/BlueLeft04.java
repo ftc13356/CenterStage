@@ -23,14 +23,14 @@ public class BlueLeft04 extends LinearOpMode {
             aut.autoGrahCycle(1);
             aut.autoGrahCycle(2);
             aut.autoGrahCycle(3);
-            if(BasicRobot.time>28&& !aut.isDroppi()){
+            if(BasicRobot.time>27.8&& !aut.isDroppi()){
                 break;
             }
-//            aut.park();
+            aut.reset();
             aut.update();
         }
         aut.robot.queuer.reset();
-        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<30.){
+        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<30.&&!aut.isDroppi()){
             aut.park();
             aut.update();
         }

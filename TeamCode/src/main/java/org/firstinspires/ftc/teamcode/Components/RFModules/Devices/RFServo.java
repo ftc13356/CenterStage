@@ -91,7 +91,7 @@ public class RFServo implements Servo {
 
     public void setPosition(double p_position) {
 
-        if (time - plastTime > FLIP_TIME && abs(p_position - position) > 0.01) {
+        if (abs(time - plastTime )> FLIP_TIME && abs(p_position - position) > 0.01) {
             logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
                     + df.format(p_position), true);
             LOGGER.log("moving to:" + p_position);

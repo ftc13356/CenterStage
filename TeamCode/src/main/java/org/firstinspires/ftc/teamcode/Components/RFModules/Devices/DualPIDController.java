@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHSPECIMEN_PITCH_POS;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -33,9 +34,9 @@ public class DualPIDController {
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
     public static double  A_OFF = -15, MAX=30, MIN=0
-            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.012               , rP2 =0.012, rD2= .5
-            , rD = .19 , rF = 0.4, G = 0.1,rG = 0.2, rG2 = 0.35, HORIZ_LIM = 27.2
-            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rF0 = 0.8, rG0= .13;
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.012, rP2 =0.012, rD2= .6
+            , rD = .185 , rF = 0.4, G = 0.2,rG = 0.23, rG2 = 0.3, HORIZ_LIM = 27.2
+            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rF0 = 0.8, rG0= .14;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel, rotVel;
@@ -103,7 +104,7 @@ public class DualPIDController {
         double power = 0;
         if(curExt*TICKS_PER_IN<23 || extension > 23 || true){
             power = (13/voltage)*(((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF-2*r)*PI/180)*(rG+ rG2*r))*gScale);
-            if(targetRot < 30){
+            if(targetRot != HIGHSPECIMEN_PITCH_POS){
                 power -= (13/voltage)*Math.cos(curRot*TICKS_PER_RAD+(A_OFF-2*r)*PI/180)*(rG0)*gScale;
             }
         }
