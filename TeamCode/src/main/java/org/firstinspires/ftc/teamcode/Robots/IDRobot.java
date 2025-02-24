@@ -2,12 +2,20 @@ package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.CYCLE_OFFSET_X;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.CYCLE_OFFSET_Y;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST12_X;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST12_Y;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST1_X;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST1_Y;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST2_X;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST2_Y;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST3_X;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST3_Y;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST4_X;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST4_Y;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST5_X;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST5_Y;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DISTTWO_X;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DISTTWO_Y;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.H_OFFSET;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.RAISE_DELAY;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_EXTEND_POS;
@@ -39,11 +47,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierPoint;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
-import java.util.Vector;
 
 @Config
 public class IDRobot extends BasicRobot {
@@ -57,7 +65,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.30, FOR_MULT = 1.2, SIDE_CONST = 1.5, SIDE_MULT = 1.1, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.12, MIN_EXT = 6.8, HANGEXT1 = 20.5, HANGROT1 = 110,
+    public static double FOR_CONST = 3.30, FOR_MULT = 1.2, SIDE_CONST = 1.5, SIDE_MULT = 0.9, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.12, MIN_EXT = 6.0, HANGEXT1 = 20.5, HANGROT1 = 110,
             HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 17, RETRACT_CONST = 0, STABLIZE_TIME = 0.4;
     double driveConst = .7;
     double lastMoveTime = -100;
@@ -417,6 +425,32 @@ public class IDRobot extends BasicRobot {
                 Pose current = follower.getPose();
                 PathChain path2 = follower.pathBuilder()
                         .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .setPathEndTValueConstraint(tValue)
+                        .build();
+                follower.followPath(path2, false);
+            }
+        }
+    }
+    public void followPath(Point mid, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, double decel, Queuer queuer) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, end))
+                        .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
+                        .setZeroPowerAccelerationMultiplier(decel)
+                        .build();
+                follower.followPath(path2, false);
+            }
+        }
+    }
+    public void followPath(Point mid, Point mid2, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, double tValue, Queuer queuer) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid,mid2, end))
                         .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
                         .setPathEndTValueConstraint(tValue)
                         .build();
@@ -931,11 +965,26 @@ public class IDRobot extends BasicRobot {
                 }
             }
             Vector2d dist = new Vector2d(DIST1_X, DIST1_Y);
+            Vector2d dist2 = new Vector2d(DIST2_X, DIST2_Y);
+            Vector2d dist12 = new Vector2d(DIST12_X, DIST12_Y);
             Vector2d dist3 = new Vector2d(DIST3_X, DIST3_Y);
+            Vector2d dist4 = new Vector2d(DIST4_X, DIST4_Y);
+            Vector2d dist5 = new Vector2d(DIST5_X, DIST5_Y).rotated(grabPoint.getHeading());
+
             dist = dist.rotated(grabPoint.getHeading());
+            dist2 = dist2.rotated(grabPoint.getHeading());
+            dist12 = dist12.rotated(grabPoint.getHeading());
             dist3 = dist3.rotated(grabPoint.getHeading());
-            queuers.get(6).addDelay(0.0);
-            followPath(new Point(dist.getX() + grabPoint.getX(), dist.getY() + grabPoint.getY(), Point.CARTESIAN), grabPoint.getHeading(), grabPoint.getHeading(), false, false, 3, queuers.get(6));
+            dist4 = dist4.rotated(grabPoint.getHeading());
+//            Vector2d two = new Vector2d(DISTTWO_X,DISTTWO_Y).rotated(grabPoint.getHeading());
+//            followPath(new Point(dist3.getX()+grabPoint.getX()+two.getX(), dist3.getY()+grabPoint.getY()+two.getY(),1),
+//                    grabPoint.getHeading(), grabPoint.getHeading(),false, false, queuers.get(6));
+            setClaw(Claw.ClawStates.CLOSED, false, queuers.get(6));
+            followPath(
+                    new Point(dist2.getX()+grabPoint.getX(), dist2.getY()+grabPoint.getY(),1),
+                    new Point(dist12.getX()+grabPoint.getX(), dist12.getY()+grabPoint.getY(),1),
+                    new Point(dist.getX() + grabPoint.getX(), dist.getY() + grabPoint.getY(), Point.CARTESIAN),
+                    grabPoint.getHeading(), grabPoint.getHeading(), false, 0.9, queuers.get(6));
             setArm(0, TelescopicArm.ArmStates.HIGH_SPECIMEN.getPitchPos(), true, queuers.get(6));
             queuers.get(6).addDelay(RAISE_DELAY);
             setArm(TelescopicArm.ArmStates.HIGH_SPECIMEN.getExtendPos(), TelescopicArm.ArmStates.HIGH_SPECIMEN.getPitchPos(), true, queuers.get(6));
@@ -944,10 +993,14 @@ public class IDRobot extends BasicRobot {
             setClaw(Claw.ClawStates.GIGA_OPEN, false, queuers.get(6));
             queuers.get(6).addDelay(0.4);
             setArm(TelescopicArm.ArmStates.SPECIMEN_GRAB, true, queuers.get(6));
-            followPath(new Point(grabPoint.getX() + dist3.getX(), grabPoint.getY() + dist3.getY(), Point.CARTESIAN), grabPoint.getHeading(), grabPoint.getHeading(), false, true, 2, queuers.get(6));
+            followPath(
+                    new Point(dist3.getX()+grabPoint.getX()+dist4.getX(), dist3.getY()+dist4.getY()+grabPoint.getY(),1),
+                    new Point(dist3.getX()+grabPoint.getX()+dist5.getX(), dist3.getY()+dist5.getY()+grabPoint.getY(),1),
+                    new Point(dist3.getX()+grabPoint.getX(), dist3.getY()+grabPoint.getY(),1),
+                    grabPoint.getHeading(), grabPoint.getHeading(), false,0.9, queuers.get(6));
             setTwist(Twist.TwistStates.SPECIMEN, true, queuers.get(6));
             setFlip(Flip.FlipStates.SPECIMEN_GRAB, true, queuers.get(6));
-            setClaw(Claw.ClawStates.CLOSED, false, queuers.get(6));
+//            setClaw(Claw.ClawStates.CLOSED, false, queuers.get(6));
         } else if (isSuperRB) {
             if (Claw.ClawStates.CLOSED.getState())
                 claw.goTo(Claw.ClawStates.OPEN);

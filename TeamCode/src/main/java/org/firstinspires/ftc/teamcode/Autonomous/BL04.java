@@ -24,10 +24,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 @Config
 public class BL04 {
     public IDRobot robot;
-    public static double X1 = 9, X2 = 26.2, X3= 16.5, X4= 25.4, X6=27.2, SX1=57.9443447037702, SX2=57.949730700179536, SX3=60.7, SX4=13.0310592459605,SX5=51.70556552962298, SX6=34.77199281867145;
-    public static double Y1 = 125, Y2 = 121.5, Y3 = 129.5, Y4=127.5, Y6=126.6, SY1=101.73339317773788, SY2=122.79353680430879, SY3=106, SY4=128.5858168761221, SY5=119.6983842010772, SY6=118.53500897666068;
+    public static double X1 = 9, X2 = 26.2, X3= 18, X4= 25.4, X6=27.2, SX1=57.9443447037702, SX2=57.949730700179536, SX3=60.7, SX4=12.0310592459605,SX5=51.70556552962298, SX6=34.77199281867145;
+    public static double Y1 = 125, Y2 = 122.5, Y3 = 128.5, Y4=128, Y6=126.6, SY1=101.73339317773788, SY2=122.79353680430879, SY3=106, SY4=129.0858168761221, SY5=119.6983842010772, SY6=118.53500897666068;
     public static double H1 = -70, H2 = -11, H3 = -30, H4 = 0, H6=35, H7 = -30;
-    public static double EXT1 = 12, EXT2 = 12.6, EXT3 = 14.7, CLOSE_DELAY = 0.00, DROP_DELAY_0 = 0.3, DROP_DELAY_1 = 0.7, DROP_DELAY_2= 0.77, DROP_DELAY_3 = 0.7
+    public static double EXT1 = 12.9, EXT2 = 13.4, EXT3 = 15.5, CLOSE_DELAY = 0.00, DROP_DELAY_0 = 0.4, DROP_DELAY_1 = 0.8, DROP_DELAY_2= 0.9, DROP_DELAY_3 = 0.8
             , DOWN_DELAY = 0.6, EXT_DELAY = 0.2, OTHER_EXT_DELAY = 0.4, GRABDROP_DELAY = 0.1, STRAFE_DELAY = 0.0;
     int[] positions = {0,0,0,0};
     int ind = 0;
@@ -76,8 +76,8 @@ public class BL04 {
 //      Preload
         robot.queuer.queue(false, true);
         robot.queuer.addDelay(DROP_DELAY_0);
-        robot.followPath(new Point(X3-3, Y3-2, Point.CARTESIAN), toRadians(-90), toRadians(-30), false,0.98);
-        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS, true);
+        robot.followPath(new Point(X3-2.5, Y3-2, Point.CARTESIAN), toRadians(-90), toRadians(-50), false,0.85);
+        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS+2, true);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
 //        robot.queuer.waitForFinish();
@@ -86,7 +86,7 @@ public class BL04 {
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         robot.setTwist(Twist.TwistStates.SPECIMEN, true);
 //      First Grab
-        robot.followPath(new Point(X2, Y2, Point.CARTESIAN), toRadians(H3), toRadians(H2), false);
+        robot.followPath(new Point(X2, Y2-1.5, Point.CARTESIAN), toRadians(H3), toRadians(H2), false);
         robot.setArm(0,HIGHBUCKET_PITCH_POS,true);
         robot.queuer.addDelay(DOWN_DELAY);
         robot.setArm(0,3, true);
@@ -101,17 +101,18 @@ public class BL04 {
         robot.setClaw(Claw.ClawStates.CLOSED, true);
 //      First Drop
         robot.queuer.addDelay(DROP_DELAY_1+GRABDROP_DELAY);
-        robot.followPath(new Point(X3, Y3, Point.CARTESIAN), toRadians(H2), toRadians(H3), false, 0.75);
+        robot.followPath(new Point(X3, Y3, Point.CARTESIAN), toRadians(H2), toRadians(H3), false, 0.9);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setArm(0,HIGHBUCKET_PITCH_POS, true);
         robot.queuer.addDelay(GRABDROP_DELAY+OTHER_EXT_DELAY);
-        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS, true);
+        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS+2, true);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
+//        robot.queuer.addDelay(.1);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         robot.setTwist(1, true);
@@ -131,17 +132,18 @@ public class BL04 {
         robot.setClaw(Claw.ClawStates.CLOSED, true);
 //      Second Drop
         robot.queuer.addDelay(DROP_DELAY_2+GRABDROP_DELAY);
-        robot.followPath(new Point(X3-1, Y3-1, Point.CARTESIAN), toRadians(H4), toRadians(H3), false,0.75);
+        robot.followPath(new Point(X3-1, Y3-1, Point.CARTESIAN), toRadians(H4), toRadians(H3), false,0.9);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setArm(0,HIGHBUCKET_PITCH_POS, true);
         robot.queuer.addDelay(GRABDROP_DELAY+OTHER_EXT_DELAY);
-        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS-3, true);
+        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS+2, true);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
+//        robot.queuer.addDelay(.1);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         robot.setTwist(1, true);
@@ -161,16 +163,17 @@ public class BL04 {
         robot.setClaw(Claw.ClawStates.CLOSED, true);
 //      Third Drop
         robot.queuer.addDelay(DROP_DELAY_3+GRABDROP_DELAY);
-        robot.followPath(new Point(X3-2, Y3-1, Point.CARTESIAN), toRadians(H6), toRadians(H3), false,0.85);
+        robot.followPath(new Point(X3-2, Y3-1, Point.CARTESIAN), toRadians(H6), toRadians(H3), false,0.92);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setArm(0,HIGHBUCKET_PITCH_POS-3, true);
         robot.queuer.addDelay(GRABDROP_DELAY+OTHER_EXT_DELAY);
-        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS-5, true);
+        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS-2, true);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.queuer.addDelay(GRABDROP_DELAY);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
         robot.queuer.queue(false, true);
+//        robot.queuer.addDelay(.1);
         robot.setClaw(Claw.ClawStates.OPEN, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         robot.setTwist(1, true);
@@ -187,18 +190,18 @@ public class BL04 {
         robot.autoGrab(2);
         robot.queuer.addDelay(STRAFE_DELAY);
         robot.followPathNotTargeted(new Point(80.9443447037702, 98.23339317773788,1), new Point(55.5, 98.23339317773788,1)
-                ,0.4,toRadians(-90),toRadians(-90),true);
+                ,0.35,toRadians(-90),toRadians(-90),true);
         robot.queuer.waitForFinish();
 //        robot.queuer.addDelay(0.2);
         if(robot.queuer.queue(false, true) || !robot.queuers.get(2).isEmpty()){
             isDroppi = true;
         }
         robot.queuer.addDelay(.2);
-        robot.followPath( new Point(SX5, SY5,1),new Point(SX4, SY4, Point.CARTESIAN), toRadians(-60), toRadians(-33), false ,4.4,false,.94);
+        robot.followPath( new Point(SX5, SY5,1),new Point(SX4, SY4, Point.CARTESIAN), toRadians(-60), toRadians(-38), false ,3,false,0.95);
         robot.queuer.addDelay(.2);
         robot.setArm(0, HIGHBUCKET_PITCH_POS, true);
         robot.queuer.addDelay(.75);
-        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS-3, true);
+        robot.setArm(HIGHBUCKET_EXTEND_POS, HIGHBUCKET_PITCH_POS-5, true);
         robot.queuer.addDelay(.45);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.queuer.addDelay(.45);

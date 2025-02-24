@@ -31,7 +31,7 @@ public class BlueLeft04 extends LinearOpMode {
         }
         aut.robot.queuer.reset();
         while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<30.&&!aut.isDroppi()){
-            aut.park();
+            aut.reset();
             aut.update();
         }
 
