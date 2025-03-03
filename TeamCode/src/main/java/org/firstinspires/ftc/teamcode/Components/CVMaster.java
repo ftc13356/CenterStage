@@ -76,13 +76,13 @@ public class CVMaster {
                         else
                             webcam.setPipeline(hsvTest);
                         webcam.startStreaming(
-                                    1280, 720, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
+                                    640, 480, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
                         webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.NATIVE_VIEW);
 //                        dashboard.startCameraStream(webcam,5);
 
                         if(shouldStream)
-                            dashboard.startCameraStream(webcam, 4);
+                            dashboard.startCameraStream(webcam, 10);
                         LOGGER.log("Camera Streaming now!");
                     }
 

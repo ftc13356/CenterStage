@@ -44,9 +44,9 @@ public class ExcludePipline extends OpenCvPipeline {
     List<MatOfPoint> contours = new ArrayList<>();
 
     public static boolean printStuff= true;
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=1,
-            FOR_CONST = 4.6;
-    public static int UPPER_THRESH = 100, LOWER_THRESH = 50, YUPPER_THRESH = 120, YLOWER_THRESH = 60, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 3;
+    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 150, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=0.85,
+            FOR_CONST = 3.6;
+    public static int UPPER_THRESH = 100, LOWER_THRESH = 50, YUPPER_THRESH = 240, YLOWER_THRESH = 80, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 2;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
@@ -94,15 +94,15 @@ public class ExcludePipline extends OpenCvPipeline {
     RotatedRect minAreaRect;
 
     public ExcludePipline() {
-        double fx = 396.39 * FCL; // Replace with your camera's focal length in pixels
-        double fy = 396.39 * FCL;
-        double cx = 646.424; // Replace with your camera's principal point x-coordinate (usually image width / 2)
-        double cy = 360.884; // Replace with your camera's principal point y-coordinate (usually image height / 2)
+        double fx = 238.722 * FCL; // Replace with your camera's focal length in pixels
+        double fy = 238.722 * FCL;
+        double cx = 323.204; // Replace with your camera's principal point x-coordinate (usually image width / 2)
+        double cy = 228.638; // Replace with your camera's principal point y-coordinate (usually image height / 2)
         cameraMatrix.put(0, 0,
                 fx, 0, cx,
                 0, fy, cy,
                 0, 0, 1);
-        distCoeffs = new MatOfDouble(0.00981454, -0.0292495, 0.00489965, -0.000205308, -4.06933e-05);
+        distCoeffs = new MatOfDouble(0.0146001, -0.0340438, 0.0060417, -0.0004239, .000107881);
     }
 
 
@@ -241,6 +241,11 @@ public class ExcludePipline extends OpenCvPipeline {
                 Point[] box = new Point[4];
                 minAreaRect.points(box);
                 Point[] orded = orderPoints(box);
+                if(printStuff) {
+                    for (int j = 0; j < 4; j++) {
+                        Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(255, 0, 0), 2);
+                    }
+                }
                 double[] distances = {distance(orded[0], orded[1]), distance(orded[1], orded[2]), distance(orded[0], orded[2])};
                 Arrays.sort(distances);
                 double width = distances[1];
@@ -309,7 +314,7 @@ public class ExcludePipline extends OpenCvPipeline {
                                     Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(255, 255, 0), 2);
                                 }
                             }
-                            if (heighter > TelescopicArm.expectedHeight - 1.5 && heighter < TelescopicArm.expectedHeight + 3) {
+                            if (heighter > TelescopicArm.expectedHeight - 3.5 && heighter < TelescopicArm.expectedHeight + 4) {
                                 centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
                                 if(printStuff) {
                                     for (int j = 0; j < 4; j++) {

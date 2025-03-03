@@ -36,8 +36,8 @@ public class DualPIDController {
 //            , rD = .25 , rF = 0.4, G = 0.3,rG = 0.2, rG2 = 0.35, HORIZ_LIM = 27.2
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
-    public static double  A_OFF = -15, MAX=30.5, MIN=0
-            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.012, rP2 =0.012, rD2= .9
+    public static double  A_OFF = -15, MAX=29, MIN=0
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.012, rP2 =0.012, rD2= .9
             , rD = .1 , rF = 0.4, G = 0.2,rG = 0.185, rG2 = 0.3, HORIZ_LIM = 28.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;
