@@ -85,7 +85,7 @@ public class OTOSLocalizer extends Localizer {
         otos.setAngularUnit(AngleUnit.RADIANS);
         otos2.setLinearUnit(DistanceUnit.INCH);
         otos2.setAngularUnit(AngleUnit.RADIANS);
-//        otos.setSignalProcessConfig(new SparkFunOTOS.SignalProcessConfig((byte) 0x0D));
+        otos.setSignalProcessConfig(new SparkFunOTOS.SignalProcessConfig((byte) 0x0D));
 
         // For the OTOS, left/right is the y axis a nd forward/backward is the x axis, with left being
         // positive y and forward being positive x. PI/2 radians is facing forward, and clockwise

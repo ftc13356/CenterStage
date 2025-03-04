@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_PITCH_POS;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHSPECIMEN_PITCH_POS;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
@@ -36,10 +37,10 @@ public class DualPIDController {
 //            , rD = .25 , rF = 0.4, G = 0.3,rG = 0.2, rG2 = 0.35, HORIZ_LIM = 27.2
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
-    public static double  A_OFF = -15, MAX=29, MIN=0
-            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.012, rP2 =0.012, rD2= .9
+    public static double  A_OFF = -8, MAX=29, MIN=0
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.15,D=0.02, rP = 0.012, rP2 =0.012, rD2= .9
             , rD = .1 , rF = 0.4, G = 0.2,rG = 0.185, rG2 = 0.3, HORIZ_LIM = 28.2
-            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rF0 = 0.8, rG0= .1;
+            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rFH = 0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel, rotVel;
@@ -121,10 +122,12 @@ public class DualPIDController {
 //        power*=gScale;
 //        packet.put("powab4rF",power);
         if(abs(rd)<1 && abs(rErr)>2){
-            if(targetRot!=0) {
+            if(targetRot==HIGHBUCKET_PITCH_POS) {
+                power += rFH * signum(rErr);
+            } else if(targetRot==0){
+                power+=rF0*signum(rErr);
+            }else{
                 power += rF * signum(rErr);
-            } else{
-                power += rF0 * signum(rErr);
             }
         }
         if(abs(rErr)<10&&targetRot==0||lastPower==0&&targetRot==0)

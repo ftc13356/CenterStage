@@ -23,16 +23,16 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDContro
 public class TelescopicArm extends DualPIDController {
     public static double INTAKE_EXTEND_POS = 4;
     public static double INTAKE_PITCH_POS = 3;
-    public static double HIGHBUCKET_EXTEND_POS = 30.5;
+    public static double HIGHBUCKET_EXTEND_POS = 28.5;
     public static double HIGHBUCKET_PITCH_POS = 100;
     public static double LOWBUCKET_EXTEND_POS = 16;
     public static double LOWBUCKET_PITCH_POS = 100;
-    public static double HIGHSPECIMEN_EXTEND_POS = 16.25;
+    public static double HIGHSPECIMEN_EXTEND_POS = 15;
 //    public static double HIGHSPECIMEN_PITCH_POS = 40.5;
 public static double HIGHSPECIMEN_PITCH_POS = 39;
     public static double LOWSPECIMEN_EXTEND_POS = 10;
     public static double LOWSPECIMEN_PITCH_POS = 25;
-    public static double HIGHSPECIMEN_TELE_EXTEND_POS = 16.25;
+    public static double HIGHSPECIMEN_TELE_EXTEND_POS = 15;
 //    public static double HIGHSPECIMEN_TELE_PITCH_POS = 40.5;
     public static double HIGHSPECIMEN_TELE_PITCH_POS = 39;
     public static double LOWSPECIMEN_TELE_EXTEND_POS = 10;
@@ -43,7 +43,7 @@ public static double HIGHSPECIMEN_PITCH_POS = 39;
     public static double HOVER_PITCH_POS = 15;
     public static double HANG_EXTEND_POS = 5;
     public static double HANG_PITCH_POS = 70, RETRACTED_EXTEND__POS = 0, RETRACTED_PITCH_POS = 0, MANUAL_EXT_SPEED = 0.75, MANUAL_ROT_SPEED = 0.5, EXP_HEIGHT_OFFSET=3,
-            AUTO_GRAB_PITCH = 12, AUTO_GRAB_EXTEND =13, AUTO_AUTO_GRAB_PITCH = 10.5;
+            AUTO_GRAB_PITCH = 9, AUTO_GRAB_EXTEND =13, AUTO_AUTO_GRAB_PITCH = 9.5;
 
     private final double EXTEND_MOTOR_BUFFER = 5;
     private final double PITCH_MOTOR_BUFFER = 5;
@@ -182,7 +182,7 @@ public static double HIGHSPECIMEN_PITCH_POS = 39;
                 i.state = false;
             }
         } else{
-            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(4, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+10)*180/PI);
+            super.goTo(super.getTargetExt()+p_extend*MANUAL_EXT_SPEED, Math.atan2(3, super.getTargetExt()+p_extend*MANUAL_EXT_SPEED+10)*180/PI);
         }
     }
     public void lowerToIntake(){
@@ -294,7 +294,7 @@ public static double HIGHSPECIMEN_PITCH_POS = 39;
                 ArmStates.INTAKE.state = true;
 
             }
-            if(abs(4 - (getExt()+10)*sin((getRot())*PI/180))<3.75 && getRot()<90){
+            if(abs(2 - (getExt()+10)*sin((getRot())*PI/180))<3.75 && getRot()<90){
                 ArmStates.HOVER.state = true;
                 TelescopicArm.ArmTargetStates.values()[ArmStates.HOVER.ordinal()].state = false;
             }

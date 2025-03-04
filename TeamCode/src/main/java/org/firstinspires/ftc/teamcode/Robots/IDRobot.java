@@ -876,7 +876,7 @@ public class IDRobot extends BasicRobot {
                                 if (newExt < arm.getTargetExt() - .25) {
                                     newExt -= RETRACT_CONST;
                                 }
-                                arm.goToResetManual(newExt, Math.atan2(3.5, newExt + 12) * 180 / PI);
+                                arm.goToResetManual(newExt, Math.atan2(3, newExt + 12) * 180 / PI);
                                 twist.twistToAng(relCent[3]);
                                 packet.put("newExt", newExt);
                                 packet.put("relVect", relVect);
