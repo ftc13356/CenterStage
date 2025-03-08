@@ -65,8 +65,8 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.30, FOR_MULT = 0.85, SIDE_CONST = 1.5, SIDE_MULT = 1, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.12, MIN_EXT = 6.0, HANGEXT1 = 20.5, HANGROT1 = 110,
-            HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 17, RETRACT_CONST = 0, STABLIZE_TIME = 0.4;
+    public static double FOR_CONST = 3.80, FOR_MULT = 0.85, SIDE_CONST = 1, SIDE_MULT = 1, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.12, MIN_EXT = 6.0, HANGEXT1 = 20.5, HANGROT1 = 110,
+            HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0.4;
     double driveConst = .7;
     double lastMoveTime = -100;
     Pose grabPoint = new Pose(0, 0, 0);
@@ -824,7 +824,7 @@ public class IDRobot extends BasicRobot {
                 targeted = false;
                 queuers.get(2).reset();
             }
-            if (isAutoGrab && ((follower.getVelocityMagnitude() < 5 && abs(arm.getVel()) < 0.7 && abs(follower.getVelocityPose().getHeading()) < 5) || (follower.isVeloStable() && abs(arm.getVel()) < 0.7))) {
+            if (isAutoGrab && ((follower.getVelocityMagnitude() < 5 && abs(arm.getVel()) < 3 && abs(follower.getVelocityPose().getHeading()) < 5) || (follower.isVeloStable() && abs(arm.getVel()) < 3))) {
 
                 double[] relCent = cv.getCenter().clone();
 

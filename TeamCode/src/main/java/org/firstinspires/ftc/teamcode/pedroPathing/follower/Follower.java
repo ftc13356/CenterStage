@@ -176,9 +176,9 @@ public class Follower {
      */
     public Follower(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        xVeloHistory = new ArrayList<>(Collections.nCopies(10,0.0));
-        yVeloHistory = new ArrayList<>(Collections.nCopies(10,0.0));
-        hVeloHistory = new ArrayList<>(Collections.nCopies(10,0.0));
+        xVeloHistory = new ArrayList<>(Collections.nCopies(4,0.0));
+        yVeloHistory = new ArrayList<>(Collections.nCopies(4,0.0));
+        hVeloHistory = new ArrayList<>(Collections.nCopies(4,0.0));
         lastStableTime = -100;
         isStable = false;
         initialize();
