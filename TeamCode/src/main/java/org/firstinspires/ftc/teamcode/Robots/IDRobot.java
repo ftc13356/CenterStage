@@ -38,6 +38,7 @@ import org.apache.commons.math3.analysis.function.Max;
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.Flip;
+import org.firstinspires.ftc.teamcode.Components.HangServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
 import org.firstinspires.ftc.teamcode.Components.Twist;
@@ -59,13 +60,14 @@ public class IDRobot extends BasicRobot {
     CVMaster cv;
     Flip flip;
     public Follower follower;
+    HangServo hang;
     public ArrayList<Queuer> queuers;
     public TelescopicArm arm;
     Twist twist;
     boolean isAutoGrab = false, targeted = false;
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.80, FOR_MULT = 0.85, SIDE_CONST = 1, SIDE_MULT = 1, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.12, MIN_EXT = 6.0, HANGEXT1 = 20.5, HANGROT1 = 110,
+    public static double FOR_CONST = 3.80, FOR_MULT = 0.85, SIDE_CONST = 1, SIDE_MULT = 1, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.25, DROP_DELAY_TIME = 0.12, MIN_EXT = 6.0, HANGEXT1 = 25.5, HANGROT1 = 70,
             HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0.4;
     double driveConst = .7;
     double lastMoveTime = -100;
@@ -78,6 +80,7 @@ public class IDRobot extends BasicRobot {
         cv = new CVMaster();
         flip = new Flip();
         follower = new Follower(op.hardwareMap);
+        hang = new HangServo();
         queuers = new ArrayList<>();
         twist = new Twist();
         isAutoGrab = false;
@@ -463,6 +466,10 @@ public class IDRobot extends BasicRobot {
         if (queuer.queue(p_async, TelescopicArm.ArmStates.INTAKE.getState()))
             arm.lowerToIntake();
     }
+    public void setHangPowe(double power, boolean p_async, Queuer queuer) {
+        if (queuer.queue(p_async, true))
+            hang.setPower(power);
+    }
 
     public void autoGrab(int color) {
         boolean isRB = false;
@@ -614,7 +621,8 @@ public class IDRobot extends BasicRobot {
 
     public void update() {
         super.update();
-        arm.update();
+        if(!isTeleop)
+            arm.update();
         claw.update();
         flip.update();
         if (!follower.isTeleDrive())
@@ -1015,10 +1023,12 @@ public class IDRobot extends BasicRobot {
 //            isAutoGrab = false;
         }
         if (isLD2 && isX2 || !queuers.get(9).isEmpty()) {
-            setArm(0, HANGROT1, false, queuers.get(9));
             setFlip(Flip.FlipStates.SUBMERSIBLE, true, queuers.get(9));
             setTwist(Twist.TwistStates.SPECIMEN, true, queuers.get(9));
             setArm(HANGEXT1, HANGROT1, false, queuers.get(9));
+            setHangPowe(-1,true, queuers.get(9));
+            queuers.get(9).addDelay(0.9);
+            setHangPowe(0,true, queuers.get(9));
             queuers.get(7).reset();
         }
         if (isLD2 && isA2 || !queuers.get(7).isEmpty()) {
@@ -1027,6 +1037,19 @@ public class IDRobot extends BasicRobot {
             setArm(HANGEXT3, HANGROT3, false, queuers.get(7));
             setFlip(Flip.FlipStates.SUBMERSIBLE, true, queuers.get(7));
             setArm(HANGEXT2, HANGROT2, true, queuers.get(7));
+        }
+        double hangPow = op.gamepad2.right_trigger - op.gamepad2.left_trigger;
+        if(abs(hangPow)>.3){
+            queuers.get(9).reset();
+            arm.setPowers(1, 0);
+            hang.setPower(hangPow);
+        }
+        else{
+            if(queuers.get(9).isEmpty()) {
+                hang.setPower(0);
+            }
+
+            arm.update();
         }
         for (var i : queuers) {
             if (!i.isEmpty()) {

@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
 
 import static java.lang.Double.NaN;
@@ -42,7 +43,7 @@ public class DualPIDController {
             , rD = .1 , rF = 0.4, G = 0.2,rG = 0.185, rG2 = 0.3, HORIZ_LIM = 28.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rFH = 0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;
-    double TICKS_PER_RAD = TICKS_PER_DEG*PI/180;
+    double TICKS_PER_RAD = TICKS_PER_DEG*PI/180, lastManualTime = -100;
     double targetExt, targetRot, middle, middleRot, trueTargExt, trueTargRot, lastPower=-0.1, curExt, curRot, vel, rotVel;
     public DualPIDController() {
         ext = op.hardwareMap.get(DcMotorEx.class, "extendMotor");
@@ -56,6 +57,7 @@ public class DualPIDController {
             rotEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rotEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
+        lastManualTime = -100;
         rot.setDirection(REVERSE);
 //        rotEnc.setDirection(REVERSE);
         ext2.setDirection(REVERSE);
@@ -84,68 +86,69 @@ public class DualPIDController {
     }
 
     public void goTo(double extension, double rotation){
-        extension = min(max(extension,MIN),MAX);
-        rotation = min(max(rotation,ROTMIN),ROTMAX);
-        targetExt = extension;
-        targetRot = rotation;
-        curRot = rotEnc.getCurrentPosition();
-        curExt = -extEnc.getCurrentPosition() + (x1)*curRot*TICKS_PER_DEG*2786.2/360;
-        if((targetExt+10)*cos(curRot*TICKS_PER_RAD)>HORIZ_LIM){
-            extension = HORIZ_LIM/cos(curRot*TICKS_PER_RAD)-10;
-        }
-        double err = extension - curExt*TICKS_PER_IN;
-        double d = extEnc.getVelocity()*TICKS_PER_IN;
-        double rd = -rotEnc.getVelocity()*TICKS_PER_DEG;
-        vel = d;
-        rotVel = rd*-1;
-        if((extension < curExt * TICKS_PER_IN) || abs(rotation - curRot*TICKS_PER_DEG + rd *0.3) < 50){
-            ext.setPower(MULT*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
-            ext2.setPower(MULT2*(P*err+D*d+G*Math.sin(curRot*TICKS_PER_RAD)));
-        }
-        double rErr = rotation - curRot*TICKS_PER_DEG;
-        double r = curExt*TICKS_PER_IN/MAX;
-        double gScale  = 1/(1-Math.max(-rd/400,0));
-
-        double power = 0;
-        if(curExt*TICKS_PER_IN<23 || extension > 23 || true){
-            power = (13/voltage)*(((rP+rP2*r)*rErr+.001*(rD+rD2*r)*rd+Math.cos(curRot*TICKS_PER_RAD+(A_OFF-2*r)*PI/180)*(rG+ rG2*r))*gScale);
-            if(targetRot != HIGHSPECIMEN_PITCH_POS){
-                power -= (13/voltage)*Math.cos(curRot*TICKS_PER_RAD+(A_OFF-2*r)*PI/180)*(rG0)*gScale;
+        if(abs(time - lastManualTime)>.5) {
+            extension = min(max(extension, MIN), MAX);
+            rotation = min(max(rotation, ROTMIN), ROTMAX);
+            targetExt = extension;
+            targetRot = rotation;
+            curRot = rotEnc.getCurrentPosition();
+            curExt = -extEnc.getCurrentPosition() + (x1) * curRot * TICKS_PER_DEG * 2786.2 / 360;
+            if ((targetExt + 10) * cos(curRot * TICKS_PER_RAD) > HORIZ_LIM) {
+                extension = HORIZ_LIM / cos(curRot * TICKS_PER_RAD) - 10;
             }
-        }
-        else{
-            power = Math.cos(curRot*TICKS_PER_RAD+(A_OFF+3*r)*PI/180)*(rG+ rG2*r)-.1;
-        }
+            double err = extension - curExt * TICKS_PER_IN;
+            double d = extEnc.getVelocity() * TICKS_PER_IN;
+            double rd = -rotEnc.getVelocity() * TICKS_PER_DEG;
+            vel = d;
+            rotVel = rd * -1;
+            if ((extension < curExt * TICKS_PER_IN) || abs(rotation - curRot * TICKS_PER_DEG + rd * 0.3) < 50) {
+                ext.setPower(MULT * (P * err + D * d + G * Math.sin(curRot * TICKS_PER_RAD)));
+                ext2.setPower(MULT2 * (P * err + D * d + G * Math.sin(curRot * TICKS_PER_RAD)));
+            }
+            double rErr = rotation - curRot * TICKS_PER_DEG;
+            double r = curExt * TICKS_PER_IN / MAX;
+            double gScale = 1 / (1 - Math.max(-rd / 400, 0));
+
+            double power = 0;
+            if (curExt * TICKS_PER_IN < 23 || extension > 23 || true) {
+                power = (13 / voltage) * (((rP + rP2 * r) * rErr + .001 * (rD + rD2 * r) * rd + Math.cos(curRot * TICKS_PER_RAD + (A_OFF - 2 * r) * PI / 180) * (rG + rG2 * r)) * gScale);
+                if (targetRot != HIGHSPECIMEN_PITCH_POS) {
+                    power -= (13 / voltage) * Math.cos(curRot * TICKS_PER_RAD + (A_OFF - 2 * r) * PI / 180) * (rG0) * gScale;
+                }
+            } else {
+                power = Math.cos(curRot * TICKS_PER_RAD + (A_OFF + 3 * r) * PI / 180) * (rG + rG2 * r) - .1;
+            }
 //        if(signum(rd) != signum(power)){
 //            gScale = 1/(1-abs(rd/MAX_SPEED/TICKS_PER_DEG));
 //        }
 //        power*=gScale;
 //        packet.put("powab4rF",power);
-        if(abs(rd)<1 && abs(rErr)>2){
-            if(targetRot==HIGHBUCKET_PITCH_POS) {
-                power += rFH * signum(rErr);
-            } else if(targetRot==0){
-                power+=rF0*signum(rErr);
-            }else{
-                power += rF * signum(rErr);
+            if (abs(rd) < 1 && abs(rErr) > 2) {
+                if (targetRot == HIGHBUCKET_PITCH_POS) {
+                    power += rFH * signum(rErr);
+                } else if (targetRot == 0) {
+                    power += rF0 * signum(rErr);
+                } else {
+                    power += rF * signum(rErr);
+                }
             }
+            if (abs(rErr) < 10 && targetRot == 0 || lastPower == 0 && targetRot == 0)
+                power = 0;
+            if (abs(rErr) < 10 && targetRot == ROTMAX) {
+                power = SPECIPOWER;
+            }
+            rot.setPower(power);
+            lastPower = power;
+            if (power == 0 && lastPower == 0 && rd == 0 && targetRot == 0 && curRot != 0) {
+                rotEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rotEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+            packet.put("powa", power);
+            packet.put("rD", abs(rd));
+            packet.put("rErr", abs(rErr));
+            packet.put("rGcostheta", rG * Math.cos(curRot * TICKS_PER_RAD));
+            packet.put("rF", rF * signum(rErr));
         }
-        if(abs(rErr)<10&&targetRot==0||lastPower==0&&targetRot==0)
-            power=0;
-        if(abs(rErr)<10&&targetRot == ROTMAX){
-            power = SPECIPOWER;
-        }
-        rot.setPower(power);
-        lastPower = power;
-        if(power ==0 &&lastPower==0&& rd==0 && targetRot ==0 && curRot!=0) {
-            rotEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rotEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-        packet.put("powa",power);
-        packet.put("rD", abs(rd));
-        packet.put("rErr", abs(rErr));
-        packet.put("rGcostheta", rG*Math.cos(curRot*TICKS_PER_RAD));
-        packet.put("rF", rF*signum(rErr));
     }
     public void goTo(double extension, double rotation, double middle){
         if(middle != this.middle || targetExt != min(max(extension,MIN),MAX) || targetRot != min(max(rotation,ROTMIN),ROTMAX))
@@ -172,6 +175,12 @@ public class DualPIDController {
             this.middleRot = middleRot;
         }
         goTo(extension,rotation);
+    }
+    public void setPowers(double exte, double rota){
+        ext.setPower(exte);
+        ext2.setPower(exte);
+        rot.setPower(rota);
+        lastManualTime = time;
     }
     public double getRot(){
         return curRot*TICKS_PER_DEG;

@@ -264,6 +264,9 @@ public static double HIGHSPECIMEN_PITCH_POS = 38;
         lastManualTime = -100;
         goTo(p_extend,p_pitch);
     }
+    public void setPowers(double ext, double rot){
+        super.setPowers(ext, rot);
+    }
 
     /**
      * updates the state machine
