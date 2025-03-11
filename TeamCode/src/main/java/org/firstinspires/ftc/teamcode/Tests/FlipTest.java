@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static org.firstinspires.ftc.teamcode.Components.Flip.FlipStates.SPECIMEN;
+import static org.firstinspires.ftc.teamcode.Components.Flip.SPECIMEN_POS;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -13,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 @Autonomous(name = "FlipTest")
 public class FlipTest extends LinearOpMode{
     //0reset, 1sub, 2spec, 3specgrab, 4basket
-    public static double POS = 0;
+    public static double POS = SPECIMEN_POS;
     Flip flipServo;
 
     public void runOpMode() throws InterruptedException{

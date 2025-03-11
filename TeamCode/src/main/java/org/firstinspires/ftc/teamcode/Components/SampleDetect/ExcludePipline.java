@@ -51,6 +51,8 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
     Mat colorMask = new Mat();
+    Mat colorMask2 = new Mat();
+
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat(), maskedImage = new Mat();
 
@@ -129,11 +131,16 @@ public class ExcludePipline extends OpenCvPipeline {
             Core.bitwise_or(mask, mask2, colorMask);
         } else if (color == 1)
             Core.inRange(hsv, blFilt, buFilt, colorMask);
-        else
-            Core.inRange(hsv, ylFilt, yuFilt, colorMask);
+        else {
+            Core.inRange(hsv, blFilt, buFilt, colorMask);
+            Core.inRange(hsv, ylFilt, yuFilt, colorMask2);
+        }
 
         maskedImage = new Mat();
         Core.bitwise_and(input, input, maskedImage, colorMask);
+        if(color==2) {
+            Core.bitwise_and(input, input, maskedImage, colorMask2);
+        }
 
         edges = new Mat();
         // Apply Canny edge detection
