@@ -78,20 +78,20 @@ public class OTOSLocalizer extends Localizer {
     public OTOSLocalizer(HardwareMap map, Pose setStartPose) {
         hardwareMap = map;
 
-        otos = hardwareMap.get(SparkFunOTOS.class, "otos2");
-        otos2 = hardwareMap.get(SparkFunOTOS.class,"otos");
+        otos = hardwareMap.get(SparkFunOTOS.class, "otos");
+        otos2 = hardwareMap.get(SparkFunOTOS.class,"otos2");
 
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.RADIANS);
         otos2.setLinearUnit(DistanceUnit.INCH);
         otos2.setAngularUnit(AngleUnit.RADIANS);
-        otos.setSignalProcessConfig(new SparkFunOTOS.SignalProcessConfig((byte) 0x0D));
+//        otos.setSignalProcessConfig(new SparkFunOTOS.SignalProcessConfig((byte) 0x0D));
 
         // For the OTOS, left/right is the y axis a nd forward/backward is the x axis, with left being
         // positive y and forward being positive x. PI/2 radians is facing forward, and clockwise
         // rotation is negative rotation.
-        otos2.setOffset(new SparkFunOTOS.Pose2D(7.25,3,-Math.PI/2));
-        otos.setOffset(new SparkFunOTOS.Pose2D(7.25,-3,Math.PI/2));
+        otos2.setOffset(new SparkFunOTOS.Pose2D(7.25,-3,Math.PI/2));
+        otos.setOffset(new SparkFunOTOS.Pose2D(7.25,3,-Math.PI/2));
 
 
         otos.setLinearScalar(1);

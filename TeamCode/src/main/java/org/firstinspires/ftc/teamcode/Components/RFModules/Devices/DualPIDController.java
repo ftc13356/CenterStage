@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_PITCH_POS;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHSPECIMEN_PITCH_POS;
+import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.LOWBUCKET_PITCH_POS;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -86,7 +87,7 @@ public class DualPIDController {
     }
 
     public void goTo(double extension, double rotation){
-        if(abs(time - lastManualTime)>.5) {
+        if(abs(time - lastManualTime)>1) {
             extension = min(max(extension, MIN), MAX);
             rotation = min(max(rotation, ROTMIN), ROTMAX);
             targetExt = extension;
@@ -124,7 +125,7 @@ public class DualPIDController {
 //        power*=gScale;
 //        packet.put("powab4rF",power);
             if (abs(rd) < 1 && abs(rErr) > 2) {
-                if (targetRot == HIGHBUCKET_PITCH_POS) {
+                if (targetRot == HIGHBUCKET_PITCH_POS || targetRot == LOWBUCKET_PITCH_POS) {
                     power += rFH * signum(rErr);
                 } else if (targetRot == 0) {
                     power += rF0 * signum(rErr);
@@ -139,7 +140,7 @@ public class DualPIDController {
             }
             rot.setPower(power);
             lastPower = power;
-            if (power == 0 && lastPower == 0 && rd == 0 && targetRot == 0 && curRot != 0) {
+            if (power == 0 && lastPower == 0 && rd == 0 && targetRot == 0 && curRot != 0 && isTeleop) {
                 rotEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rotEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }

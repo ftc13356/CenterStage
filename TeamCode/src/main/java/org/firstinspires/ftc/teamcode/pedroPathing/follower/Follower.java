@@ -323,7 +323,7 @@ public class Follower {
         double vf = rawDrive.getX();
         double vs = rawDrive.getY();
         double vw = rawDrive.getHeading();
-        vf = vf * (1.5 - height/DualPIDController.MAX)/1.5;
+//        vf = vf * (1.5 - height/DualPIDController.MAX)/1.5;
 //        if(abs(vf-getRotVelocity().getX()/xMovement)> (1.3-height/DualPIDController.MAX) * 1.2){
 //            vf =getRotVelocity().getX()/xMovement +  Math.signum(vf-getRotVelocity().getX()/xMovement) * (1.3-height/DualPIDController.MAX)*1.2;
 //        }
