@@ -57,10 +57,9 @@ public class ExcludePipline extends OpenCvPipeline {
     Mat boundingImage = new Mat(), maskedImage = new Mat();
 
     public static double AREA_THRESH = .82, FCL = 1, UP_TOLERANCE = 0.6, DOWN_TOLERANCE = 0.8, CLASSUP_TOL = 0.5, CLASSDOWN_TOL = 0.3;
-    double objectWidth = 3.5;  // Replace with your object's width in real-world units (e.g., centimeters)
-    double objectHeight = 1.5;  // Replace with your object's height in real-world units
+    double objectWidth = 3.5;
+    double objectHeight = 1.5;
 
-    // Define the 3D coordinates of the object corners in the object coordinate space
     MatOfPoint3f objectPoints = new MatOfPoint3f(
             new Point3(objectWidth / 2, objectHeight / 2, 0),
             new Point3(-objectWidth / 2, objectHeight / 2, 0),
@@ -429,8 +428,8 @@ public class ExcludePipline extends OpenCvPipeline {
         }
 
         // Calculate the center of the frame
-        double centerX = 640;
-        double centerY = 360;
+        double centerX = 320;
+        double centerY = 240;
         Point center = new Point((int) centerX, (int) centerY);
 
         // Calculate distances from each point to the center

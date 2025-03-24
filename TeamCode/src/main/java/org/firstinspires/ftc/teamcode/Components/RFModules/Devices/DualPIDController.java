@@ -40,8 +40,8 @@ public class DualPIDController {
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
     public static double  A_OFF = -8, MAX=29, MIN=0
-            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.15,D=0.02, rP = 0.012, rP2 =0.012, rD2= .7
-            , rD = .1 , rF = 0.4, G = 0.2,rG = 0.185, rG2 = 0.3, HORIZ_LIM = 28.2
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.16,D=0.02, rP = 0.009, rP2 =0.01, rD2= .4
+            , rD = .1 , rF = 0.4, G = 0.2,rG = 0.165, rG2 = 0.35, HORIZ_LIM = 28.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rFH = 0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180, lastManualTime = -100;
@@ -87,7 +87,7 @@ public class DualPIDController {
     }
 
     public void goTo(double extension, double rotation){
-        if(abs(time - lastManualTime)>1) {
+        if(abs(time - lastManualTime)>3) {
             extension = min(max(extension, MIN), MAX);
             rotation = min(max(rotation, ROTMIN), ROTMAX);
             targetExt = extension;
@@ -175,6 +175,17 @@ public class DualPIDController {
             this.middle = middle;
             this.middleRot = middleRot;
         }
+        else{
+            targetRot = rotation;
+            targetExt = extension;
+        }
+        packet.put("isMid", mid);
+        packet.put("middled", abs(getExt() - middle) < 5);
+        packet.put("middleRotted", abs(getRot()-middleRot)<10);
+        packet.put("middleRot", middleRot);
+        packet.put("middleRotCurrent", getRot());
+
+
         goTo(extension,rotation);
     }
     public void setPowers(double exte, double rota){
@@ -199,6 +210,11 @@ public class DualPIDController {
 
     public double getTrueTargRot() {
         return trueTargRot;
+    }
+    public void resetMid(){
+        this.middle = 0;
+        this.middleRot = 0;
+        mid = true;
     }
 
     public double getMiddle(){return middle;}
