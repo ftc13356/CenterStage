@@ -40,8 +40,8 @@ public class DualPIDController {
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
     public static double  A_OFF = -8, MAX=29, MIN=0
-            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.16,D=0.02, rP = 0.009, rP2 =0.01, rD2= .4
-            , rD = .1 , rF = 0.4, G = 0.2,rG = 0.165, rG2 = 0.35, HORIZ_LIM = 28.2
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.145, S = 0.13 ,D=0.023, rP = 0.009, rP2 =0.01, rD2= .3
+            , rD = .1 , rF = 0.4, G = 0.2,rG = 0.15, rG2 = 0.32, HORIZ_LIM = 28.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rFH = 0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180, lastManualTime = -100;
@@ -103,8 +103,12 @@ public class DualPIDController {
             vel = d;
             rotVel = rd * -1;
             if ((extension < curExt * TICKS_PER_IN) || abs(rotation - curRot * TICKS_PER_DEG + rd * 0.3) < 50) {
-                ext.setPower(MULT * (P * err + D * d + G * Math.sin(curRot * TICKS_PER_RAD)));
-                ext2.setPower(MULT2 * (P * err + D * d + G * Math.sin(curRot * TICKS_PER_RAD)));
+                double signum = 0;
+                if(abs(targetExt-curExt)>0.5 && abs(vel)<2){
+                    signum = signum(targetExt-curExt)*S;
+                }
+                ext.setPower(MULT * (P * err + D * d + G * Math.sin(curRot * TICKS_PER_RAD) + signum));
+                ext2.setPower(MULT2 * (P * err + D * d + G * Math.sin(curRot * TICKS_PER_RAD) +signum));
             }
             double rErr = rotation - curRot * TICKS_PER_DEG;
             double r = curExt * TICKS_PER_IN / MAX;
