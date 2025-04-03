@@ -21,6 +21,7 @@ public class Flip {
     public static double RETRACT_POS = 0.55;
     public static double SUBMERSIBLE_POS = 0.3;
     public static double SPECIMEN_POS = .96;
+    public static double BACKDROP_POS = 1;
     public static double SPECIMENGRAB_POS = 0.8;
     public static double BUCKET_POS = 0.72, AUTO_GRAH_POS= .63,
             FLIP_TIME = 0.1;
@@ -52,6 +53,7 @@ public class Flip {
         RESET(true, RESET_POS),
         SUBMERSIBLE(false, SUBMERSIBLE_POS),
         SPECIMEN(false, SPECIMEN_POS),
+        BACKDROP(false, BACKDROP_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
         RETRACT(false, Flip.RETRACT_POS),
         BUCKET(false, BUCKET_POS),
@@ -78,6 +80,7 @@ public class Flip {
         RESET(false, RESET_POS),
         SUBMERSIBLE(false, SUBMERSIBLE_POS),
         SPECIMEN(false, SPECIMEN_POS),
+        BACKDROP(false, BACKDROP_POS),
         SPECIMEN_GRAB(false, SPECIMENGRAB_POS),
         RETRACT(false, RETRACT_POS),
         BUCKET(false, BUCKET_POS),

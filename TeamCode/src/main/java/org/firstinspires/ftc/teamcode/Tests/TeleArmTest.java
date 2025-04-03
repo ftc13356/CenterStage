@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.DualPIDController;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 @Autonomous
-@Disabled
+
 @Config
 public class TeleArmTest extends LinearOpMode {
     public static double TARGET_ROT = 0, TARGET_EXT = 0, MID = 0, MID_ROT = 0;

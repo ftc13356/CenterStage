@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.CYCLE_OFFSET_X;
-import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.CYCLE_OFFSET_Y;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST3_X;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DIST3_Y;
-import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.RAISE_DELAY;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHSPECIMEN_EXTEND_POS;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHSPECIMEN_PITCH_POS;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.SPECIMENGRAB_EXTEND_POS;
@@ -247,19 +244,28 @@ public class BR40 {
     }
 
     public void placeSpeci2(int i) {
-        if(i==-2){
-            x7=-.4;
-        }
-        else{
-            x7=0;
-        }
-        robot.followPath(new Point(21, 66 + i, 1), new Point(40 + x7-00.03*i, 68 + i * .5, Point.CARTESIAN), 0, 0, false, 0.9);
-        robot.setArm(HIGHSPECIMEN_EXTEND_POS, HIGHSPECIMEN_PITCH_POS, 0, HIGHSPECIMEN_PITCH_POS, true);
-        robot.setTwist(Twist.TwistStates.PARALLEL, true);
-        robot.setFlip(Flip.FlipStates.SPECIMEN, true);
-        robot.queuer.queue(false, true);
-        robot.queuer.addDelay(0.12);
+//        if(i==-2){
+//            x7=-.4;
+//        }
+//        else{
+//            x7=0;
+//        }
+        robot.followPath(new Point(41.8 + x1, 64, Point.CARTESIAN), 0, 0, false); //icl idk if this point is correct bc i ran it from the starting program to the submersible rather than from spec pick up pos to submersible so b careful i guess
+        robot.setArm(TelescopicArm.ArmStates.LOW_BUCKET, false);
+        robot.setTwist(Twist.TwistStates.SPECIMEN, true);
+        robot.setFlip(Flip.FlipStates.BACKDROP, true);
+        robot.followPath(new Point(17.5 + x1, 64, Point.CARTESIAN), 0, 0, false);
+        robot.setArm(0, TelescopicArm.ArmStates.LOW_BUCKET.getPitchPos() + 2, false);
+        robot.queuer.addDelay(0.25 + x2);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
+        //
+//        robot.followPath(new Point(21, 66 + i, 1), new Point(40 + x7-00.03*i, 68 + i * .5, Point.CARTESIAN), 0, 0, false, 0.9);
+//        robot.setArm(HIGHSPECIMEN_EXTEND_POS, HIGHSPECIMEN_PITCH_POS, 0, HIGHSPECIMEN_PITCH_POS, true);
+//        robot.setTwist(Twist.TwistStates.PARALLEL, true);
+//        robot.setFlip(Flip.FlipStates.SPECIMEN, true);
+//        robot.queuer.queue(false, true);
+//        robot.queuer.addDelay(0.12);
+//        robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
     }
 
     public void park() {
