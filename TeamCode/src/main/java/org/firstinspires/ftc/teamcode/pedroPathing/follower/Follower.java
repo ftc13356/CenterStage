@@ -595,14 +595,14 @@ public class Follower {
      */
     public void update() {
         updatePose();
-
+        Pose current = getPose();
+        packet.put("x",current.getX());
+        packet.put("y",current.getY());
+        packet.put("heading",current.getHeading());
         if (!teleopDrive) {
             if (currentPath != null) {
-                Pose current = getPose();
 
-                packet.put("x",current.getX());
-                packet.put("y",current.getY());
-                packet.put("heading",current.getHeading());
+
                 Point target = getCurrentPath().getPoint(1);
                 packet.put("targ x", target.getX());
                 packet.put("targ y", target.getY());

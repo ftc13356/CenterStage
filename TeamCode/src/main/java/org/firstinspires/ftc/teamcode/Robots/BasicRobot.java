@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
 import static java.lang.Math.abs;
 
@@ -15,7 +14,6 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.tuning.LocalizationTest;
 
 import java.util.List;
 

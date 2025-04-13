@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.PoseStorage.currentPose;
 import static java.lang.Math.pow;
 import static java.lang.Math.signum;
 import static java.lang.Math.sqrt;

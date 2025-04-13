@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.apache.commons.math3.stat.StatUtils.min;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import android.graphics.Color;

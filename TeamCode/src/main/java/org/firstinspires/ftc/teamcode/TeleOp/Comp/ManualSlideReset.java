@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.TeleOp.Comp;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
-import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServoImpl;

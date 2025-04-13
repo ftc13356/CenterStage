@@ -14,9 +14,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Disabled
-@Autonomous
+//@Disabled
+@Autonomous(name = "PPLocalizerTest")
 public class FastOtosTestPP extends LinearOpMode {
     Queuer queuer;
     private String navigation = "forward";
@@ -51,11 +50,11 @@ public class FastOtosTestPP extends LinearOpMode {
         resetRuntime();
         BasicRobot.time = 0;
         while(!isStopRequested()&&opModeIsActive()) {
-            for(int i=0;i<8;i++){
-                followTrajAsync(trajSeq2);
-            }
-            loops++;
-            queuer.setFirstLoop(false);
+//            for(int i=0;i<8;i++){
+//                followTrajAsync(trajSeq2);
+//            }
+//            loops++;
+//            queuer.setFirstLoop(false);
             robot.update();
             follower.update();
         }

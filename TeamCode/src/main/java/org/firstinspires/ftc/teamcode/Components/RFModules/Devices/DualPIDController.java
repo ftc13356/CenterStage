@@ -117,7 +117,7 @@ public class DualPIDController {
             double power = 0;
             if (curExt * TICKS_PER_IN < 23 || extension > 23 || true) {
                 power = (13 / voltage) * (((rP + rP2 * r) * rErr + .001 * (rD + rD2 * r) * rd + Math.cos(curRot * TICKS_PER_RAD + (A_OFF - 2 * r) * PI / 180) * (rG + rG2 * r)) * gScale);
-                if (targetRot != HIGHSPECIMEN_PITCH_POS) {
+                if (targetRot != 29) {
                     power -= (13 / voltage) * Math.cos(curRot * TICKS_PER_RAD + (A_OFF - 2 * r) * PI / 180) * (rG0) * gScale;
                 }
             } else {

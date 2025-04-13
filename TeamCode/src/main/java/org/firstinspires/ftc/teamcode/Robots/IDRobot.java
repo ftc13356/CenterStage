@@ -35,7 +35,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.apache.commons.math3.analysis.function.Max;
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.Flip;
@@ -109,7 +108,7 @@ public class IDRobot extends BasicRobot {
 
     public void setArm(TelescopicArm.ArmStates targ, boolean p_async) {
         if (queuer.queue(p_async, abs(arm.getTargetExt() - arm.getExt()) < 1 && abs(arm.getTargetRot() - arm.getRot()) < 3) && !queuer.isExecuted() && !queuer.isFirstLoop()) {
-            if(arm.getTrueTargExt()!=targ.getExtendPos())
+            if(arm.getTrueTargExt()!=targ.getExtendPos()|| arm.getTargetRot()!= targ.getPitchPos())
                 arm.goTo(targ);
         }
     }
