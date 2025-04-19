@@ -228,6 +228,19 @@ public class IDRobot extends BasicRobot {
         }
     }
 
+    public void followPath(Point end, double headingInterp0, boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, !follower.isBusy())) {
+            if (!queuer.isExecuted()) {
+                Pose current = follower.getPose();
+                PathChain path2 = follower.pathBuilder()
+                        .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), end))
+                        .setLinearHeadingInterpolation(headingInterp0, current.getHeading())
+                        .build();
+                follower.followPath(path2);
+            }
+        }
+    }
+
     public void followPathNotTargeted(Point end, Point end2, double pathMaxVelMultipler, double headingInterp0, double headingInterp1, boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, targeted || !queuers.get(2).isEmpty())) {
             if ((follower.getPointFromPath(1) == null || new Point(follower.getPose()).distanceFrom(follower.getPointFromPath(1)) < 2) && !targeted && queuers.get(2).isEmpty()) {
