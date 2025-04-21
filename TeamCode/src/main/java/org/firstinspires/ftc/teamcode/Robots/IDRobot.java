@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.Flip;
 import org.firstinspires.ftc.teamcode.Components.HangServo;
+import org.firstinspires.ftc.teamcode.Components.Hardstop;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
 import org.firstinspires.ftc.teamcode.Components.Twist;
@@ -61,6 +62,7 @@ public class IDRobot extends BasicRobot {
     public Flip flip;
     public Follower follower;
     HangServo hang;
+    public Hardstop hardstop;
     public ArrayList<Queuer> queuers;
     public TelescopicArm arm;
     public Twist twist;
@@ -83,6 +85,7 @@ public class IDRobot extends BasicRobot {
         flip = new Flip();
         follower = new Follower(op.hardwareMap);
         hang = new HangServo();
+        hardstop = new Hardstop();
         queuers = new ArrayList<>();
         twist = new Twist();
         isAutoGrab = false;
@@ -148,6 +151,11 @@ public class IDRobot extends BasicRobot {
     public void setFlip(Flip.FlipStates targ, boolean p_async) {
         if (queuer.queue(p_async, true) && !queuer.isExecuted() && !queuer.isFirstLoop())
             flip.flipTo(targ);
+    }
+
+    public void setHardstop(Hardstop.HardstopStates targ, boolean p_async){
+        if(queuer.queue(p_async, arm.getRot()>39 && queuer.isExecuted()) && !queuer.isExecuted() && !queuer.isFirstLoop() && arm.getRot()>39)
+            hardstop.goTo(targ);
     }
 
     public void setTwist(Twist.TwistStates targ, boolean p_async, Queuer queuer) {
@@ -489,7 +497,7 @@ public class IDRobot extends BasicRobot {
 
     public void autoGrab(int color) {
         boolean isRB = false;
-        if (queuer.queue(true, !isAutoGrab && (queuers.get(2).isEmpty() || Claw.ClawTargetStates.CLOSED.getState() || TelescopicArm.ArmStates.INTAKE.getState())||((color==1 || color==0)&&time-lastStartAUtoGrabTime>1.5))) {
+        if (queuer.queue(true, !isAutoGrab && (queuers.get(2).isEmpty() || Claw.ClawTargetStates.CLOSED.getState())||((color==1 || color==0)&&time-lastStartAUtoGrabTime>2))) {
             if (!targeted && queuers.get(2).isEmpty()) {
                 if (!isAutoGrab) {
                     claw.goTo(Claw.ClawStates.OPEN);
@@ -503,7 +511,7 @@ public class IDRobot extends BasicRobot {
                     flip.flipTo(Flip.FlipStates.AUTO_GRAH);
                     lastStartAUtoGrabTime = time;
                 }
-                if (isAutoGrab && ((follower.getVelocityMagnitude() < 3.6 && abs(arm.getVel()) < 1.7&& abs(follower.getVelocityPose().getHeading()) < 3.6) || (follower.isVeloStable() && abs(arm.getVel()) < 1.7))) {
+                if (isAutoGrab && (TelescopicArm.ArmStates.HOVER.getState() && abs(arm.getExt() - arm.getTargetExt()) < 5 && arm.getTargetExt() > 3 && arm.getTargetRot() != 0) && ((abs(follower.getVelocityPose().getHeading()) < 20 && abs(arm.getVel()) < 3) || (abs(arm.getVel()) < 5))) {
 
                     double[] relCent = cv.getCenter().clone();
 
@@ -522,17 +530,17 @@ public class IDRobot extends BasicRobot {
 //                            claw.goTo(Claw.ClawStates.OPEN);
                                 targeted = true;
                                 follower.stopTeleopDrive();
-                                Vector2d relVect = new Vector2d(0, ((-relCent[1] + Math.signum(-relCent[1] - follower.getStableRotVelo().getY()*cv.getLatency()) * SIDE_CONST)) * SIDE_MULT
-                                        - follower.getStableRotVelo().getY() * cv.getLatency()).rotated(follower.getPose().getHeading()/*-follower.getStableRotVelo().getHeading()*cv.getLatency()*/);
+                                Vector2d relVect = new Vector2d(0, ((-relCent[1] + Math.signum(-relCent[1]) * SIDE_CONST)) * SIDE_MULT
+                                        - follower.getStableRotVelo().getY() * cv.getLatency()).rotated(follower.getPose().getHeading());
                                 Vector2d relVect2 = new Vector2d(0, (-relCent[1] * SIDE_MULT))
-                                        .rotated(follower.getPose().getHeading() - follower.getStableRotVelo().getHeading() * cv.getLatency());
+                                        .rotated(follower.getPose().getHeading());
                                 Pose pos = follower.getPose();
                                 pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
                                 Pose pos2 = follower.getPose();
                                 pos2.add(new Pose(relVect2.getX(), relVect2.getY(), 0));
-                                double newExt = Math.max(arm.getExt() + relCent[0] - (-arm.getVel() + follower.getStableRotVelo().getX()) * cv.getLatency(), MIN_EXT+2);
+                                double newExt = Math.max(arm.getExt() + relCent[0] - (-arm.getVel() + follower.getStableRotVelo().getX()) * cv.getLatency(), MIN_EXT);
 
-                                if (newExt > arm.getExt() + 8 || newExt > MAX_EXT || newExt == MIN_EXT+1) {
+                                if (newExt > arm.getExt() + 8 || newExt > MAX_EXT) {
                                     targeted = false;
                                 } else {
 //                                    if (newExt > MIN_EXT + .1) {
