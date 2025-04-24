@@ -22,7 +22,7 @@ public class Claw {
     public static double OPEN_POS_TELE = .39;
     public static double CLOSED_POS = 0.00;
 
-    public static double FLIP_TIME = 0.2;
+    public static double FLIP_TIME = 0.1;
     private final double CLAW_SERVO_BUFFER = 0.05;
     /**
      * init

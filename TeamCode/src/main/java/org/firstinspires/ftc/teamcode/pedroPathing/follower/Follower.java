@@ -176,9 +176,9 @@ public class Follower {
      */
     public Follower(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        xVeloHistory = new ArrayList<>(Collections.nCopies(4,0.0));
-        yVeloHistory = new ArrayList<>(Collections.nCopies(4,0.0));
-        hVeloHistory = new ArrayList<>(Collections.nCopies(4,0.0));
+        xVeloHistory = new ArrayList<>(Collections.nCopies(5,0.0));
+        yVeloHistory = new ArrayList<>(Collections.nCopies(5,0.0));
+        hVeloHistory = new ArrayList<>(Collections.nCopies(5,0.0));
         lastStableTime = -100;
         isStable = false;
         initialize();
@@ -518,7 +518,7 @@ public class Follower {
         for (int i=0; i<size; i++){
             xTot+=xVeloHistory.get(i);
             yTot += yVeloHistory.get(i);
-            hTot += clampAngle(hVeloHistory.get(i));
+            hTot += hVeloHistory.get(i);
         }
         return new Pose(xTot/size, yTot/size, hTot/size);
 
@@ -577,7 +577,7 @@ public class Follower {
         Pose velo = poseUpdater.getVelocityPose();
         double h = poseUpdater.getPose().getHeading();
         Vector2d vect = new Vector2d(velo.getX(), velo.getY()).rotated(-h);
-        velo = new Pose(vect.getX(), vect.getY(), clampAngle(velo.getHeading()));
+        velo = new Pose(vect.getX(), vect.getY(), velo.getHeading());
         xVeloHistory.remove(0);
         xVeloHistory.add(velo.getX());
         yVeloHistory.remove(0);

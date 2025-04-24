@@ -37,9 +37,9 @@ public class FollowerConstants {
 
     // Translational PIDF coefficients (don't use integral)
     public static CustomPIDFCoefficients translationalPIDFCoefficients = new CustomPIDFCoefficients(
-            0.09,
+            0.1,
             0,
-            0.01,
+            0.02,
             0.12);
 
     // Translational Integral
@@ -57,7 +57,7 @@ public class FollowerConstants {
     public static CustomPIDFCoefficients headingPIDFCoefficients = new CustomPIDFCoefficients(
             2,
             0,
-            0.2,
+            0.3,
             0);
 
     // Feed forward constant added on to the heading PIDF
@@ -66,14 +66,14 @@ public class FollowerConstants {
 
     // Drive PIDF coefficients
     public static CustomFilteredPIDFCoefficients drivePIDFCoefficients = new CustomFilteredPIDFCoefficients(
-            0.0115,
+            0.0125,
             0,
-            0.0013,
+            0.0016,
             0.6,
             0.0);
 
     // Feed forward constant added on to the drive PIDF
-    public static double drivePIDFFeedForward = 0.0;
+    public static double drivePIDFFeedForward = 0.1;
 
     // Kalman filter parameters for the drive error Kalman filter
     public static KalmanFilterParameters driveKalmanFilterParameters = new KalmanFilterParameters(

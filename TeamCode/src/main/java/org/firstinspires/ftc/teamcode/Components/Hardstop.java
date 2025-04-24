@@ -15,9 +15,9 @@ public class Hardstop {
     RFServo hardstop;
 
     public static double STOP_POS = 0;
-    public static double GO_POS  = .39;
+    public static double GO_POS  = 1;
 
-    public static double FLIP_TIME = 0.4;
+    public static double FLIP_TIME = 0.2;
     private final double STOP_SERVO_BUFFER = 0.05;
     /**
      * init
@@ -105,5 +105,9 @@ public class Hardstop {
 
         }
         hardstop.update();
+        if(HardstopStates.GO.getState())
+            packet.put("HARDSTOP_STATE", "GO");
+        else
+            packet.put("HARDSTOP_STATE", "STOP");
     }
 }

@@ -25,7 +25,7 @@ public class Twist {
     public static double PARPLUSHALF_POS = 0.3;
     public static double PERPLUSHALF_POS = 0.9;
     public static double SPECIMEN_POS = 1;
-    public static double GRAB_POS = 0, FLIP_TIME = 0.2;
+    public static double GRAB_POS = 0, FLIP_TIME = 0.1;
     private final double TWIST_SERVO_BUFFER = 0.05;
 
     /**
@@ -155,6 +155,10 @@ public class Twist {
         }
         p_ang = min(1, p_ang / 170);
         twist.setPosition(p_ang);
+    }
+
+    public double getPosition(){
+        return twist.getPosition();
     }
 
     /**
