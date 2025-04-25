@@ -109,6 +109,7 @@ public class Twist {
     }
 
     public void twistTo(Twist.TwistStates p_state) {
+        p_state.setStateTrue();
         twist.setPosition(p_state.position);
     }
     public double getLastTwisTime(){

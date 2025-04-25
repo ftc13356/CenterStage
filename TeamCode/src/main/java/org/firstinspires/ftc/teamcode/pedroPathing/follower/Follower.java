@@ -598,7 +598,7 @@ public class Follower {
         Pose current = getPose();
         packet.put("x",current.getX());
         packet.put("y",current.getY());
-        packet.put("heading",current.getHeading());
+        packet.put("heading", toDegrees(current.getHeading()));
         if (!teleopDrive) {
             if (currentPath != null) {
 

@@ -69,10 +69,12 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false; //sigma
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.0, FOR_MULT = 1, SIDE_CONST = 1, SIDE_MULT = 0.8, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.05, MIN_EXT = 5.0, HANGEXT1 = 26.5, HANGROT1 = 70,
+    public static double FOR_CONST = 3.5, FOR_MULT = 1, SIDE_CONST = 1.7, SIDE_MULT = 0.85, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.05, MIN_EXT = 5.0, HANGEXT1 = 26.5, HANGROT1 = 70,
             HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0., DROP_DEL = 0.14;
     double driveConst = .7;
     double lastMoveTime = -100;
+
+    double targetHead = 1000;
     Pose grabPoint = new Pose(0, 0, 0);
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -492,16 +494,16 @@ public class IDRobot extends BasicRobot {
         }
     }
 
-    public void followPath(Point mid, Point mid2, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, double tValue, Queuer queuer) {
+    public void followPath(Point mid, Point mid2, Point end, double headingInterp0, double headingInterp1, boolean p_asynchronous, double decel, Queuer queuer) {
         if (queuer.queue(p_asynchronous, !follower.isBusy())) {
             if (!queuer.isExecuted()) {
                 Pose current = follower.getPose();
                 PathChain path2 = follower.pathBuilder()
                         .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, mid2, end))
                         .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
-                        .setPathEndTValueConstraint(tValue)
+                        .setZeroPowerAccelerationMultiplier(decel)
                         .build();
-                follower.followPath(path2, false);
+                follower.followPath(path2, true);
             }
         }
     }
@@ -532,7 +534,9 @@ public class IDRobot extends BasicRobot {
                     flip.flipTo(Flip.FlipStates.AUTO_GRAH);
                     lastStartAUtoGrabTime = time;
                 }
-                if (isAutoGrab && (TelescopicArm.ArmStates.HOVER.getState() && abs(arm.getExt() - arm.getTargetExt()) < 5 && abs(follower.getVelocityMagnitude())<20&& arm.getTargetExt() > 3 && arm.getTargetRot() != 0) && ((abs(follower.getVelocityPose().getHeading()) < 10 && abs(arm.getVel()) < 3) || (abs(arm.getVel()) < 5))) {
+                if (isAutoGrab && (TelescopicArm.ArmStates.HOVER.getState() && (targetHead==1000 || abs(follower.getPose().getHeading()-targetHead)<toRadians(7)) &&
+                        abs(arm.getExt() - arm.getTargetExt()) < 5 && abs(follower.getVelocityMagnitude())<15&& arm.getTargetExt() > 3 && arm.getTargetRot() != 0) &&
+                        (abs(follower.getVelocityPose().getHeading()) < toRadians(10))) {
 
                     double[] relCent = cv.getCenter().clone();
 
@@ -552,14 +556,14 @@ public class IDRobot extends BasicRobot {
                                 targeted = true;
                                 follower.stopTeleopDrive();
                                 Vector2d relVect = new Vector2d(0, ((-relCent[1] + Math.signum(-relCent[1]) * SIDE_CONST)) * SIDE_MULT
-                                        - follower.getStableRotVelo().getY() * cv.getLatency()).rotated(follower.getPose().getHeading());
+                                        - 1.2 * follower.getStableRotVelo().getY() * cv.getLatency()).rotated(follower.getPose().getHeading());
                                 Vector2d relVect2 = new Vector2d(0, (-relCent[1] * SIDE_MULT))
                                         .rotated(follower.getPose().getHeading());
                                 Pose pos = follower.getPose();
                                 pos.add(new Pose(relVect.getX(), relVect.getY(), 0));
                                 Pose pos2 = follower.getPose();
                                 pos2.add(new Pose(relVect2.getX(), relVect2.getY(), 0));
-                                double newExt = Math.max(arm.getExt() + relCent[0] - (-arm.getVel() + follower.getStableRotVelo().getX()) * cv.getLatency(), MIN_EXT);
+                                double newExt = Math.max(arm.getExt() + relCent[0] - 1.2*(-arm.getVel() + follower.getStableRotVelo().getX()) * cv.getLatency(), MIN_EXT);
 
                                 if (newExt > arm.getExt() + 8 || newExt > MAX_EXT) {
                                     targeted = false;
@@ -607,13 +611,17 @@ public class IDRobot extends BasicRobot {
                             twist.twistTo(Twist.TwistStates.PARALLEL);
                         }
                     }
+                    if(follower.getCurrentPath()!=null){
+                        targetHead = follower.getCurrentPath().getHeadingGoal(1);
+                    }
                     packet.put("TARGWHENCHECK", arm.getTargetExt());
                     cv.resetCenter();
                     isAutoGrab = true;
                 }
             }
         }
-        if (targeted && time - twist.getLastTwisTime() > .1 && (!follower.isBusy() || lastTarg == null || lastTarg.distanceFrom(new Point(follower.getPose())) < 0.7) && ((abs(arm.getTargetExt() - arm.getExt()) < 0.7 && abs(arm.getVel()) > .75) || (abs(arm.getTargetExt() - arm.getExt()) < 0.5))) {
+        if (targeted && time - twist.getLastTwisTime() > .1 && (!follower.isBusy() || lastTarg == null || lastTarg.distanceFrom(new Point(follower.getPose())) < 0.5) && ((abs(arm.getTargetExt() - arm.getExt()) < 0.7 && abs(arm.getVel()) > .75) || (abs(arm.getTargetExt() - arm.getExt()) < 0.5))) {
+            targetHead = 1000;
             if (!Flip.FlipStates.SUBMERSIBLE.getState()) {
                 isRB = true;
                 isAutoGrab = false;
@@ -1063,6 +1071,7 @@ public class IDRobot extends BasicRobot {
 //            followPath(new Point(dist3.getX()+grabPoint.getX()+two.getX(), dist3.getY()+grabPoint.getY()+two.getY(),1),
 //                    grabPoint.getHeading(), grabPoint.getHeading(),false, false, queuers.get(6));
             setClaw(Claw.ClawStates.CLOSED, false, queuers.get(6));
+            packet.put("grabPoint", grabPoint);
             followPath(
                     new Point(dist2.getX() + grabPoint.getX(), dist2.getY() + grabPoint.getY(), 1),
                     new Point(dist12.getX() + grabPoint.getX(), dist12.getY() + grabPoint.getY(), 1),
@@ -1080,7 +1089,7 @@ public class IDRobot extends BasicRobot {
                     new Point(dist3.getX() + grabPoint.getX() + dist4.getX(), dist3.getY() + dist4.getY() + grabPoint.getY(), 1),
                     new Point(dist3.getX() + grabPoint.getX() + dist5.getX(), dist3.getY() + dist5.getY() + grabPoint.getY(), 1),
                     new Point(dist3.getX() + grabPoint.getX(), dist3.getY() + grabPoint.getY(), 1),
-                    grabPoint.getHeading(), grabPoint.getHeading(), false, 0.9, queuers.get(6));
+                    grabPoint.getHeading(), grabPoint.getHeading(), false, 2.5, queuers.get(6));
             setTwist(Twist.TwistStates.SPECIMEN, true, queuers.get(6));
             setFlip(Flip.FlipStates.SPECIMEN_GRAB, true, queuers.get(6));
 //            setClaw(Claw.ClawStates.CLOSED, false, queuers.get(6));

@@ -66,10 +66,10 @@ public class ExcludePipline extends OpenCvPipeline {
             new Point3(-objectWidth / 2, -objectHeight / 2, 0),
             new Point3(objectWidth / 2, -objectHeight / 2, 0));
     MatOfPoint3f objectPoints1 = new MatOfPoint3f(
-            new Point3(-objectWidth / 2, objectHeight / 2, 0),
-            new Point3(-objectWidth / 2, -objectHeight / 2, -1.5),
-            new Point3(objectWidth / 2, -objectHeight / 2, -1.5),
-            new Point3(objectWidth / 2, objectHeight / 2, 0));
+            new Point3(objectWidth / 2, objectHeight / 2, -1),
+            new Point3(-objectWidth / 2, objectHeight / 2, -1),
+            new Point3(-objectWidth / 2, -objectHeight / 2, 0),
+            new Point3(objectWidth / 2, -objectHeight / 2, 0));
     MatOfPoint3f objectPoints2 = new MatOfPoint3f(
             new Point3(objectWidth / 2, -objectHeight / 2, -1),
             new Point3(-objectWidth / 2, -objectHeight / 2, 0),
