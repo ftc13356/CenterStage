@@ -29,18 +29,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
+import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 @Config
 public class DualPIDController {
     public static double x1 = 0;
-    DcMotorEx ext, ext2, rot, extEnc, rotEnc;
+    DcMotorEx ext, ext2, rot, extENC, rotEnc;
+    Encoder extEnc;
 //    public static double  A_OFF = -15, MAX=31.5, MIN=0
 //            , ROTMAX = 162, ROTMIN = 0, TICKS_PER_IN = 0.001821464277011343*4*31/79*30/35, TICKS_PER_DEG = 380/8192.0,P=0.2,D=0.02, rP = 0.025 , rP2 =0.03, rD2= 2
 //            , rD = .25 , rF = 0.4, G = 0.3,rG = 0.2, rG2 = 0.35, HORIZ_LIM = 27.2
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
     public static double  A_OFF = -8, MAX=29, MIN=0
-            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.1, S = 0.15, S2 = 0.07 ,D=0.02, rP = 0.009, rP2 =0.01, rD2= .3
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.1, S = 0.15, S2 = 0.07 ,D=0.005, rP = 0.009, rP2 =0.01, rD2= .3
             , rD = .2 , rF = 0.4, G = 0.2,rG = 0.15, rG2 = 0.32, HORIZ_LIM = 28.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rFH = 0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;
@@ -49,12 +51,11 @@ public class DualPIDController {
     public DualPIDController() {
         ext = op.hardwareMap.get(DcMotorEx.class, "extendMotor");
         ext2 = op.hardwareMap.get(DcMotorEx.class, "extendMotor2");
-        extEnc = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
+        extENC = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
         rot = op.hardwareMap.get(DcMotorEx.class, "rotateMotor"); 
         rotEnc = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
+        extEnc = new Encoder(extENC);
         if(!isTeleop) {
-            extEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            extEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rotEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rotEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
@@ -98,7 +99,7 @@ public class DualPIDController {
                 extension = HORIZ_LIM / cos(curRot * TICKS_PER_RAD) - 10;
             }
             double err = extension - curExt * TICKS_PER_IN;
-            double d = extEnc.getVelocity() * TICKS_PER_IN;
+            double d = extEnc.getCorrectedVelocity() * TICKS_PER_IN;
             double rd = -rotEnc.getVelocity() * TICKS_PER_DEG;
             vel = d;
             rotVel = rd * -1;

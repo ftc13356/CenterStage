@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DISTT
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.DISTTWO_Y;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.H_OFFSET;
 import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.RAISE_DELAY;
+import static org.firstinspires.ftc.teamcode.Components.Constants.AutoSpec.T_VAL;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_EXTEND_POS;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHBUCKET_PITCH_POS;
 import static org.firstinspires.ftc.teamcode.Components.TelescopicArm.HIGHSPECIMEN_PITCH_POS;
@@ -70,7 +71,7 @@ public class IDRobot extends BasicRobot {
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
     public static double FOR_CONST = 3.5, FOR_MULT = 1, SIDE_CONST = 1.7, SIDE_MULT = 0.85, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.05, MIN_EXT = 5.0, HANGEXT1 = 26.5, HANGROT1 = 70,
-            HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0., DROP_DEL = 0.14;
+            HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0., DROP_DEL = 0, FLIP_DEL = 0.05   ;
     double driveConst = .7;
     double lastMoveTime = -100;
 
@@ -502,6 +503,7 @@ public class IDRobot extends BasicRobot {
                         .addPath(new BezierCurve(new Point(current.getX(), current.getY(), Point.CARTESIAN), mid, mid2, end))
                         .setLinearHeadingInterpolation(headingInterp0, headingInterp1)
                         .setZeroPowerAccelerationMultiplier(decel)
+                        .setPathEndHeadingConstraint(T_VAL)
                         .build();
                 follower.followPath(path2, true);
             }
@@ -1019,9 +1021,9 @@ public class IDRobot extends BasicRobot {
                 setFlip(Flip.FlipStates.AUTO_GRAH, false, queuers.get(8));
                 queuers.get(8).addDelay(0.4);
                 setTwist(Twist.TwistStates.SPECIMEN, true, queuers.get(8));
-                queuers.get(8).addDelay(DROP_DEL - .1);
+                queuers.get(8).addDelay(DROP_DEL);
                 setClaw(Claw.ClawStates.OPEN, true, queuers.get(8));
-                queuers.get(8).addDelay(0.0);
+                queuers.get(8).addDelay(FLIP_DEL);
                 setFlip(Flip.FlipStates.SPECIMEN_GRAB, true, queuers.get(8));
                 queuers.get(0).addDelay(0.5);
                 setArm(TelescopicArm.ArmStates.RETRACTED, false, queuers.get(0));
