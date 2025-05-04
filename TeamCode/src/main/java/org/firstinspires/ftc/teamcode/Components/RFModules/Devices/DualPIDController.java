@@ -42,7 +42,7 @@ public class DualPIDController {
 //            ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1;
 
     public static double  A_OFF = -8, MAX=29, MIN=0
-            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.1, S = 0.15, S2 = 0.07 ,D=0.005, rP = 0.009, rP2 =0.01, rD2= .3
+            , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.15, S = 0.15, S2 = 0.07 ,D=0.005, rP = 0.009, rP2 =0.01, rD2= .3
             , rD = .2 , rF = 0.4, G = 0.2,rG = 0.15, rG2 = 0.32, HORIZ_LIM = 28.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rFH = 0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;

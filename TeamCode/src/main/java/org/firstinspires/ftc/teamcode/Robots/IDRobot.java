@@ -1002,7 +1002,7 @@ public class IDRobot extends BasicRobot {
             twist.iterateTwist(1);
         }
         if ((isRB || !queuers.get(2).isEmpty() || !queuers.get(8).isEmpty()) && queuers.get(9).isEmpty() && arm.getTargetExt() != HANGEXT1) {
-            if (queuers.get(8).isEmpty() && TelescopicArm.ArmStates.HOVER.getState() && (arm.getTargetRot() != 0 || !queuers.get(2).isEmpty()) && (!queuers.get(2).isEmpty() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.AUTO_GRAB.getState())) {
+            if (arm.getRot()<80 && (queuers.get(8).isEmpty() && TelescopicArm.ArmStates.HOVER.getState() && (arm.getTargetRot() != 0 || !queuers.get(2).isEmpty()) && (!queuers.get(2).isEmpty() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.AUTO_GRAB.getState()))) {
                 hardstop.goTo(Hardstop.HardstopStates.GO);
                 if (!Flip.FlipStates.SUBMERSIBLE.getState() || time - twist.getLastTwisTime() < 0.2) {
                     queuers.get(2).addDelay(DROP_DELAY_TIME);

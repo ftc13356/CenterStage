@@ -140,7 +140,7 @@ public class BR40 {
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop1
         robot.followPath(new Point(26.0, 34.5, Point.CARTESIAN), -3* Math.PI / 4, -3 * Math.PI / 4, false, 0.85);
-        robot.setArm(17, 5, true);
+        robot.setArm(19, 5, true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         //grab2
@@ -155,7 +155,7 @@ public class BR40 {
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop2
         robot.followPath(new Point(26 + x7, 24 + y7, Point.CARTESIAN), -3.1 * Math.PI / 4, -3.1 * Math.PI / 4, false, 0.9);
-        robot.setArm(18, 5, true);
+        robot.setArm(19, 5, true);
         robot.queuer.addDelay(DROP_DELAY);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         //grab3
@@ -170,14 +170,14 @@ public class BR40 {
 //        robot.queuer.addDelay(0.2);
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop3
-        robot.followPath(new Point(22, 24.75, Point.CARTESIAN), Math.toRadians(-44), 0, false);
+        robot.followPath(new Point(24, 26.75, Point.CARTESIAN), Math.toRadians(-44), 0, false);
         robot.setArm(SPECIMENGRAB_EXTEND_POS, SPECIMENGRAB_PITCH_POS, true);
-        robot.queuer.addDelay(0.6);
+        robot.queuer.addDelay(0.8);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         //grab4
-        robot.followPath(new Point(17.5, 24.25, Point.CARTESIAN), 0, 0, false);
+        robot.followPath(new Point(17.5, 26.25, Point.CARTESIAN), 0, 0, false);
         robot.setHardstop(Hardstop.HardstopStates.STOP, true);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.setTwist(Twist.TwistStates.SPECIMEN, true);
@@ -188,7 +188,7 @@ public class BR40 {
 
     public void cycleBlueGrab(int i) {
 
-        robot.followPath(new Point(24 + i * X_OFF,40.4 + i * Y_OFF,1), new Point(17.4 + i * X_OFF, 34.8 + i * Y_OFF, Point.CARTESIAN), 0, 0, false, 1, false);
+        robot.followPath(new Point(24 + i * X_OFF,40.4 + i * Y_OFF,1), new Point(17.4 + i * X_OFF, 36.8 + i * Y_OFF, Point.CARTESIAN), 0, 0, false, 1, false);
         robot.setArm(0, 65, true);
         robot.queuer.addDelay(0.25);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
