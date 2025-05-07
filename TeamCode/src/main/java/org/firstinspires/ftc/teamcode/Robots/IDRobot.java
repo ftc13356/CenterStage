@@ -719,6 +719,10 @@ public class IDRobot extends BasicRobot {
                 if (!follower.isTeleDrive()) {
                     follower.startTeleopDrive();
                     follower.breakFollowing();
+                    if(!queuers.get(6).isEmpty()){
+                        for (var i : queuers)
+                            i.reset();
+                    }
                 }
                 follower.rawDriving(new Pose2d(-op.gamepad1.left_stick_y * driveConst * 1 / .7, op.gamepad1.left_stick_x * max(driveConst / .6, 0.4), -op.gamepad1.right_stick_x * driveConst * .7), arm.getExt());
 //            isAutoGrab = false;
@@ -1048,7 +1052,7 @@ public class IDRobot extends BasicRobot {
             }
             isAutoGrab = false;
         }
-        if (isDD2 && isSuperRB || !queuers.get(6).isEmpty()) {
+        if ((isDD2 && isSuperRB) || !queuers.get(6).isEmpty()) {
             if (queuers.get(6).isEmpty()) {
                 if (follower.isTeleDrive()) {
                     grabPoint = follower.getPose();

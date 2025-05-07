@@ -23,6 +23,7 @@ import static java.lang.Math.sqrt;
 import android.animation.RectEvaluator;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -58,6 +59,10 @@ public class DualPIDController {
         if(!isTeleop) {
             rotEnc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rotEnc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            ext.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            ext2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            extENC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extENC.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         lastManualTime = -100;
         rot.setDirection(REVERSE);
