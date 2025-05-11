@@ -70,7 +70,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false; //sigma
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.5, FOR_MULT = 1, SIDE_CONST = 1.7, SIDE_MULT = 0.85, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.05, MIN_EXT = 5.0, HANGEXT1 = 26.5, HANGROT1 = 70,
+    public static double FOR_CONST = 3.5, FOR_MULT = 0.9, SIDE_CONST = 1.7, SIDE_MULT = 0.85, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.05, MIN_EXT = 5.0, HANGEXT1 = 26.5, HANGROT1 = 70,
             HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0., DROP_DEL = 0, FLIP_DEL = 0.05   ;
     double driveConst = .7;
     double lastMoveTime = -100;
@@ -536,7 +536,17 @@ public class IDRobot extends BasicRobot {
                     flip.flipTo(Flip.FlipStates.AUTO_GRAH);
                     lastStartAUtoGrabTime = time;
                 }
-                if (isAutoGrab && (TelescopicArm.ArmStates.HOVER.getState() && (targetHead==1000 || abs(follower.getPose().getHeading()-targetHead)<toRadians(7)) &&
+                double h1= follower.getPose().getHeading() - targetHead;
+                while(abs(h1)>PI){
+                    if(h1>PI){
+                        h1-=2*PI;
+                    }
+                    if(h1<-PI){
+                        h1+=2*PI;
+                    }
+
+                }
+                if (isAutoGrab && (TelescopicArm.ArmStates.HOVER.getState() && (targetHead==1000 || h1<toRadians(7)) &&
                         abs(arm.getExt() - arm.getTargetExt()) < 5 && abs(follower.getVelocityMagnitude())<15&& arm.getTargetExt() > 3 && arm.getTargetRot() != 0) &&
                         (abs(follower.getVelocityPose().getHeading()) < toRadians(10))) {
 
@@ -635,7 +645,7 @@ public class IDRobot extends BasicRobot {
             }
         }
         if (isRB || !queuers.get(2).isEmpty()) {
-            if (queuers.get(8).isEmpty() && TelescopicArm.ArmStates.HOVER.getState() && (arm.getTargetRot() != 0 || !queuers.get(2).isEmpty()) && (!queuers.get(2).isEmpty() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.AUTO_GRAB.getState())) {
+//            if ( TelescopicArm.ArmStates.HOVER.getState() && (arm.getTargetRot() != 0 || !queuers.get(2).isEmpty()) && (!queuers.get(2).isEmpty() || TelescopicArm.ArmStates.HOVER.getState() || TelescopicArm.ArmStates.AUTO_GRAB.getState())) {
                 if (!Flip.FlipStates.SUBMERSIBLE.getState() || time - twist.getLastTwisTime() < 0.2) {
                     queuers.get(2).addDelay(DROP_DELAY_TIME);
                 }
@@ -645,7 +655,8 @@ public class IDRobot extends BasicRobot {
                 setFlip(Flip.FlipStates.SUBMERSIBLE, true, queuers.get(2));
                 queuers.get(2).addDelay(DELAY_TIME);
                 setClaw(Claw.ClawStates.CLOSED, false, queuers.get(2));
-            }
+                queuers.get(2).queue(false, true);
+//            }
             isAutoGrab = false;
         }
         for (var i : queuers) {
