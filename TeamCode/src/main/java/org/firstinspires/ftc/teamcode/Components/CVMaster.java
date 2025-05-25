@@ -109,6 +109,7 @@ public class CVMaster {
         return .001*webcam.getTotalFrameTimeMs();
     }
     public void swapRed(){
+
         exclude.setColor(0);
     }
     public void swapBlue(){
@@ -120,4 +121,7 @@ public class CVMaster {
     public void resetCenter(){
         exclude.resetCenter();
     }
+    public void swapTeleRed() {exclude.isBlue = false;
+        exclude.setColor(0);}
+    public void swapTeleBlue() {exclude.isBlue = true; exclude.setColor(1);}
 }

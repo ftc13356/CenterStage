@@ -34,6 +34,7 @@ public class BR40 {
     int position = 0;
     boolean shouldPark = false, shouldAuto = true;
     int isRed = 0;
+    int offset = 0;
     Vector2d dist3 = new Vector2d(DIST3_X, DIST3_Y);
 
 
@@ -80,7 +81,7 @@ public class BR40 {
 
     public void placeSpeci() {
 //        robot.queuer.addDelay(0.4);
-        robot.followPath(new Point(4.51 + x1, 64, Point.CARTESIAN), 0, 0, false, .85);
+        robot.followPath(new Point(42.51 + x1, 64, Point.CARTESIAN), 0, 0, false, .85);
         robot.setArm(HIGHSPECIMEN_EXTEND_POS,HIGHSPECIMEN_PITCH_POS - 3, true);
         robot.setTwist(Twist.TwistStates.PARALLEL, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
@@ -99,7 +100,7 @@ public class BR40 {
 
 //            robot.autoReset(false);
 //            robot.followPath(new Point(36.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
-            robot.followPath(new Point(36 + x1, 72 + position * 4, Point.CARTESIAN), 0, 0, false, .9);
+            robot.followPath(new Point(36 + x1 , 72 + position * 4, Point.CARTESIAN), 0, 0, false, .9);
             if (isRed > 0)
                 robot.autoGrab(0);
             else
@@ -110,11 +111,14 @@ public class BR40 {
         } else {
             cycleBlueGrab(2);
         }
-
     }
 
     public void grabBluesSweep() {
         //grab1
+        robot.setFlip(Flip.FlipStates.RESET, true);
+        if(Math.abs(position) > 1){
+            robot.followPath(new Point(30.5, 68, Point.CARTESIAN), 0, 0, false);
+        }
         robot.queuer.addDelay(0.0);
         robot.followPath(new Point(26.0, 50.5, Point.CARTESIAN), -0.1 * Math.PI / 4, -3.4 * Math.PI / 4, false, 0.85);
         robot.queuer.addDelay(.0);
@@ -123,7 +127,6 @@ public class BR40 {
         robot.setArm(20, 5, true);
         robot.queuer.addDelay(0.05);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
-        robot.setFlip(Flip.FlipStates.RESET, true);
         robot.queuer.addDelay(1.1);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.followPath(new Point(26.25 + x3, 39.5 + y3, Point.CARTESIAN), Math.toRadians(-40), Math.toRadians(-40), false, .8);

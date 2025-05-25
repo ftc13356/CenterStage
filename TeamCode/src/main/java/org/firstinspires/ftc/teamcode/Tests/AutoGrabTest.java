@@ -16,15 +16,17 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 @Config
 public class AutoGrabTest {
     IDRobot robot;
+    public static int color = 2;
     public AutoGrabTest(LinearOpMode opmode) {
         robot = new IDRobot(opmode, false);
         robot.follower.setStartingPose(new Pose(57.9443447037702, 99.23339317773788, toRadians(-90)));
+        robot.cv.swapInt(color);
     }
 
 
     public void autoGrab() {
         robot.queuer.queue(false, true);
-        robot.autoGrab(2);
+        robot.autoGrab(color);
         robot.queuer.addDelay(1);
         robot.followPathNotTargeted(new Point(80.9443447037702, 99.23339317773788,1), new Point(55.5, 99.23339317773788,1),
                 0.4,toRadians(-90),toRadians(-90),true);

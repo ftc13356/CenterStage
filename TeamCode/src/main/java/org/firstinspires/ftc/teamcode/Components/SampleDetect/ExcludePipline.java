@@ -41,6 +41,7 @@ import java.util.List;
 @Config
 public class ExcludePipline extends OpenCvPipeline {
     public static int retVal = 0;
+    public static boolean isBlue = true;
     List<MatOfPoint> contours = new ArrayList<>();
 
     public static boolean printStuff= true;
@@ -131,7 +132,13 @@ public class ExcludePipline extends OpenCvPipeline {
         } else if (color == 1)
             Core.inRange(hsv, blFilt, buFilt, colorMask);
         else {
-            Core.inRange(hsv, blFilt, buFilt, colorMask);
+            if(isBlue){
+                Core.inRange(hsv, blFilt, buFilt, colorMask);
+            } else {
+                Core.inRange(hsv, rlFilt, ruFilt, mask);
+                Core.inRange(hsv, rllFilt, rulFilt, mask2);
+                Core.bitwise_or(mask, mask2, colorMask);
+            }
             Core.inRange(hsv, ylFilt, yuFilt, colorMask2);
         }
 

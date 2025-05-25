@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.Components.Flip;
 import org.firstinspires.ftc.teamcode.Components.HangServo;
 import org.firstinspires.ftc.teamcode.Components.Hardstop;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
+import org.firstinspires.ftc.teamcode.Components.SampleDetect.ExcludePipline;
 import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
 import org.firstinspires.ftc.teamcode.Components.Twist;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -59,7 +60,7 @@ import java.util.Queue;
 @Config
 public class IDRobot extends BasicRobot {
     public Claw claw;
-    CVMaster cv;
+    public CVMaster cv;
     public Flip flip;
     public Follower follower;
     HangServo hang;
@@ -691,16 +692,16 @@ public class IDRobot extends BasicRobot {
     public void teleOp(boolean isBlue) {
         if (queuer.isFirstLoop()) {
             if (isBlue)
-                cv.swapBlue();
+                cv.swapTeleBlue();
             else
-                cv.swapRed();
+                cv.swapTeleRed();
             claw.goTo(Claw.ClawStates.OPEN);
             queuer.setFirstLoop(false);
         }
         boolean isY = gampad.readGamepad(op.gamepad1.y || op.gamepad2.y, "gamepad1_y", "high basket");
-        boolean isB = gampad.readGamepad(op.gamepad1.b || op.gamepad2.b, "gamepad1_b", "specimen grab");
-        boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "retract slide(flat if from drop, vert if from grab)");
-        boolean isA2 = gampad.readGamepad((op.gamepad2.a), "gamepad2_a", "retract slide(flat if from drop, vert if from grab)");
+        boolean isB = gampad.readGamepad((op.gamepad1.b || op.gamepad2.b) && (!op.gamepad1.start && !op.gamepad2.start), "gamepad1_b", "specimen grab");
+        boolean isA = gampad.readGamepad(op.gamepad1.a && (!op.gamepad1.start&&!op.gamepad2.start), "gamepad1_a", "retract slide(flat if from drop, vert if from grab)");
+        boolean isA2 = gampad.readGamepad((op.gamepad2.a && (!op.gamepad1.start&&!op.gamepad2.start)), "gamepad2_a", "retract slide(flat if from drop, vert if from grab)");
         boolean isX = gampad.readGamepad(op.gamepad1.x || (op.gamepad2.x && !op.gamepad2.dpad_left), "gamepad1_x", "specimen drop");
         boolean isX2 = gampad.readGamepad(op.gamepad2.x, "gamepad1_x", "specimen drop");
         boolean isRB = gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "down to grab /close claw/open claw");
