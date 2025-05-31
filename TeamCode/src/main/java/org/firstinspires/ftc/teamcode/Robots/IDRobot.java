@@ -71,7 +71,7 @@ public class IDRobot extends BasicRobot {
     boolean isAutoGrab = false, targeted = false; //sigma
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
-    public static double FOR_CONST = 3.5, FOR_MULT = 0.9, SIDE_CONST = 1.7, SIDE_MULT = 0.85, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.05, MIN_EXT = 5.0, HANGEXT1 = 26.5, HANGROT1 = 70,
+    public static double FOR_CONST = 3.8, FOR_MULT = 0.9, SIDE_CONST = 2, SIDE_MULT = 0.9, MOVE_INTERVAL = 0.5, DELAY_TIME = 0.2, DROP_DELAY_TIME = 0.05, MIN_EXT = 5.0, HANGEXT1 = 26.5, HANGROT1 = 70,
             HANGEXT2 = 0, HANGROT2 = 120, HANGEXT3 = 3.5, HANGROT3 = 20, LAG_CONSST = .25, MAX_EXT = 19, RETRACT_CONST = 0, STABLIZE_TIME = 0., DROP_DEL = 0, FLIP_DEL = 0.05   ;
     double driveConst = .7;
     double lastMoveTime = -100;
@@ -633,7 +633,7 @@ public class IDRobot extends BasicRobot {
                 }
             }
         }
-        if (targeted && time - twist.getLastTwisTime() > .1 && (!follower.isBusy() || lastTarg == null || lastTarg.distanceFrom(new Point(follower.getPose())) < 0.5) && ((abs(arm.getTargetExt() - arm.getExt()) < 0.7 && abs(arm.getVel()) > .75) || (abs(arm.getTargetExt() - arm.getExt()) < 0.5))) {
+        if (targeted && time - twist.getLastTwisTime() > .1 && (!follower.isBusy() || lastTarg == null || lastTarg.distanceFrom(new Point(follower.getPose())) < 0.35) && ((abs(arm.getTargetExt() - arm.getExt()) < 0.7 && abs(arm.getVel()) > .75) || (abs(arm.getTargetExt() - arm.getExt()) < 0.5))) {
             targetHead = 1000;
             if (!Flip.FlipStates.SUBMERSIBLE.getState()) {
                 isRB = true;
@@ -729,8 +729,12 @@ public class IDRobot extends BasicRobot {
         if (follower.isTeleDrive()) {
             if ((abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_x) > 0.001 || abs(op.gamepad1.right_stick_x) > 0.001)) {
                 if (!follower.isTeleDrive()) {
+                    if(!queuers.get(6).isEmpty()){
+                        arm.goTo(0, 90);
+                    }
                     follower.startTeleopDrive();
                     follower.breakFollowing();
+                    hardstop.goTo(Hardstop.HardstopStates.GO);
                     if(!queuers.get(6).isEmpty()){
                         for (var i : queuers)
                             i.reset();
@@ -1065,7 +1069,8 @@ public class IDRobot extends BasicRobot {
             isAutoGrab = false;
         }
         if ((isDD2 && isSuperRB) || !queuers.get(6).isEmpty()) {
-            if (queuers.get(6).isEmpty()) {
+            if (queuers.get(6).isEmpty() || (isDD2 && isSuperRB)) {
+                queuers.get(6).reset();
                 if (follower.isTeleDrive()) {
                     grabPoint = follower.getPose();
                     follower.stopTeleopDrive();

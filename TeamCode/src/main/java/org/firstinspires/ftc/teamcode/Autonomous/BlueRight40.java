@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @Autonomous
-//@Disabled
+@Disabled
 public class BlueRight40 extends LinearOpMode {
     BR40 aut;
     public void runOpMode() throws InterruptedException {
