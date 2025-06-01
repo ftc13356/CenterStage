@@ -47,7 +47,7 @@ public class ExcludePipline extends OpenCvPipeline {
     public static boolean printStuff= true;
     public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 150, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=0.85,
             FOR_CONST = 3.6;
-    public static int UPPER_THRESH = 100, LOWER_THRESH = 50, YUPPER_THRESH = 240, YLOWER_THRESH = 80, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 2;
+    public static int UPPER_THRESH = 120, LOWER_THRESH = 60, YUPPER_THRESH = 240, YLOWER_THRESH = 80, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 2;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
@@ -131,7 +131,7 @@ public class ExcludePipline extends OpenCvPipeline {
             Core.bitwise_or(mask, mask2, colorMask);
         } else if (color == 1)
             Core.inRange(hsv, blFilt, buFilt, colorMask);
-        else {
+        else if(color == 2){
             if(isBlue){
                 Core.inRange(hsv, blFilt, buFilt, colorMask);
             } else {
@@ -140,6 +140,9 @@ public class ExcludePipline extends OpenCvPipeline {
                 Core.bitwise_or(mask, mask2, colorMask);
             }
             Core.inRange(hsv, ylFilt, yuFilt, colorMask2);
+        }
+        else{
+            Core.inRange(hsv, ylFilt, yuFilt, colorMask);
         }
 
         maskedImage = new Mat();

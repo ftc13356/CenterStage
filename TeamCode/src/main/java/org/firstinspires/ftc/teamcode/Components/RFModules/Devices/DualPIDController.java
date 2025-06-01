@@ -44,7 +44,7 @@ public class DualPIDController {
 
     public static double  A_OFF = -8, MAX=29, MIN=0
             , ROTMAX = 170, ROTMIN = 0, TICKS_PER_IN = 6.501950585175553e-4, TICKS_PER_DEG = 380/8192.0,P=0.11, S = 0.15, S2 = 0.07 ,D=0.0075, rP = 0.009, rP2 =0.01, rD2= .3
-            , rD = .2 , rF = 0.4, G = 0.23,rG = 0.15, rG2 = 0.32, HORIZ_LIM = 28.2
+            , rD = .2 , rF = 0.4, G = 0.23,rG = 0.15, rG2 = 0.32, HORIZ_LIM = 26.2
             ,TEST_LEN = 0, MAX_SPEED = 223*751.8/60, MULT = -1, MULT2=-1, SPECIPOWER = -0.05, rFH = 0.05, rF0 = 0.8, rG0= .1;
     boolean mid=true, voltScaled = false;
     double TICKS_PER_RAD = TICKS_PER_DEG*PI/180, lastManualTime = -100;
@@ -96,13 +96,13 @@ public class DualPIDController {
         if(abs(time - lastManualTime)>3) {
             extension = min(max(extension, MIN), MAX);
             rotation = min(max(rotation, ROTMIN), ROTMAX);
-            targetExt = extension;
             targetRot = rotation;
             curRot = rotEnc.getCurrentPosition();
             curExt = -extEnc.getCurrentPosition() + (x1) * curRot * TICKS_PER_DEG * 2786.2 / 360;
             if ((targetExt + 10) * cos(curRot * TICKS_PER_RAD) > HORIZ_LIM) {
                 extension = HORIZ_LIM / cos(curRot * TICKS_PER_RAD) - 10;
             }
+            targetExt = min(extension, MAX);
             double err = extension - curExt * TICKS_PER_IN;
             double d = extEnc.getCorrectedVelocity() * TICKS_PER_IN;
             double rd = -rotEnc.getVelocity() * TICKS_PER_DEG;
@@ -176,9 +176,10 @@ public class DualPIDController {
         goTo(extension,rotation);
     }
     public void goTo(double extension, double rotation, double middle, double middleRot){
+        extension = min(MAX, extension);
         if(mid&& (middle != this.middle || middleRot != this.middleRot || targetExt != min(max(extension,MIN),MAX) || targetRot != min(max(rotation,ROTMIN),ROTMAX)))
             mid=false;
-        if(!mid && abs(getExt() - middle) < 5 && abs(getRot()-middleRot)<10)
+        if(!mid && abs(getExt() - middle) < 10 && abs(getRot()-middleRot)<15)
             mid=true;
         trueTargExt = extension;
         trueTargRot = rotation;

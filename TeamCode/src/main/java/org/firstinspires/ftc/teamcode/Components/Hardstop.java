@@ -17,7 +17,7 @@ public class Hardstop {
     public static double STOP_POS = 0;
     public static double GO_POS  = 1;
 
-    public static double FLIP_TIME = 0.2;
+    public static double FLIP_TIME = 0.4;
     private final double STOP_SERVO_BUFFER = 0.05;
     /**
      * init
