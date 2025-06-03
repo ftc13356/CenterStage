@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltageSensor;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.absoluteTimeoutTime;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.convertToPolar;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.drivePIDFFeedForward;
@@ -670,6 +671,10 @@ public class Follower {
             calculateAveragedVelocityAndAcceleration();
 
             drivePowers = driveVectorScaler.getDrivePowers(getCentripetalForceCorrection(), teleopHeadingVector, teleopDriveVector, poseUpdater.getPose().getHeading());
+
+            for(var i : drivePowers){
+                i *= 13/voltageSensor.getVoltage();
+            }
 
             limitDrivePowers();
 

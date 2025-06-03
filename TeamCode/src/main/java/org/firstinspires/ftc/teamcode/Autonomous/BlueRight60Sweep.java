@@ -15,7 +15,7 @@ public class BlueRight60Sweep extends LinearOpMode {
         }
         resetRuntime();
         BasicRobot.time=0;
-        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<30.0){
+        while(!isStopRequested()&&opModeIsActive()&&!aut.robot.queuer.isFullfilled()&&BasicRobot.time<29.99){
             aut.placeSpeci();
             aut.autoGrab();
             aut.grabBluesSweep();

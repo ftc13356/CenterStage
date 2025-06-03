@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 @Config
 public class BR40 {
     IDRobot robot;
-    public static double x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0, x7 = 0, X_OFF = -.5, Y_OFF = 0.05;
+    public static double x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0, x7 = 0, X_OFF = -.6, Y_OFF = 0.05;
     public static double x8 = 0, x9 = 0, x10 = 0, x12 = 0, y9 = 0;
     public double y2 = 0, y3 = 0, y4 = 0, y5 = 0, y6 = 0, y7 = 0, y8 = 0, y10 = 0, DROP_DELAY = 0.65;
     int position = 0;
@@ -160,7 +160,7 @@ public class BR40 {
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
 //        robot.queuer.addDelay(0.2);
         robot.setArm(16, 0, false);
-        robot.queuer.addDelay(0.3);
+        robot.queuer.addDelay(0.2);
         robot.queuer.queue(false, true);
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop2
@@ -175,7 +175,7 @@ public class BR40 {
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
         robot.queuer.addDelay(0.1);
         robot.setArm(12 + x5, 0, false);
-        robot.queuer.addDelay(0.15);
+        robot.queuer.addDelay(0.1);
         robot.queuer.queue(false, true);
 //        robot.queuer.addDelay(0.2);
         robot.setClaw(Claw.ClawStates.CLOSED, true);

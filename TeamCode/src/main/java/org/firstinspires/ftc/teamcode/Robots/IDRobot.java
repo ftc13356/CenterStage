@@ -619,7 +619,7 @@ public class IDRobot extends BasicRobot {
                     }
                 } else {
                     if (arm.getTargetExt() < 1 || arm.getTargetExt() > 30 || arm.getTargetRot() < 1 || arm.getTargetRot() > 90) {
-                        arm.goTo(AUTO_GRAB_EXTEND+1, AUTO_AUTO_GRAB_PITCH);
+                        arm.goTo(AUTO_GRAB_EXTEND+2, AUTO_AUTO_GRAB_PITCH);
                         flip.flipTo(Flip.FlipStates.AUTO_GRAH);
                         claw.goTo(Claw.ClawStates.OPEN);
                         if (arm.getExt() < 5) {
@@ -720,7 +720,7 @@ public class IDRobot extends BasicRobot {
         boolean isLD2 = op.gamepad2.dpad_left;
 
         if (Claw.ClawStates.GIGA_OPEN.getState() || TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
-            driveConst = 0.3;
+            driveConst = 0.7;
         } else if (TelescopicArm.ArmStates.HIGH_BUCKET.getState()) {
             driveConst = .7;
         } else if (!TelescopicArm.ArmTargetStates.SPECIMEN_GRAB.getState() && !TelescopicArm.ArmStates.SPECIMEN_GRAB.getState()) {
