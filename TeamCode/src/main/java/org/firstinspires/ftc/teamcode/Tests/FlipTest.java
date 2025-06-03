@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 @Autonomous(name = "FlipTest")
 public class FlipTest extends LinearOpMode{
     //0reset, 1sub, 2spec, 3specgrab, 4basket
-    public static double POS = SPECIMEN_POS;
+    public static double POS = SPECIMEN_POS-.02;
     Flip flipServo;
 
     public void runOpMode() throws InterruptedException{
