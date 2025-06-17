@@ -1045,7 +1045,7 @@ public class IDRobot extends BasicRobot {
                 }
                 queuers.get(8).addDelay(0.6);
                 setFlip(Flip.FlipStates.AUTO_GRAH, false, queuers.get(8));
-                queuers.get(8).addDelay(0.4);
+                queuers.get(8).addDelay(0);
                 setTwist(Twist.TwistStates.SPECIMEN, true, queuers.get(8));
                 queuers.get(8).addDelay(DROP_DEL);
                 setClaw(Claw.ClawStates.GIGA_OPEN, true, queuers.get(8));

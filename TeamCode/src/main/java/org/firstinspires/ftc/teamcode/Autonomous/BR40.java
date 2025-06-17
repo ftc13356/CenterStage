@@ -180,16 +180,15 @@ public class BR40 {
 //        robot.queuer.addDelay(0.2);
         robot.setClaw(Claw.ClawStates.CLOSED, true);
         //drop3
-        robot.followPath(new Point(26, 27.75, Point.CARTESIAN), new Point(22.5, 25.5, Point.CARTESIAN), Math.toRadians(-44), Math.toRadians(20), false);
+        robot.followPath(new Point(29.5, 27.75, Point.CARTESIAN), new Point(22.5, 25.5, Point.CARTESIAN), Math.toRadians(-44), Math.toRadians(5), false);
         robot.setArm(SPECIMENGRAB_EXTEND_POS, SPECIMENGRAB_PITCH_POS, true);
-        robot.queuer.addDelay(1.2);
+        robot.queuer.addDelay(1);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         //grab4
         robot.followPath(new Point(17, 25.5, Point.CARTESIAN), 0, 0, false);
         robot.setHardstop(Hardstop.HardstopStates.STOP, true);
-        robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.setTwist(Twist.TwistStates.SPECIMEN, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);
         robot.setClaw(Claw.ClawStates.CLOSED, false);
@@ -213,7 +212,7 @@ public class BR40 {
     }
 
     public void placeSpeci2(int i) {
-        robot.followPath(new Point(20, 66 + i*.75, 1), new Point(41.5+i*CYCLE_OFFSET_X, 70 + i *.9, Point.CARTESIAN), 0, 0, false, .85);
+        robot.followPath(new Point(20, 66 + i*.9, 1), new Point(41.5+i*CYCLE_OFFSET_X, 70 + i *.9, Point.CARTESIAN), 0, 0, false, .85);
         robot.setArm(0, HIGHSPECIMEN_PITCH_POS, true);
         robot.queuer.addDelay(0.8);
         robot.setArm(HIGHSPECIMEN_EXTEND_POS, HIGHSPECIMEN_PITCH_POS, true);

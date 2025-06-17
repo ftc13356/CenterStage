@@ -23,7 +23,7 @@ public class BlueLeft04 extends LinearOpMode {
             aut.autoGrahCycle(1);
             aut.autoGrahCycle(2);
             aut.autoGrahCycle(3);
-            if(BasicRobot.time>27.8&& !aut.isDroppi()){
+            if(BasicRobot.time>28.8&& !aut.isDroppi()){
                 break;
             }
             aut.reset();

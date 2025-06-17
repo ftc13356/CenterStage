@@ -19,9 +19,9 @@ public class Flip {
     RFServo flip;
     public static double RESET_POS = 0.83;
     public static double RETRACT_POS = 0.58;
-    public static double SUBMERSIBLE_POS = 0.36;
-    public static double SPECIMEN_POS = .98;
-    public static double BACKDROP_POS = .98;
+    public static double SUBMERSIBLE_POS = 0.4;
+    public static double SPECIMEN_POS = 1;
+    public static double BACKDROP_POS = 1;
     public static double SPECIMENGRAB_POS = 0.83;
     public static double BUCKET_POS = 0.75, AUTO_GRAH_POS= .66,
             FLIP_TIME = 0.1;
