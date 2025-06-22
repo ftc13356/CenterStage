@@ -115,8 +115,8 @@ public class BR40 {
                 robot.autoGrab(0);
             else
                 robot.autoGrab(1);
-//            robot.queuer.waitForFinish();
-//            robot.queuer.addDelay(DAMNDELAY);
+            robot.queuer.waitForFinish();
+            robot.queuer.addDelay(DAMNDELAY);
             robot.queuer.queue(false, true);
         } else {
             cycleBlueGrab(2);
@@ -125,7 +125,7 @@ public class BR40 {
 
     public void grabBluesSweep() {
         //grab1
-        robot.setFlip(Flip.FlipStates.SPECIMEN, false);
+        robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setArm(0, 15, true);
         double startAng = 0;

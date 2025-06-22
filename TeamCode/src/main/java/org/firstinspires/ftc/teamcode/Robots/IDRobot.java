@@ -181,10 +181,10 @@ public class IDRobot extends BasicRobot {
             bigLight.goTo(targ);
     }
 
-    public void setBigLight(BigLight.BigLightStates targ, boolean p_async, Queuer queuer) {
-        if (queuer.queue(p_async, targ.getState())  && !queuer.isFirstLoop())
-            bigLight.goTo(targ);
-    }
+//    public void setBigLight(BigLight.BigLightStates targ, boolean p_async, Queuer queuer) {
+//        if (queuer.queue(p_async, targ.getState())  && !queuer.isFirstLoop())
+//            bigLight.goTo(targ);
+//    }
 
     public void setFlip(Flip.FlipStates targ, boolean p_async, Queuer queuer) {
         if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
@@ -672,7 +672,6 @@ public class IDRobot extends BasicRobot {
                 setFlip(Flip.FlipStates.SUBMERSIBLE, true, queuers.get(2));
                 queuers.get(2).addDelay(DELAY_TIME);
                 setClaw(Claw.ClawStates.CLOSED, false, queuers.get(2));
-//                setBigLight(BigLight.BigLightStates.OFF, false);
                 queuers.get(2).queue(false, true);
 //            }
             isAutoGrab = false;
@@ -746,6 +745,8 @@ public class IDRobot extends BasicRobot {
         }
 
         if (follower.isTeleDrive()) {
+
+//            setBigLight(BigLight.BigLightStates.ON, true, queuers.get(1));
             if ((abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_x) > 0.001 || abs(op.gamepad1.right_stick_x) > 0.001)) {
                 if (!follower.isTeleDrive()) {
                     if(!queuers.get(6).isEmpty()){
@@ -1043,10 +1044,6 @@ public class IDRobot extends BasicRobot {
 //            bigLight.goTo(1); // maybe
             isAutoGrab = false;
         }
-//        if (isLD || isRD || isUD){ // this is so fucked maybe
-//            setBigLight(BigLight.BigLightStates.ON, false);
-//
-//        }
         if (op.gamepad1.dpad_down && isRB) {
             twist.iterateTwist(1);
         }
@@ -1194,7 +1191,6 @@ public class IDRobot extends BasicRobot {
 
             arm.update();
         }
-        setBigLight(BigLight.BigLightStates.ON, true, queuers.get(1));
         for (var i : queuers) {
             if (!i.isEmpty()) {
                 i.setFirstLoop(false);
