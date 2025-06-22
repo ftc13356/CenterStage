@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp.Comp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Components.TelescopicArm;
 import org.firstinspires.ftc.teamcode.Robots.IDRobot;
 
 @TeleOp

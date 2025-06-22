@@ -17,6 +17,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Components.BigLight;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.Flip;
 import org.firstinspires.ftc.teamcode.Components.Hardstop;
@@ -37,6 +38,7 @@ public class BR40 {
     int isRed = 0;
     int offset = 0;
     Vector2d dist3 = new Vector2d(DIST3_X, DIST3_Y);
+    public static double shitFuck = .5, FUCK = 0, UGHUHGUH = .25, DAMNDELAY = 1;
 
 
     public BR40(LinearOpMode opmode) {
@@ -93,25 +95,28 @@ public class BR40 {
         robot.followPath(new Point(34.4 + x1, 64, Point.CARTESIAN), 0, 0, false, .8);
         robot.setClaw(Claw.ClawStates.GIGA_OPEN, true);
         robot.setHardstop(Hardstop.HardstopStates.GO, true);
-        robot.setArm(0, 95, true);
-        robot.queuer.addDelay(0.3);
+        robot.setArm(0, 95 + FUCK, true);
+        robot.queuer.addDelay(shitFuck); // maybe
+        op.telemetry.addData("shit fuck", shitFuck);
         robot.setArm(0, 15, true);
-
-
     }
 
     public void autoGrab() {
         if (shouldAuto) {
 
-//            robot.autoReset(false);
-//            robot.followPath(new Point(36.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
+            robot.autoReset(false);
+            robot.followPath(new Point(36.4 + x1, 67, Point.CARTESIAN), 0, 0, false, .9);
+// change maybe
+            robot.setFlip(Flip.FlipStates.AUTO_GRAH, true);
+            robot.setTwist(Twist.TwistStates.SPECIMEN, true);
             robot.followPath(new Point(36 + x1 , 72 + position * 2, Point.CARTESIAN), 0, 0, false, .9);
+            robot.queuer.addDelay(UGHUHGUH);
             if (isRed > 0)
                 robot.autoGrab(0);
             else
                 robot.autoGrab(1);
-            robot.queuer.waitForFinish();
-            robot.queuer.addDelay(0.4);
+//            robot.queuer.waitForFinish();
+//            robot.queuer.addDelay(DAMNDELAY);
             robot.queuer.queue(false, true);
         } else {
             cycleBlueGrab(2);
@@ -120,13 +125,13 @@ public class BR40 {
 
     public void grabBluesSweep() {
         //grab1
-        robot.setFlip(Flip.FlipStates.SPECIMEN, true);
+        robot.setFlip(Flip.FlipStates.SPECIMEN, false);
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setArm(0, 15, true);
         double startAng = 0;
 //        if(Math.abs(position) > 1){
-            robot.followPath(new Point(29.5, 68, Point.CARTESIAN), 0, -3.4 * Math.PI / 4, false,0.8);
-            startAng = -3.4*Math.PI/4;
+        robot.followPath(new Point(29.5, 68, Point.CARTESIAN), 0, -3.4 * Math.PI / 4, false,0.8);
+        startAng = -3.4*Math.PI/4;
 //        }
         robot.queuer.addDelay(0.0);
         robot.followPath(new Point(25, 50.5, Point.CARTESIAN), startAng, -3.4 * Math.PI / 4, false, 0.9);
@@ -174,7 +179,7 @@ public class BR40 {
         robot.setTwist(0.83 + x12, true);
         robot.setFlip(Flip.FlipStates.SUBMERSIBLE, true);
         robot.queuer.addDelay(0.1);
-        robot.setArm(12 + x5, 0, false);
+        robot.setArm(12 + x5, 0,                                                     false);
         robot.queuer.addDelay(0.1);
         robot.queuer.queue(false, true);
 //        robot.queuer.addDelay(0.2);
@@ -187,7 +192,7 @@ public class BR40 {
         robot.setTwist(Twist.TwistStates.PERPENDICULAR, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN, true);
         //grab4
-        robot.followPath(new Point(17, 25.5, Point.CARTESIAN), 0, 0, false);
+        robot.followPath(new Point(17, 24.5, Point.CARTESIAN), 0, 0, false);
         robot.setHardstop(Hardstop.HardstopStates.STOP, true);
         robot.setTwist(Twist.TwistStates.SPECIMEN, true);
         robot.setFlip(Flip.FlipStates.SPECIMEN_GRAB, true);

@@ -21,7 +21,7 @@ public class Twist {
     RFServo twist;
     public static double PARALLEL_POS = 0;
 
-    public static double PERPENDICULAR_POS = 0.55;
+    public static double PERPENDICULAR_POS = 0.5;
     public static double PARPLUSHALF_POS = 0.3;
     public static double PERPLUSHALF_POS = 0.9;
     public static double SPECIMEN_POS = 1;
