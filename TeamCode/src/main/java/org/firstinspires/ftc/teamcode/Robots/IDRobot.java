@@ -38,6 +38,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Components.BigLight;
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.Flip;
@@ -70,6 +71,7 @@ public class IDRobot extends BasicRobot {
     public ArrayList<Queuer> queuers;
     public TelescopicArm arm;
     public Twist twist;
+    public BigLight bigLight;
     boolean isAutoGrab = false, targeted = false; //sigma
     double lastReadTime, lastStartAUtoGrabTime = -100;
     Point lastTarg = new Point(0, 0, 1);
@@ -80,6 +82,7 @@ public class IDRobot extends BasicRobot {
 
     double targetHead = 1000;
     Pose grabPoint = new Pose(0, 0, 0);
+
 
     public IDRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
@@ -173,6 +176,16 @@ public class IDRobot extends BasicRobot {
             twist.twistTo(targ);
     }
 
+    public void setBigLight(BigLight.BigLightStates targ, boolean p_async) {
+        if (queuer.queue(p_async, targ.getState())  && !queuer.isFirstLoop())
+            bigLight.goTo(targ);
+    }
+
+    public void setBigLight(BigLight.BigLightStates targ, boolean p_async, Queuer queuer) {
+        if (queuer.queue(p_async, targ.getState())  && !queuer.isFirstLoop())
+            bigLight.goTo(targ);
+    }
+
     public void setFlip(Flip.FlipStates targ, boolean p_async, Queuer queuer) {
         if (queuer.queue(p_async, targ.getState()) && !queuer.isExecuted() && !queuer.isFirstLoop())
             flip.flipTo(targ);
@@ -192,7 +205,6 @@ public class IDRobot extends BasicRobot {
         if (queuer.queue(p_async, true) && !queuer.isExecuted() && !queuer.isFirstLoop())
             twist.twistTo(rotation);
     }
-
 
     public void followPath(PathChain path) {
         followPath(path, false);
@@ -622,6 +634,8 @@ public class IDRobot extends BasicRobot {
                         arm.goTo(AUTO_GRAB_EXTEND+2, AUTO_AUTO_GRAB_PITCH);
                         flip.flipTo(Flip.FlipStates.AUTO_GRAH);
                         claw.goTo(Claw.ClawStates.OPEN);
+
+//                        bigLight.goTo(1); // maybe
                         if (arm.getExt() < 5) {
                             twist.twistTo(Twist.TwistStates.PARALLEL);
                         }
@@ -658,6 +672,7 @@ public class IDRobot extends BasicRobot {
                 setFlip(Flip.FlipStates.SUBMERSIBLE, true, queuers.get(2));
                 queuers.get(2).addDelay(DELAY_TIME);
                 setClaw(Claw.ClawStates.CLOSED, false, queuers.get(2));
+//                setBigLight(BigLight.BigLightStates.OFF, false);
                 queuers.get(2).queue(false, true);
 //            }
             isAutoGrab = false;
@@ -734,7 +749,7 @@ public class IDRobot extends BasicRobot {
             if ((abs(op.gamepad1.left_stick_y) > 0.001 || abs(op.gamepad1.left_stick_x) > 0.001 || abs(op.gamepad1.right_stick_x) > 0.001)) {
                 if (!follower.isTeleDrive()) {
                     if(!queuers.get(6).isEmpty()){
-                        arm.goTo(0, 90);
+//                        arm.goTo(0, 90);
                     }
                     follower.startTeleopDrive();
                     follower.breakFollowing();
@@ -900,6 +915,7 @@ public class IDRobot extends BasicRobot {
 
         if ((isLB && !op.gamepad1.dpad_down &&( arm.getRot()<80 || !Claw.ClawStates.CLOSED.getState())) || isRD || isDDPress || isUD || isAutoGrab) {
             hardstop.goTo(Hardstop.HardstopStates.GO);
+//            bigLight.goTo(1); // maybe
             if ((isRD || isLB || isUD || isDDPress) && !isAutoGrab && !targeted)
                 claw.goTo(Claw.ClawStates.OPEN);
             if (isRD && isBlue)
@@ -912,6 +928,8 @@ public class IDRobot extends BasicRobot {
                 cv.swapInt(3);
             }
             if ((isRD || isLB || isUD || isDDPress) && !isAutoGrab && !targeted && queuers.get(2).isEmpty()) {
+
+//                bigLight.goTo(1); // maybe
                 cv.resetCenter();
                 flip.flipTo(Flip.FlipStates.AUTO_GRAH);
                 targeted = false;
@@ -1022,8 +1040,13 @@ public class IDRobot extends BasicRobot {
             arm.goTo(TelescopicArm.ArmStates.AUTO_GRAB);
             flip.flipTo(Flip.FlipStates.SUBMERSIBLE);
             twist.twistTo(Twist.TwistStates.PARALLEL);
+//            bigLight.goTo(1); // maybe
             isAutoGrab = false;
         }
+//        if (isLD || isRD || isUD){ // this is so fucked maybe
+//            setBigLight(BigLight.BigLightStates.ON, false);
+//
+//        }
         if (op.gamepad1.dpad_down && isRB) {
             twist.iterateTwist(1);
         }
@@ -1171,6 +1194,7 @@ public class IDRobot extends BasicRobot {
 
             arm.update();
         }
+        setBigLight(BigLight.BigLightStates.ON, true, queuers.get(1));
         for (var i : queuers) {
             if (!i.isEmpty()) {
                 i.setFirstLoop(false);
@@ -1181,4 +1205,5 @@ public class IDRobot extends BasicRobot {
         }
         update();
     }
+
 }
